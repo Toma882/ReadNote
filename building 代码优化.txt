@@ -1,0 +1,172 @@
+building 代码优化
+	数据层级调整
+		父类player
+			当前是single
+			改到G
+		G.building = 
+		{
+			SData=
+			{
+				Pmall、、、
+			},
+			CData=
+			{
+				floor=
+				{
+					商店设备、、、
+				}
+			},
+			
+		}
+			... 
+				Object 
+				
+				SData ??  component ,  
+				
+		
+			G.me.
+				G.me.Buildings
+				
+					G.me 不要存在System
+						BuildSystem
+							GameState
+							
+								me.building 你拥有的数量 ， 1000
+							
+				
+			G.other[1001]
+				Player
+				
+			Data 
+				program language 
+					Data 
+						Data decl 
+						DAta Type
+						Data inst 
+						Data copy 
+						
+				NetData 
+					string 
+					int 
+					float 
+					class 
+					
+				Obj
+					ServerObject
+						ObjectPool 
+
+					client 
+					dbObj
+
+					OOP ESC Lua
+						ESC
+						
+					
+					
+				req(resp) v1
+				
+					local building = resp.building
+					
+					
+					building.cfg = CfgData.building[building.id]
+					
+					local prefab = ResNode:Inst()
+					
+					prefab.AddTable(building)
+					
+				
+				end
+				
+				
+				
+				life cycle 
+					create
+						req(resp)
+					destory 
+						GameObject.Destory(buiilding.gameObject)
+							same Layer + same life cycle
+							
+								buiilding.gameObjectId
+					
+					get 
+						buildingSystem:Set(building)
+							map[building.dbId] = building
+						
+					set
+						local building = buildingSystem:Get(dbId)
+						
+					
+					update 
+						SynACtion
+							class UpdateBuildingACtion : SynACtion
+							{
+								long buildingId 
+								int level;
+								int woker;
+							}
+							
+							class UpdateBuildingWokerACtion : SynACtion
+							{
+								long buildingId 
+								int woker;
+							}
+							
+								Execute()
+								{
+								
+									local buiilding =buildingSystem:Get(updataBuilding.Id)
+									
+									buiilding.serverObject.woker = woker
+									
+								}
+							
+							class UpdateBuildingACtion : SynACtion
+							{
+								Building updataBuilding;
+							}
+								Execute()
+								{
+								
+									local buiilding =buildingSystem:Get(updataBuilding.Id)
+									
+									buiilding.serverObject = updataBuilding
+									
+								}
+								
+									req(resp) v2
+				
+										-- resp.building
+										lcoal building =  Building:New() --??
+										
+										building.serverObject =  resp.building
+										building.cfg = CfgData.building[building.id]
+										
+										GameObject go = new GameObject
+										
+										local prefab = ResNode:Inst()
+										
+										
+										prefab.AddTable(building)
+										
+
+									
+									end
+					
+					
+					OOP ESC Lua
+						ESC
+							E = GameObject 
+							C = Building
+							S = BuildingSystem:Set(Building)
+								。。Mgr
+		
+		buildingSystem
+		{
+			数据管理，所有数据这里拿
+		}
+	
+	UI
+		可能要抽一些通用模板
+		将UI统一以gameobject为单位层载功能
+	
+	
