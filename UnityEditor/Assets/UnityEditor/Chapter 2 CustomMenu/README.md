@@ -16,15 +16,15 @@
 [MeshCombiner]("../CustomMenu/CustomMenu/Editor/MeshCombiner.cs")
 
 ### Seletion
-* activeContext -->与SetActionObjectwithContext
-* active .. --> 当前Hierarchy 或 Project 窗口中所选中的对象
+* activeContext --> 与SetActionObjectwithContext
+* active .. -->   当前Hierarchy 或 Project 窗口中所选中的对象
     
 | 类型          | 作用范围              |
 |-------------|-------------------|
 | GUIDs       | Project           |
-| gameObjects | Hierarchy$Project |
-| instnaceIDs | Hierarchy$Project |
-| objects     | Hierarchy$Project |
+| gameObjects | Hierarchy&Project |
+| instnaceIDs | Hierarchy&Project |
+| objects     | Hierarchy&Project |
 | transforms  | Hierachy          |
 
 
