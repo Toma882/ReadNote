@@ -1,7 +1,8 @@
 {
 	"$schema": "https://joplinapp.org/schema/settings.json",
-	"editor.codeView": true,
+	"editor.codeView": false,
 	"sync.target": 3,
+	"richTextBannerDismissed": true,
 	"locale": "zh_CN",
 	"theme": 1,
 	"markdown.plugin.softbreaks": false,
@@ -11,12 +12,12 @@
 		"children": [
 			{
 				"key": "sideBar",
-				"width": 250,
+				"width": 245,
 				"visible": true
 			},
 			{
 				"key": "noteList",
-				"width": 187,
+				"width": 215,
 				"visible": true
 			},
 			{
