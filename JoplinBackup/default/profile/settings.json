@@ -1,0 +1,58 @@
+{
+	"$schema": "https://joplinapp.org/schema/settings.json",
+	"editor.codeView": false,
+	"sync.target": 3,
+	"richTextBannerDismissed": true,
+	"editor.pluginCompatibilityBannerDismissedFor": [
+		"com.whatever.quick-links",
+		"outline",
+		"io.github.jackgruber.backup",
+		"io.github.personalizedrefrigerator.js-draw"
+	],
+	"locale": "zh_CN",
+	"ocr.enabled": false,
+	"theme": 1,
+	"preferredLightTheme": 1,
+	"plugins.devPluginPaths": "C:\\Users\\Toma1\\AppData\\Roaming\\Joplin\\plugins",
+	"markdown.plugin.softbreaks": false,
+	"markdown.plugin.typographer": false,
+	"markdown.plugin.emoji": true,
+	"markdown.plugin.multitable": true,
+	"ui.layout": {
+		"key": "root",
+		"children": [
+			{
+				"key": "sideBar",
+				"width": 245,
+				"visible": true
+			},
+			{
+				"key": "noteList",
+				"width": 220,
+				"visible": true
+			},
+			{
+				"key": "editor",
+				"visible": true,
+				"width": 1399
+			},
+			{
+				"key": "plugin-view-outline-outline.panel",
+				"context": {
+					"pluginId": "outline"
+				},
+				"visible": true
+			}
+		],
+		"visible": true
+	},
+	"noteVisiblePanes": [
+		"editor",
+		"viewer"
+	],
+	"api.token": "83d740e1cfd25fd3a6f10e68df7eefbba37eee37d5101881ca9d6e1e15264dd7c4a789e684f80f973f35d1e3ce62330b2e1fde8c85f13153beac0dfe69c9b40a",
+	"spellChecker.enabled": true,
+	"spellChecker.languages": [
+		"en-US"
+	]
+}
