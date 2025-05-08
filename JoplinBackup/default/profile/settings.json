@@ -1,21 +1,49 @@
 {
 	"$schema": "https://joplinapp.org/schema/settings.json",
-	"editor.codeView": false,
+	"editor.codeView": true,
 	"sync.target": 3,
 	"richTextBannerDismissed": true,
 	"editor.pluginCompatibilityBannerDismissedFor": [
+		"com.github.alan-null.joplin-plugin-github-alerts",
+		"com.github.marc0l92.joplin-plugin-drawio",
+		"com.hieuthi.joplin.markdown-table-colorize",
+		"com.joplin.copy.codeBlocks",
+		"com.sctmes.kity-minder",
+		"com.septemberhx.Joplin.Enhancement",
 		"com.whatever.quick-links",
+		"de.fomin.markmap",
+		"io.github.jackgruber.note-overview",
+		"io.github.personalizedrefrigerator.js-draw",
+		"io.github.personalizedrefrigerator.snippets-and-autocomplete",
+		"joplin.plugin.benji.quick-move",
+		"joplin.plugin.quick.html.tags",
+		"org.joplinapp.plugins.ToggleSidebars",
 		"outline",
-		"io.github.jackgruber.backup",
-		"io.github.personalizedrefrigerator.js-draw"
+		"plugin.calebjohn.rich-markdown",
+		"plugin.calebjohn.todo",
+		"sadmice.TextColorize",
+		"ylc395.joplinOcr",
+		"io.github.jackgruber.backup"
 	],
 	"locale": "zh_CN",
 	"ocr.enabled": false,
 	"theme": 1,
 	"preferredLightTheme": 1,
+	"notes.sortOrder.field": "todo_due",
+	"notes.sortOrder.reverse": true,
+	"notes.perFieldReverse": {
+		"user_updated_time": false,
+		"user_created_time": true,
+		"title": false,
+		"order": false,
+		"todo_due": true
+	},
 	"plugins.devPluginPaths": "C:\\Users\\Toma1\\AppData\\Roaming\\Joplin\\plugins",
-	"markdown.plugin.softbreaks": false,
-	"markdown.plugin.typographer": false,
+	"markdown.plugin.softbreaks": true,
+	"markdown.plugin.typographer": true,
+	"markdown.plugin.sub": true,
+	"markdown.plugin.sup": true,
+	"markdown.plugin.deflist": true,
 	"markdown.plugin.emoji": true,
 	"markdown.plugin.multitable": true,
 	"ui.layout": {
@@ -23,25 +51,24 @@
 		"children": [
 			{
 				"key": "sideBar",
-				"width": 245,
+				"width": 197,
 				"visible": true
 			},
 			{
 				"key": "noteList",
-				"width": 220,
-				"visible": true
+				"width": 263,
+				"visible": false
 			},
 			{
 				"key": "editor",
-				"visible": true,
-				"width": 1399
+				"visible": true
 			},
 			{
 				"key": "plugin-view-outline-outline.panel",
 				"context": {
 					"pluginId": "outline"
 				},
-				"visible": true
+				"visible": false
 			}
 		],
 		"visible": true
