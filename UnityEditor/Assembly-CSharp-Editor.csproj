@@ -12,7 +12,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{0910a9e8-8671-82a3-4fe4-3c21ba335f00}</ProjectGuid>
+    <ProjectGuid>{808f4e79-3353-b266-3eff-6097c57fbb98}</ProjectGuid>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -41,40 +41,54 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\Example\Editor\CustomHierarchyWindow.cs" />
-     <Compile Include="Assets\UnityEditor\BeizerPath\Editor\BezierCurvePathEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\MeshExtracter.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\ProtoEditor\Editor\ProtoEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\EditorStylesPreviewer\Editor\EditorStylesPreviewer.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\GUIPreviewer\Editor\GUIIconPreviewer.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\GUIPreviewer\Editor\GUIStylePreviewer.cs" />
-     <Compile Include="Assets\UnityEditor\EventGraph\Editor\EventGraphEditorWindow.cs" />
      <Compile Include="Assets\UnityEditor\Chapter 1 GUILayout\Editor\ExampleEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\TransfromEditor\Editor\TransformEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\RectTransformEditor\Editor\RectTransformEditorExample.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\BatchBuild\Editor\BuildTask.cs" />
      <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\AutoBoxCollider.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\PropertyDrawer\Editor\ColorPropertyDrawer.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\Example\Editor\CustomProjectWindow.cs" />
-     <Compile Include="Assets\UnityEditor\AudioDatabase\Editor\AudioDatabaseEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\Image2RawImage.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\PropertyDrawer\Editor\TimePropertyDrawer.cs" />
-     <Compile Include="Assets\UnityEditor\EventGraph\Editor\NodeBase.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\MeshCombiner.cs" />
-     <Compile Include="Assets\UnityEditor\Gizmo&amp;Handle\Editor\GizmosExampleEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 1 GUILayout\Editor\ExampleEditorWindow.cs" />
-     <Compile Include="Assets\UnityEditor\EventGraph\Editor\DelayEventNode.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\Example\Editor\GUISkinExampleEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\AssetReference.cs" />
-     <Compile Include="Assets\UnityEditor\Gizmo&amp;Handle\Editor\HandlesExampleEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\PropertyDrawer\Editor\SpritePropertyDrawer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\BatchBuild\Editor\BuildProfileEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\Example\Editor\ExampleScriptableWizard.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\Example\Editor\CustomHierarchyWindow.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\TransfromEditor\Editor\TransformEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetModificationProcessor\Editor\ScriptsHeader.cs" />
      <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\AvatarCreateScriptableWizard\Editor\AvatarCreateScriptableWizard.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\Example\Editor\MyEditorWindow.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\TransformTweenAnimation\Editor\TransformTweenAnimationEditor.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\DevelopmentMemo\Editor\DevelopmentMemo.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\MenuItemExample.cs" />
-     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\CustomComponent\Editor\CustomComponentEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AudioDatabase\Editor\AudioDatabaseEditor.cs" />
+     <Compile Include="Assets\UnityEditor\EventGraph\Editor\DelayEventNode.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\Example\Editor\SceneGUIExample.cs" />
+     <Compile Include="Assets\UnityEditor\EventGraph\Editor\EventGraphEditorWindow.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\EditorPrefsUtility\Editor\EditorPrefsUtility.cs" />
      <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\CreateStair.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\Image2RawImage.cs" />
+     <Compile Include="Assets\UnityEditor\EventGraph\Editor\NodeBase.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\TransformTweenAnimation\Editor\TransformTweenAnimationEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\Example\Editor\ExampleSettingsProvider.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 6 Gizmos\Gizmo&amp;Handle\Editor\GizmosExampleEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 6 Gizmos\Gizmo&amp;Handle\Editor\HandlesExampleEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\MeshCombiner.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetPostprocessor\Editor\TexturePostprocessor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\MenuItemExample.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\PropertyDrawer\Editor\ColorPropertyDrawer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\Example\Editor\MyEditorWindow.cs" />
      <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\HierarchyWindowUtility.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 6 Gizmos\BeizerPath\Editor\BezierCurvePathEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\ProtoEditor\Editor\ProtoEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\DevelopmentMemo\Editor\DevelopmentMemo.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetBundleConfigure\Editor\AssetBundleUtility.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetModificationProcessor\Editor\OnWillMoveAssetPrompt.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\Example\Editor\GUISkinExampleEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 4 EditorWindow\Example\Editor\CustomProjectWindow.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\EditorStylesPreviewer\Editor\EditorStylesPreviewer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\BatchBuild\Editor\BuildProfile.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\GUIPreviewer\Editor\GUIStylePreviewer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\PropertyDrawer\Editor\SpritePropertyDrawer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\CustomComponent\Editor\CustomComponentEditor.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\AssetReference.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 5 GUISkin\GUIPreviewer\Editor\GUIIconPreviewer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 2 CustomMenu\CustomMenu\Editor\MeshExtracter.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetBundleConfigure\Editor\AssetBundleConfigure.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetPostprocessor\Editor\TexturePreprocessSettings.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\RectTransformEditor\Editor\RectTransformEditorExample.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 3 CustomEditor\PropertyDrawer\Editor\TimePropertyDrawer.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 7 EditorPrefs\AssetBundleBuilder\Editor\AssetBundleBuilder.cs" />
+     <Compile Include="Assets\UnityEditor\Chapter 1 GUILayout\Editor\ExampleEditorWindow.cs" />
      <Reference Include="UnityEngine">
      <HintPath>D:\Unity\2021.3.0f1c1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>
@@ -334,43 +348,43 @@
      <HintPath>D:\Unity\2021.3.0f1c1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Plastic.Newtonsoft.Json">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Plastic.Antlr3.Runtime">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.YamlDotNet">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.visualscripting@1.7.6\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.visualscripting@1.7.6\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
      </Reference>
      <Reference Include="unityplastic">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst.Unsafe">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.Unsafe.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.Unsafe.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst.Cecil.Mdb">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.Mdb.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.Mdb.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.IonicZip">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.visualscripting@1.7.6\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.visualscripting@1.7.6\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst.Cecil.Pdb">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.Pdb.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.Pdb.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst.Cecil">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.dll</HintPath>
      </Reference>
      <Reference Include="log4netPlastic">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.collab-proxy@1.15.15\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst.Cecil.Rocks">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.Rocks.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.burst@1.6.5\Unity.Burst.CodeGen\Unity.Burst.Cecil.Rocks.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.visualscripting@1.7.6\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.visualscripting@1.7.6\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="nunit.framework">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Android.Types">
      <HintPath>D:\Unity\2021.3.0f1c1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
@@ -979,138 +993,138 @@
      <HintPath>D:\Unity\2021.3.0f1c1\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\netstandard.dll</HintPath>
      </Reference>
      <Reference Include="UnityEngine.TestRunner">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
      </Reference>
      <Reference Include="UnityEditor.TestRunner">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.Flow.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Tilemap.Extras">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Tilemap.Extras.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Tilemap.Extras.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Animation.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Animation.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Animation.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.InternalAPIEngineBridge.001">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.001.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.001.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VSCode.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.PixelPerfect">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.PixelPerfect.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.PixelPerfect.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Tilemap.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Tilemap.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Tilemap.Editor.dll</HintPath>
      </Reference>
      <Reference Include="PsdPlugin">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\PsdPlugin.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\PsdPlugin.dll</HintPath>
      </Reference>
      <Reference Include="Unity.TextMeshPro.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualStudio.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Timeline">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.Core.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.TextMeshPro">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.State.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.IK.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.IK.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.IK.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Sprite.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Sprite.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Path.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Path.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Path.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.Flow">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
      </Reference>
      <Reference Include="UnityEditor.UI">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
      </Reference>
      <Reference Include="Unity.PlasticSCM.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Rider.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Psdimporter.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Psdimporter.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Psdimporter.Editor.dll</HintPath>
      </Reference>
      <Reference Include="UnityEngine.UI">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Tilemap.Extras.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Tilemap.Extras.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Tilemap.Extras.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.InternalAPIEditorBridge.001">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.001.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.001.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.Core">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Mathematics">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.IK.Runtime">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.IK.Runtime.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.IK.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Burst">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.Shared.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Animation.Runtime">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Animation.Runtime.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Animation.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.PixelPerfect.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.PixelPerfect.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.PixelPerfect.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Timeline.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.Mathematics.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.Mathematics.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.Mathematics.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Common.Runtime">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Common.Runtime.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Common.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.SpriteShape.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.SpriteShape.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.SpriteShape.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.Common.Editor">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.Common.Editor.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.Common.Editor.dll</HintPath>
      </Reference>
      <Reference Include="Unity.2D.SpriteShape.Runtime">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.2D.SpriteShape.Runtime.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.2D.SpriteShape.Runtime.dll</HintPath>
      </Reference>
      <Reference Include="Unity.VisualScripting.State">
-     <HintPath>D:\Project_Git@SVN\ReadNote\My project\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
+     <HintPath>D:\Project_Git@SVN\ReadNote\UnityEditor\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
      </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{e6bdc332-25e1-2831-82c1-25d0441455a3}</Project>
+      <Project>{d680748d-e16d-3ce2-11f4-22c95c47b507}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
   </ItemGroup>

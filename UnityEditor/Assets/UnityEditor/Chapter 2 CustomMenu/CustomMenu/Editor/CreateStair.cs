@@ -13,8 +13,7 @@ public class CreateStair
         MeshFilter mf = go.AddComponent<MeshFilter>();
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         //加载阶梯网格资产
-        Mesh stairMesh = AssetDatabase.LoadAssetAtPath<Mesh>(
-            "Assets/Mesh/Stair.asset");
+        Mesh stairMesh = AssetDatabase.LoadAssetAtPath<Mesh>("Assets/Mesh/Stair.asset");
         mf.sharedMesh = stairMesh;
         mr.sharedMaterial = new Material(Shader.Find("Standard"));
         //如果当前在Hierarchy窗口中已经选中了某个游戏物体

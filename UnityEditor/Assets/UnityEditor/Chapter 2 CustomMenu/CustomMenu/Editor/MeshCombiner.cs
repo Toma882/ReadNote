@@ -8,7 +8,7 @@ using System.Collections.Generic;
 /// </summary>
 public class MeshCombiner
 {
-    [MenuItem("Example/Mesh/Combine %M")]
+    [MenuItem("Example/Mesh/Combine %M")] //%M 等于Ctrl+M
     public static void Execute()
     {
         //弹出对话框 让用户选择是否合并到单个子网格中

@@ -25,12 +25,143 @@ public class ExampleEditorWindow : EditorWindow
         GUILayout.BeginHorizontal();
         {
             GUILayout.BeginVertical(GUILayout.Width(splitterPos));
-            GUILayout.Box("左侧区域", GUILayout.ExpandHeight(true),
-                GUILayout.ExpandWidth(true));
-            GUILayout.EndVertical();
-
+            GUILayout.Box("左侧区域", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(GUILayout.Width(splitterPos));
+            {
+                // 显示标题文本
+                GUILayout.Label("左侧面板", EditorStyles.boldLabel);
+                
+                // 使用ScrollView包裹内容，允许内容超出视图时滚动
+                scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+                {
+                    // 创建一个文本输入框，用于输入字符串
+                    EditorGUILayout.TextField("名称", "输入文本", GUILayout.ExpandWidth(true));
+                    
+                    // 创建一个数值输入框，用于输入整数
+                    EditorGUILayout.IntField("数量", 0, GUILayout.ExpandWidth(true));
+                    
+                    // 创建一个浮点数输入框，用于输入小数
+                    EditorGUILayout.FloatField("比例", 1.0f, GUILayout.ExpandWidth(true));
+                    
+                    // 创建一个开关按钮，用于切换布尔值
+                    EditorGUILayout.Toggle("启用", false, GUILayout.ExpandWidth(true));
+                    
+                    // 创建一个下拉选择框
+                    EditorGUILayout.Popup("选项", 0, new string[] { "选项1", "选项2", "选项3" });
+                    
+                    // 创建一个颜色选择器
+                    EditorGUILayout.ColorField("颜色", Color.white);
+                    
+                    // 创建一个对象选择框
+                    EditorGUILayout.ObjectField("对象", null, typeof(Object), true);
+                    
+                    // 创建一个可折叠的组
+                    EditorGUILayout.Foldout(true, "折叠组");
+                    
+                    // 创建一个分隔线
+                    EditorGUILayout.Space(10);
+                    
+                    // 创建一个按钮
+                    if (GUILayout.Button("确认", GUILayout.Height(30)))
+                    {
+                       // Debug.Log("按钮被点击");
+                    }
+                }
+    GUILayout.EndScrollView();
+}
+GUILayout.EndVertical();GUILayout.BeginVertical(GUILayout.Width(splitterPos));
+{
+    // 显示标题文本
+    GUILayout.Label("左侧面板", EditorStyles.boldLabel);
+    
+    // 使用ScrollView包裹内容，允许内容超出视图时滚动
+    scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+    {
+        // 创建一个文本输入框，用于输入字符串
+        EditorGUILayout.TextField("名称", "输入文本", GUILayout.ExpandWidth(true));
+        
+        // 创建一个数值输入框，用于输入整数
+        EditorGUILayout.IntField("数量", 0, GUILayout.ExpandWidth(true));
+        
+        // 创建一个浮点数输入框，用于输入小数
+        EditorGUILayout.FloatField("比例", 1.0f, GUILayout.ExpandWidth(true));
+        
+        // 创建一个开关按钮，用于切换布尔值
+        EditorGUILayout.Toggle("启用", false, GUILayout.ExpandWidth(true));
+        
+        // 创建一个下拉选择框
+        EditorGUILayout.Popup("选项", 0, new string[] { "选项1", "选项2", "选项3" });
+        
+        // 创建一个颜色选择器
+        EditorGUILayout.ColorField("颜色", Color.white);
+        
+        // 创建一个对象选择框
+        EditorGUILayout.ObjectField("对象", null, typeof(Object), true);
+        
+        // 创建一个可折叠的组
+        EditorGUILayout.Foldout(true, "折叠组");
+        
+        // 创建一个分隔线
+        EditorGUILayout.Space(10);
+        
+        // 创建一个按钮
+        if (GUILayout.Button("确认", GUILayout.Height(30)))
+        {
+            Debug.Log("按钮被点击");
+        }
+    }
+    GUILayout.EndScrollView();
+}
+GUILayout.EndVertical();GUILayout.BeginVertical(GUILayout.Width(splitterPos));
+{
+    // 显示标题文本
+    GUILayout.Label("左侧面板", EditorStyles.boldLabel);
+    
+    // 使用ScrollView包裹内容，允许内容超出视图时滚动
+    scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+    {
+        // 创建一个文本输入框，用于输入字符串
+        EditorGUILayout.TextField("名称", "输入文本", GUILayout.ExpandWidth(true));
+        
+        // 创建一个数值输入框，用于输入整数
+        EditorGUILayout.IntField("数量", 0, GUILayout.ExpandWidth(true));
+        
+        // 创建一个浮点数输入框，用于输入小数
+        EditorGUILayout.FloatField("比例", 1.0f, GUILayout.ExpandWidth(true));
+        
+        // 创建一个开关按钮，用于切换布尔值
+        EditorGUILayout.Toggle("启用", false, GUILayout.ExpandWidth(true));
+        
+        // 创建一个下拉选择框
+        EditorGUILayout.Popup("选项", 0, new string[] { "选项1", "选项2", "选项3" });
+        
+        // 创建一个颜色选择器
+        EditorGUILayout.ColorField("颜色", Color.white);
+        
+        // 创建一个对象选择框
+        EditorGUILayout.ObjectField("对象", null, typeof(Object), true);
+        
+        // 创建一个可折叠的组
+        EditorGUILayout.Foldout(true, "折叠组");
+        
+        // 创建一个分隔线
+        EditorGUILayout.Space(10);
+        
+        // 创建一个按钮
+        if (GUILayout.Button("确认", GUILayout.Height(30)))
+        {
+            Debug.Log("按钮被点击");
+        }
+    }
+    GUILayout.EndScrollView();
+}
+GUILayout.EndVertical();
+            
+            GUILayout.EndVertical();    
+            
             //分割线 垂直扩展 
-            GUILayout.Box(string.Empty, GUILayout.Width(splitterWidth),
+            GUILayout.Box("垂直布局", GUILayout.Width(splitterWidth),
+                
                 GUILayout.ExpandHeight(true));
             //该方法用于获取GUILayout最后用于控件的矩形区域
             splitterRect = GUILayoutUtility.GetLastRect();

@@ -9,8 +9,7 @@ public class AssetReference
     public static void GetReference()
     {
         //字典存放资产的依赖关系
-        Dictionary<string, string[]> map = 
-            new Dictionary<string, string[]>();
+        Dictionary<string, string[]> map = new Dictionary<string, string[]>();
         //获取所有资产的路径
         string[] paths = AssetDatabase.GetAllAssetPaths();
         //遍历 建立资产间的依赖关系
@@ -31,11 +30,9 @@ public class AssetReference
         EditorUtility.ClearProgressBar();
 
         //当前所选中资产的路径
-        string assetPath = AssetDatabase
-            .GetAssetPath(Selection.activeObject);
-        //所有引用项的资产路径
-        string[] reference = map.Where(
-            m => m.Value.Contains(assetPath)).Select(m => m.Key).ToArray();
+        string assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+        //所有引用项的资产路径， where 条件为m.Value.Contains(assetPath) 返回m.Key
+        string[] reference = map.Where(m => m.Value.Contains(assetPath)).Select(m => m.Key).ToArray();
         //根据路径加载引用项资产 存储到列表中
         List<Object> objects = new List<Object>();
         for (int i = 0; i < reference.Length; i++)
@@ -44,6 +41,7 @@ public class AssetReference
         Selection.objects = objects.ToArray();
     }
 
+    //判断是否选中资产
     [MenuItem("Assets/Select Reference", true)]
     public static bool GetReferencesValidate()
     {

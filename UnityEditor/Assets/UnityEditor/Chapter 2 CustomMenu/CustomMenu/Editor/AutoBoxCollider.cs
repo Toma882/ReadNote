@@ -17,13 +17,15 @@ public class AutoBoxCollider
         selected.rotation = Quaternion.identity;
         //创建边界盒并计算
         Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-        var renders = selected
-            .GetComponentsInChildren<MeshRenderer>(true);
+        var renders = selected.GetComponentsInChildren<MeshRenderer>(true);
         for (int j = 0; j < renders.Length; j++)
         {
-            bounds.Encapsulate(renders[j].bounds);
+            //Encapsulate方法将当前渲染器的边界包围到总边界中
+            bounds.Encapsulate(renders[j].bounds); 
         }
+        //设置边界盒中心
         boxCollider.center = bounds.center;
+        //设置边界盒大小
         Vector3 size = bounds.size;
         size.x /= scale.x;
         size.y /= scale.y;

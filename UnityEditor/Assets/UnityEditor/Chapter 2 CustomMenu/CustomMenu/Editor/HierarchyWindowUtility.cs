@@ -18,12 +18,11 @@ public class HierarchyWindowUtility
     }
     private static void SetExpandedRecursive(bool expand)
     {
+        //使用反射获取相关属性
         //获取SceneHierarchyWindow类型
-        Type type = typeof(EditorWindow).Assembly.GetType(
-            "UnityEditor.SceneHierarchyWindow");
+        Type type = typeof(EditorWindow).Assembly.GetType("UnityEditor.SceneHierarchyWindow");
         //获取SetExpandedRecursive方法
-        MethodInfo methodInfo = type.GetMethod("SetExpandedRecursive",
-            BindingFlags.Public | BindingFlags.Instance);
+        MethodInfo methodInfo = type.GetMethod("SetExpandedRecursive",BindingFlags.Public | BindingFlags.Instance);
         //根据类型获取窗口实例
         EditorWindow window = EditorWindow.GetWindow(type);
         object[] array = new object[2];

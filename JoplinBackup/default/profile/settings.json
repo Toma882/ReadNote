@@ -1,6 +1,6 @@
 {
 	"$schema": "https://joplinapp.org/schema/settings.json",
-	"editor.codeView": true,
+	"editor.codeView": false,
 	"sync.target": 3,
 	"richTextBannerDismissed": true,
 	"editor.pluginCompatibilityBannerDismissedFor": [
@@ -57,7 +57,7 @@
 			{
 				"key": "noteList",
 				"width": 263,
-				"visible": false
+				"visible": true
 			},
 			{
 				"key": "editor",

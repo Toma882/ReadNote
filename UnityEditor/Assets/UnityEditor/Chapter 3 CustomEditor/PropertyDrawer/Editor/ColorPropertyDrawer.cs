@@ -7,57 +7,51 @@ using UnityEditor;
 [CustomPropertyDrawer(typeof(Color))]
 public class ColorPropertyDrawer : PropertyDrawer
 {
+    // 颜色绘制器间距
     private const float spacing = 5f;
+    // 16进制颜色值宽度
     private const float hexWidth = 60f;
+    // 颜色Alpha值宽度
     private const float alphaWidth = 32f;
 
-    public override void OnGUI(Rect position, 
-        SerializedProperty property, GUIContent label)
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        label = EditorGUI.BeginProperty(
-            position, label, property);
-        position = EditorGUI.PrefixLabel(position,
-            GUIUtility.GetControlID(FocusType.Passive), label);
+        label = EditorGUI.BeginProperty(position, label, property);
+        // 获取控件ID，并设置为被动
+        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
         var indent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
-        float colorWidth = position.width - hexWidth
-            - spacing - alphaWidth - spacing;
+        float colorWidth = position.width - hexWidth - spacing - alphaWidth - spacing;
 
-        Color newColor = EditorGUI.ColorField(new Rect(
-            position.x, position.y, colorWidth, position.height), 
-                property.colorValue);
+        Color newColor = EditorGUI.ColorField(new Rect(position.x, position.y, colorWidth, position.height), property.colorValue);
         if (!newColor.Equals(property.colorValue))
             property.colorValue = newColor;
 
-        //16进制颜色值字符串
-        string hex = EditorGUI.TextField(new Rect(position.x + colorWidth 
-            + spacing, position.y, hexWidth, position.height),
-                ColorUtility.ToHtmlStringRGB(property.colorValue));
+        // 16进制颜色值字符串
+        string hex = EditorGUI.TextField(new Rect(position.x + colorWidth + spacing, position.y, hexWidth, position.height),
+            ColorUtility.ToHtmlStringRGB(property.colorValue));
         try
         {
             newColor = FromHex(hex, property.colorValue.a);
             if (!newColor.Equals(property.colorValue))
                 property.colorValue = newColor;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Debug.LogError(e);
         }
 
-        //颜色Alpha值
-        float newAlpha = EditorGUI.Slider(new Rect(position.x + colorWidth 
-            + hexWidth + (spacing * 2f), position.y, alphaWidth,
-            position.height), property.colorValue.a, 0f, 1f);
+        // 颜色Alpha值
+        float newAlpha = EditorGUI.Slider(new Rect(position.x + colorWidth + hexWidth + (spacing * 2f), position.y, alphaWidth, position.height), property.colorValue.a, 0f, 1f);
         if (!newAlpha.Equals(property.colorValue.a))
-            property.colorValue = new Color(property.colorValue.r,
-                property.colorValue.g, property.colorValue.b, newAlpha);
+            property.colorValue = new Color(property.colorValue.r, property.colorValue.g, property.colorValue.b, newAlpha);
 
-        EditorGUI.indentLevel = indent;
-        EditorGUI.EndProperty();
+        EditorGUI.indentLevel = indent;//恢复缩进
+        EditorGUI.EndProperty();//结束属性
     }
 
-    //16进制颜色值字符串转Color值
+    // 16进制颜色值字符串转Color值
     private static Color FromHex(string hexValue, float alpha)
     {
         if (string.IsNullOrEmpty(hexValue)) 
