@@ -90,6 +90,7 @@ Unity CustomEditor系统
 │   │   │   ├── OnGUI() - 用于绘制属性的GUI界面，通常在此方法中调用绘制控件的代码
 │   │   │   └── GetPropertyHeight() - 返回属性在Inspector中所需的高度，通常用于动态调整属性的显示空间
 │   │   ├── 特性列表
+│   │   │   ├── [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field, Inherited = true)] // 指定该特性可以应用于类、结构、属性和字段，并支持继承
 │   │   │   ├── [Range(4f, 10f)] - 限制数值在4到10之间的范围，确保用户输入的值在此范围内
 │   │   │   ├── [Min(4f)] - 限制数值最小为4，防止输入低于此值
 │   │   │   ├── [Multiline(5)] - 允许多行文本输入，显示5行，适用于长文本

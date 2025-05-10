@@ -23,30 +23,30 @@ public class MyEditorWindow : EditorWindow
     private void OnGUI()
     {
         if (GUILayout.Button("PopupWindow Example"))
-            PopupWindow.Show(examplePupupWindowRect,
-                new ExamplePopupWindowContent(
-                    new Vector2(position.width - 6f, 100f)));
+        {
+            PopupWindow.Show(examplePupupWindowRect, new ExamplePopupWindowContent(new Vector2(position.width - 6f, 100f)));
+        }
+
         if (Event.current.type == EventType.Repaint)
+        {
             examplePupupWindowRect = GUILayoutUtility.GetLastRect();
+        }
 
         if (GUILayout.Button("Button"))
         {
             GenericMenu gm = new GenericMenu();
-            //添加菜单项
-            gm.AddItem(new GUIContent("Memu1"), true,
-                () => Debug.Log("Select Menu1"));
-            //添加分隔符 参数传空字符串表示在一级菜单中添加分隔符
+            // 添加菜单项
+            gm.AddItem(new GUIContent("Menu1"), true, () => Debug.Log("Select Menu1"));
+            // 添加分隔符
             gm.AddSeparator(string.Empty);
-            //添加不可交互菜单项
-            gm.AddDisabledItem(new GUIContent("Memu2"));
-            //通过'/'可添加子菜单项
-            gm.AddItem(new GUIContent("Menu3/SubMenu1"), false,
-                () => Debug.Log("Select SubMenu1"));
-            //在子菜单中添加分隔符
+            // 添加不可交互菜单项
+            gm.AddDisabledItem(new GUIContent("Menu2"));
+            // 通过 '/' 可添加子菜单项
+            gm.AddItem(new GUIContent("Menu3/SubMenu1"), false, () => Debug.Log("Select SubMenu1"));
+            // 在子菜单中添加分隔符
             gm.AddSeparator("Menu3/");
-            gm.AddItem(new GUIContent("Menu3/SubMenu2"), false,
-                () => Debug.Log("Select SubMenu2"));
-            //显示菜单
+            gm.AddItem(new GUIContent("Menu3/SubMenu2"), false, () => Debug.Log("Select SubMenu2"));
+            // 显示菜单
             gm.ShowAsContext();
         }
 
@@ -55,44 +55,45 @@ public class MyEditorWindow : EditorWindow
             GUISkin skin = Resources.Load<GUISkin>("New GUISkin");
             m_Style = skin.label;
         }
+
         GUILayout.Label("Hello World.", m_Style);
     }
-    //private void OnFocus()
-    //{
-    //    Debug.Log("OnFocus");
-    //}
-    //private void OnLostFocus()
-    //{
-    //    Debug.Log("OnLostFocus");
-    //}
-    //private void OnHierarchyChange()
-    //{
-    //    Debug.Log("OnHierarchyChang");
-    //}
-    //private void OnInspectorUpdate()
-    //{
-    //    Debug.Log("OnInspecotrUpdate");
-    //}
-    //private void OnProjectChange()
-    //{
-    //    Debug.Log("OnProjectChang");
-    //}
-    //private void OnSelectionChange()
-    //{
-    //    Debug.Log("OnSelectionChang");
-    //}
-    //private void OnValidate()
-    //{
-    //    Debug.Log("OnValidate");
-    //}
-    //private void OnDisable()
-    //{
-    //    Debug.Log("OnDisable");
-    //}
-    //private void OnDestroy()
-    //{
-    //    Debug.Log("OnDestroy");
-    //}
+    private void OnFocus()
+    {
+       Debug.Log("OnFocus");
+    }
+    private void OnLostFocus()
+    {
+       Debug.Log("OnLostFocus");
+    }
+    private void OnHierarchyChange()
+    {
+       Debug.Log("OnHierarchyChang");
+    }
+    private void OnInspectorUpdate()
+    {
+       Debug.Log("OnInspecotrUpdate");
+    }
+    private void OnProjectChange()
+    {
+       Debug.Log("OnProjectChang");
+    }
+    private void OnSelectionChange()
+    {
+       Debug.Log("OnSelectionChang");
+    }
+    private void OnValidate()
+    {
+       Debug.Log("OnValidate");
+    }
+    private void OnDisable()
+    {
+       Debug.Log("OnDisable");
+    }
+    private void OnDestroy()
+    {
+       Debug.Log("OnDestroy");
+    }
 }
 
 public class ExamplePopupWindowContent : PopupWindowContent

@@ -15,62 +15,63 @@ public class DevelopmentMemo : EditorWindow
         GetWindow<DevelopmentMemo>().Show();
     }
 
-    //缓存文件的路径
+    // 缓存文件的路径
     private string filePath;
-    //数据类
+    // 数据类
     [SerializeField] private DevelopmentMemoData data;
-    //搜索的内容
+    // 搜索的内容
     private string searchContent = string.Empty;
-    //列表的宽度
+    // 列表的宽度
     private float listRectWidth = 280f;
-    //左右两侧分割线区域
+    // 左右两侧分割线区域
     private Rect splitterRect;
-    //是否正在拖拽分割线
+    // 是否正在拖拽分割线
     private bool isDragging;
-    //列表滚动值
+    // 列表滚动值
     private Vector2 listScroll;
-    //当前选中项
+    // 当前选中项
     private DevelopmentMemoItem currentItem;
-    //详情滚动值
+    // 详情滚动值
     private Vector2 detailScroll;
     private Rect dateRect;
 
     private void OnEnable()
     {
-        //缓存文件的路径
-        filePath = Path.GetFullPath(".").Replace("\\", "/")
-            + "/Library/DevelopmentMemo.dat";
-        //判断是否有缓存文件
+        // 缓存文件的路径
+        filePath = Path.GetFullPath(".").Replace("\\", "/") + "/Library/DevelopmentMemo.dat";
+        // 判断是否有缓存文件
         if (File.Exists(filePath))
         {
-            //文件流打开缓存文件
+            // 文件流打开缓存文件
             using (FileStream fs = File.Open(filePath, FileMode.Open))
             {
-                //二进制反序列化
+                // 二进制反序列化
                 BinaryFormatter bf = new BinaryFormatter();
                 var deserialize = bf.Deserialize(fs);
                 if (deserialize != null)
                     data = deserialize as DevelopmentMemoData;
-                //反序列化失败
+                // 反序列化失败
                 if (data == null)
                 {
-                    //删除无效数据文件
+                    // 删除无效数据文件
                     File.Delete(filePath);
                     data = new DevelopmentMemoData();
                 }
-                //默认按标题排序
-                else data.list = data.list.OrderBy(m => m.title).ToList();
+                // 默认按标题排序
+                else
+                    data.list = data.list.OrderBy(m => m.title).ToList();
             }
         }
-        //当前没有缓存 
-        else data = new DevelopmentMemoData();
+        // 当前没有缓存 
+        else
+            data = new DevelopmentMemoData();
     }
 
     private void OnDisable()
     {
         try
         {
-            //数据写入缓存
+            // 数据写入缓存
             using (FileStream fs = File.Create(filePath))
             {
                 BinaryFormatter bf = new BinaryFormatter();
@@ -89,39 +90,27 @@ public class DevelopmentMemo : EditorWindow
         OnBodyGUI();
     }
 
-    //顶部GUI
+    // 顶部GUI
     private void OnTopGUI()
     {
         GUILayout.BeginHorizontal(EditorStyles.toolbar);
-        //排序按钮
+        // 排序按钮
         GUI.enabled = data != null && data.list.Count > 0;
-        if (GUILayout.Button("Sort", EditorStyles.toolbarDropDown, 
-            GUILayout.Width(50f)))
+        if (GUILayout.Button("Sort", EditorStyles.toolbarDropDown, GUILayout.Width(50f)))
         {
             GenericMenu gm = new GenericMenu();
-            gm.AddItem(new GUIContent("Title ↓"), false, 
-                () => data.list = data.list
-                    .OrderBy(m => m.title).ToList());
-            gm.AddItem(new GUIContent("Title ↑"), false, 
-                () => data.list = data.list
-                    .OrderByDescending(m => m.title).ToList());
-            gm.AddItem(new GUIContent("Created Time ↓"), false,
-                () => data.list = data.list
-                    .OrderBy(m => m.createdTime).ToList());
-            gm.AddItem(new GUIContent("Created Time ↑"), false, 
-                () => data.list = data.list
-                    .OrderByDescending(m => m.createdTime).ToList());
+            gm.AddItem(new GUIContent("Title ↓"), false, () => data.list = data.list.OrderBy(m => m.title).ToList());
+            gm.AddItem(new GUIContent("Title ↑"), false, () => data.list = data.list.OrderByDescending(m => m.title).ToList());
+            gm.AddItem(new GUIContent("Created Time ↓"), false, () => data.list = data.list.OrderBy(m => m.createdTime).ToList());
+            gm.AddItem(new GUIContent("Created Time ↑"), false, () => data.list = data.list.OrderByDescending(m => m.createdTime).ToList());
             gm.ShowAsContext();
         }
         GUI.enabled = true;
         GUILayout.Space(5f);
-        //搜索框
-        searchContent = GUILayout.TextField(searchContent, 
-            EditorStyles.toolbarSearchField);
-        //当点击鼠标且鼠标位置不在输入框中时 取消控件的聚焦
-        if (Event.current.type == EventType.MouseDown 
-            && !GUILayoutUtility.GetLastRect().Contains(
-                Event.current.mousePosition))
+        // 搜索框
+        searchContent = GUILayout.TextField(searchContent, EditorStyles.toolbarSearchField);
+        // 当点击鼠标且鼠标位置不在输入框中时 取消控件的聚焦
+        if (Event.current.type == EventType.MouseDown && !GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
         {
             GUI.FocusControl(null);
             Repaint();
@@ -131,19 +120,17 @@ public class DevelopmentMemo : EditorWindow
 
     private void OnBodyGUI()
     {
-        //左侧列表
+        // 左侧列表
         GUILayout.BeginHorizontal();
         GUILayout.BeginVertical(GUILayout.Width(listRectWidth));
         OnLeftGUI();
         GUILayout.EndVertical();
-        //分割线
-        GUILayout.BeginVertical(GUILayout.ExpandHeight(true), 
-            GUILayout.MaxWidth(5f));
-        GUILayout.Box(GUIContent.none, "EyeDropperVerticalLine", 
-            GUILayout.ExpandHeight(true));
+        // 分割线
+        GUILayout.BeginVertical(GUILayout.ExpandHeight(true), GUILayout.MaxWidth(5f));
+        GUILayout.Box(GUIContent.none, "EyeDropperVerticalLine", GUILayout.ExpandHeight(true));
         GUILayout.EndVertical();
         splitterRect = GUILayoutUtility.GetLastRect();
-        //右侧详情
+        // 右侧详情
         GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
         OnRightGUI();
         GUILayout.EndVertical();
@@ -151,27 +138,24 @@ public class DevelopmentMemo : EditorWindow
 
         if (Event.current != null)
         {
-            //光标
-            EditorGUIUtility.AddCursorRect(splitterRect,
-                MouseCursor.ResizeHorizontal);
+            // 光标
+            EditorGUIUtility.AddCursorRect(splitterRect, MouseCursor.ResizeHorizontal);
             switch (Event.current.rawType)
             {
-                //鼠标按下时判断是否为分割线的区域
+                // 鼠标按下时判断是否为分割线的区域
                 case EventType.MouseDown:
-                    isDragging = splitterRect.Contains(
-                        Event.current.mousePosition);
+                    isDragging = splitterRect.Contains(Event.current.mousePosition);
                     break;
-                //拖拽分割线的过程中根据拖拽偏移量调整左侧列表宽度
+                // 拖拽分割线的过程中根据拖拽偏移量调整左侧列表宽度
                 case EventType.MouseDrag:
                     if (isDragging)
                     {
                         listRectWidth += Event.current.delta.x;
-                        listRectWidth = Mathf.Clamp(listRectWidth,
-                            position.width * .3f, position.width * .8f);
+                        listRectWidth = Mathf.Clamp(listRectWidth, position.width * .3f, position.width * .8f);
                         Repaint();
                     }
                     break;
-                //鼠标抬起结束拖拽
+                // 鼠标抬起结束拖拽
                 case EventType.MouseUp:
                     if (isDragging)
                         isDragging = false;
@@ -179,33 +163,29 @@ public class DevelopmentMemo : EditorWindow
             }
         }
     }
-    //左侧列表GUI
+
+    // 左侧列表GUI
     private void OnLeftGUI()
     {
-        //列表滚动试图
+        // 列表滚动视图
         listScroll = EditorGUILayout.BeginScrollView(listScroll);
         for (int i = 0; i < data.list.Count; i++)
         {
             var item = data.list[i];
-            //判断当前项是否符合检索的内容
+            // 判断当前项是否符合检索的内容
             if (!item.title.ToLower().Contains(searchContent.ToLower()))
                 continue;
-            //当前选中项与其它项使用不同样式
-            GUILayout.BeginHorizontal(currentItem == item 
-                ? "MeTransitionSelectHead"
-                : "ProjectBrowserHeaderBgTop");
-            GUILayout.Label(item.title); 
+            // 当前选中项与其它项使用不同样式
+            GUILayout.BeginHorizontal(currentItem == item ? "MeTransitionSelectHead" : "ProjectBrowserHeaderBgTop");
+            GUILayout.Label(item.title);
             if (item.isOverdue)
             {
                 GUILayout.FlexibleSpace();
-                GUILayout.Label(EditorGUIUtility.IconContent(
-                    "console.warnicon.sml"));
+                GUILayout.Label(EditorGUIUtility.IconContent("console.warnicon.sml"));
             }
             GUILayout.EndHorizontal();
-            //鼠标点击当前项 进行选中
-            if (Event.current.type == EventType.MouseDown 
-                && GUILayoutUtility.GetLastRect().Contains(
-                    Event.current.mousePosition))
+            // 鼠标点击当前项 进行选中
+            if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
             {
                 if (currentItem != item)
                 {
@@ -219,10 +199,9 @@ public class DevelopmentMemo : EditorWindow
 
         GUILayout.FlexibleSpace();
 
-        GUILayout.Box(GUIContent.none, "EyeDropperHorizontalLine",
-            GUILayout.MaxHeight(1f), GUILayout.Width(listRectWidth));
+        GUILayout.Box(GUIContent.none, "EyeDropperHorizontalLine", GUILayout.MaxHeight(1f), GUILayout.Width(listRectWidth));
         GUILayout.BeginHorizontal(EditorStyles.toolbar);
-        //新建按钮
+        // 新建按钮
         if (GUILayout.Button("新建", EditorStyles.toolbarButton))
         {
             var item = new DevelopmentMemoItem()
@@ -235,89 +214,78 @@ public class DevelopmentMemo : EditorWindow
         }
         GUILayout.EndHorizontal();
     }
-    //右侧详情GUI
+
+    // 右侧详情GUI
     private void OnRightGUI()
     {
-        //当前未选中任何项
+        // 当前未选中任何项
         if (currentItem == null) return;
 
         detailScroll = EditorGUILayout.BeginScrollView(detailScroll);
-        //标题
+        // 标题
         GUILayout.Label("标题：", EditorStyles.boldLabel);
         GUILayout.BeginHorizontal(EditorStyles.helpBox);
-        string newTitle = EditorGUILayout.TextField(
-            currentItem.title, EditorStyles.label);
+        string newTitle = EditorGUILayout.TextField(currentItem.title, EditorStyles.label);
         if (newTitle != currentItem.title)
         {
-            //长度限制
+            // 长度限制
             if (newTitle.Length > 0 && newTitle.Length <= 20)
                 currentItem.title = newTitle;
         }
         GUILayout.FlexibleSpace();
-        GUILayout.Label(string.Format("{0}/{1}", currentItem.title.Length,
-            20), EditorStyles.miniBoldLabel);
+        GUILayout.Label(string.Format("{0}/{1}", currentItem.title.Length, 20), EditorStyles.miniBoldLabel);
         GUILayout.EndHorizontal();
 
-        //日期
+        // 日期
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        GUILayout.Label(currentItem.createdTime.ToString(),
-            EditorStyles.miniBoldLabel);
+        GUILayout.Label(currentItem.createdTime.ToString(), EditorStyles.miniBoldLabel);
         GUILayout.EndHorizontal();
 
-        //内容
+        // 内容
         GUILayout.Label("内容：", EditorStyles.boldLabel);
-        currentItem.content = EditorGUILayout.TextArea(currentItem.content,
-            GUILayout.MaxWidth(position.width - listRectWidth - 15f),
-            GUILayout.MinHeight(200f));
+        currentItem.content = EditorGUILayout.TextArea(currentItem.content, GUILayout.MaxWidth(position.width - listRectWidth - 15f), GUILayout.MinHeight(200f));
 
         EditorGUILayout.Space();
         EditorGUI.BeginChangeCheck();
-        //是否为待办
+        // 是否为待办
         currentItem.todo = GUILayout.Toggle(currentItem.todo, "待办");
         if (EditorGUI.EndChangeCheck())
         {
             if (currentItem.todo)
                 currentItem.OverdueCal();
-            else currentItem.isOverdue = false;
-
+            else
+                currentItem.isOverdue = false;
         }
         EditorGUILayout.Space();
 
         if (currentItem.todo)
         {
-            //当前状态
+            // 当前状态
             GUILayout.Label("当前状态：", EditorStyles.boldLabel);
-            if (GUILayout.Button(currentItem.isCompleted 
-                ? "已完成" : "未完成", "DropDownButton"))
+            if (GUILayout.Button(currentItem.isCompleted ? "已完成" : "未完成", "DropDownButton"))
             {
                 GenericMenu gm = new GenericMenu();
-                gm.AddItem(new GUIContent("未完成"), !currentItem.isCompleted,
-                    () =>
-                    {
-                        currentItem.isCompleted = false;
-                        currentItem.OverdueCal();
-                    });
-                gm.AddItem(new GUIContent("已完成"), currentItem.isCompleted, 
-                    () =>
-                    {
-                        currentItem.isCompleted = true;
-                        currentItem.OverdueCal();
-                    });
+                gm.AddItem(new GUIContent("未完成"), !currentItem.isCompleted, () =>
+                {
+                    currentItem.isCompleted = false;
+                    currentItem.OverdueCal();
+                });
+                gm.AddItem(new GUIContent("已完成"), currentItem.isCompleted, () =>
+                {
+                    currentItem.isCompleted = true;
+                    currentItem.OverdueCal();
+                });
                 gm.ShowAsContext();
             }
 
             if (!currentItem.isCompleted)
             {
-                GUILayout.Label("预计完成日期：",
-                    EditorStyles.boldLabel);
+                GUILayout.Label("预计完成日期：", EditorStyles.boldLabel);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button(currentItem.estimateCompleteTime
-                    .ToString("D"), "DropDownButton"))
+                if (GUILayout.Button(currentItem.estimateCompleteTime.ToString("D"), "DropDownButton"))
                 {
-                    PopupWindow.Show(dateRect, new DatePopupWindowContent(
-                        new Vector2(position.width - listRectWidth - 18f, 200f),
-                            currentItem));
+                    PopupWindow.Show(dateRect, new DatePopupWindowContent(new Vector2(position.width - listRectWidth - 18f, 200f), currentItem));
                 }
                 if (Event.current.type == EventType.Repaint)
                     dateRect = GUILayoutUtility.GetLastRect();
@@ -327,14 +295,13 @@ public class DevelopmentMemo : EditorWindow
             }
         }
 
-        //删除
+        // 删除
         EditorGUILayout.Space();
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("删除"))
         {
-            if (EditorUtility.DisplayDialog("提醒",
-                "是否确认删除该项？", "确认", "取消"))
+            if (EditorUtility.DisplayDialog("提醒", "是否确认删除该项？", "确认", "取消"))
             {
                 data.list.Remove(currentItem);
                 currentItem = null;
@@ -348,14 +315,13 @@ public class DevelopmentMemo : EditorWindow
 
 public class DatePopupWindowContent : PopupWindowContent
 {
-    //弹出窗口的尺寸
+    // 弹出窗口的尺寸
     private Vector2 windowSize;
-    //滚动值
+    // 滚动值
     private Vector2 scroll;
     private readonly DevelopmentMemoItem item;
 
-    public DatePopupWindowContent(Vector2 windowSize, 
-        DevelopmentMemoItem item)
+    public DatePopupWindowContent(Vector2 windowSize, DevelopmentMemoItem item)
     {
         this.windowSize = windowSize;
         this.item = item;
@@ -375,13 +341,10 @@ public class DatePopupWindowContent : PopupWindowContent
         int currentYear = DateTime.Now.Year;
         for (int i = 0; i < 3; i++)
         {
-            GUI.color = currentYear + i == item.estimateCompleteTime.Year
-                ? Color.gray : cacheColor;
-            if (GUILayout.Button((currentYear + i).ToString(),
-                GUILayout.Width(60f)))
+            GUI.color = currentYear + i == item.estimateCompleteTime.Year ? Color.gray : cacheColor;
+            if (GUILayout.Button((currentYear + i).ToString(), GUILayout.Width(60f)))
             {
-                item.estimateCompleteTime
-                    = new DateTime(currentYear + i, 1, 1);
+                item.estimateCompleteTime = new DateTime(currentYear + i, 1, 1);
             }
             GUI.color = cacheColor;
         }
@@ -398,14 +361,10 @@ public class DatePopupWindowContent : PopupWindowContent
                 int index = i + j;
                 if (index < 12)
                 {
-                    GUI.color = (index + 1) 
-                        == item.estimateCompleteTime.Month 
-                        ? Color.gray : cacheColor;
-                    if (GUILayout.Button((index + 1).ToString(),
-                        GUILayout.Width(50f)))
+                    GUI.color = (index + 1) == item.estimateCompleteTime.Month ? Color.gray : cacheColor;
+                    if (GUILayout.Button((index + 1).ToString(), GUILayout.Width(50f)))
                     {
-                        item.estimateCompleteTime = new DateTime(
-                           item.estimateCompleteTime.Year, index + 1, 1);
+                        item.estimateCompleteTime = new DateTime(item.estimateCompleteTime.Year, index + 1, 1);
                         item.OverdueCal();
                     }
                     GUI.color = cacheColor;
@@ -416,8 +375,7 @@ public class DatePopupWindowContent : PopupWindowContent
 
         EditorGUILayout.Space();
         GUILayout.Label("日", EditorStyles.boldLabel);
-        int daysCount = DateTime.DaysInMonth(item.estimateCompleteTime.Year,
-            item.estimateCompleteTime.Month);
+        int daysCount = DateTime.DaysInMonth(item.estimateCompleteTime.Year, item.estimateCompleteTime.Month);
         int dayCountPerRow = Mathf.RoundToInt(rect.width / 43f);
         for (int i = 0; i < daysCount; i += dayCountPerRow)
         {
@@ -427,15 +385,10 @@ public class DatePopupWindowContent : PopupWindowContent
                 int index = i + j;
                 if (index < daysCount)
                 {
-                    GUI.color = (index + 1) 
-                        == item.estimateCompleteTime.Day
-                        ? Color.gray : cacheColor;
-                    if (GUILayout.Button((index + 1).ToString(), 
-                        GUILayout.Width(40f)))
+                    GUI.color = (index + 1) == item.estimateCompleteTime.Day ? Color.gray : cacheColor;
+                    if (GUILayout.Button((index + 1).ToString(), GUILayout.Width(40f)))
                     {
-                        item.estimateCompleteTime = new DateTime(
-                            item.estimateCompleteTime.Year,
-                            item.estimateCompleteTime.Month, index + 1);
+                        item.estimateCompleteTime = new DateTime(item.estimateCompleteTime.Year, item.estimateCompleteTime.Month, index + 1);
                         item.OverdueCal();
                     }
                     GUI.color = cacheColor;
@@ -484,13 +437,12 @@ public class DevelopmentMemoItem
     /// </summary>
     public void OverdueCal()
     {
-        isOverdue = !isCompleted && (DateTime.Now
-            - estimateCompleteTime).Days > 0;
+        isOverdue = !isCompleted && (DateTime.Now - estimateCompleteTime).Days > 0;
     }
 }
+
 [Serializable]
 public class DevelopmentMemoData
 {
-    public List<DevelopmentMemoItem> list
-        = new List<DevelopmentMemoItem>(0);
+    public List<DevelopmentMemoItem> list = new List<DevelopmentMemoItem>(0);
 }
