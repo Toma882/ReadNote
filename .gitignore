@@ -1,1 +1,42 @@
 /UnityEditor/Library
+/UnityEditor/.idea/.idea.UnityEditor/.idea/*.gitignore
+/UnityEditor/.idea/.idea.UnityEditor/.idea/*.xml
+/UnityEditor/.lh/.cursor/rules/chinese.mdc.json
+/UnityEditor/.lh/.lhignore
+/UnityEditor/.lh/.vscode/settings.json.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 1 GUILayout/Editor/ExampleEditor.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 1 GUILayout/Editor/ExampleEditorWindow.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 1 GUILayout/README.md.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/CustomMenu/Editor/AssetReference.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/CustomMenu/Editor/AutoBoxCollider.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/CustomMenu/Editor/CreateStair.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/CustomMenu/Editor/HierarchyWindowUtility.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/CustomMenu/Editor/MeshCombiner.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/CustomMenu/Editor/MeshExtracter.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 2 CustomMenu/README.md.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 3 CustomEditor/CustomComponent/Editor/CustomComponentEditor.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 3 CustomEditor/PropertyDrawer/Editor/ColorPropertyDrawer.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 3 CustomEditor/PropertyDrawer/Editor/SpritePropertyDrawer.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 3 CustomEditor/PropertyDrawer/TimeAttribute.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 3 CustomEditor/README.md.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 3 CustomEditor/TransformTweenAnimation/Editor/TransformTweenAnimationEditor.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/AvatarCreateScriptableWizard/Editor/AvatarCreateScriptableWizard.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/DevelopmentMemo/Editor/DevelopmentMemo.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/Example/Editor/CustomHierarchyWindow.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/Example/Editor/CustomProjectWindow.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/Example/Editor/MyEditorWindow.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/Example/MonoBehaviourOnGUIExample.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/ProtoEditor/Editor/ProtoEditor.cs.json
+/UnityEditor/.lh/Assets/UnityEditor/Chapter 4 EditorWindow/README.md.json
+/UnityEditor/.lh/Assets/UnityEditor/README.md.json
+/UnityEditor/.lh/cursor.rule.json
+/UnityEditor/Temp/FSTimeGet-2d17ae284390ae44f873248c095ca59e
+/UnityEditor/Temp/FSTimeGet-32b5e5334c21d3a4b8082136f7768c7a
+/UnityEditor/Temp/FSTimeGet-35071b3cccf5c144eb1c850ce0b11bd9
+/UnityEditor/Temp/FSTimeGet-44d7195cf47b02c4b81f0076055b399c
+/UnityEditor/Temp/FSTimeGet-babd4a3e885e4844db1bcaff79de48a5
+/UnityEditor/Temp/FSTimeGet-d9a16be2ea420344fad1f4a8813407fe
+/UnityEditor/Temp/FSTimeGet-dfb1df8271efbc643b7e6d5b71849678
+/UnityEditor/Temp/UnityLockfile
+/UnityEditor/Temp/__Backupscenes/0.backup
+/UnityEditor/Temp/workerlic
