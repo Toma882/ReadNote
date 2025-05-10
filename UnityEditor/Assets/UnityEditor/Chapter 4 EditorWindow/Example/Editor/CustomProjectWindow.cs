@@ -19,6 +19,6 @@ public class CustomProjectWindow
         Rect rect = selectionRect;
         rect.x += selectionRect.width - 20f;
         rect.width = 20f;
-        GUI.Label(rect, dependencies.Length.ToString());
+        GUI.Label(rect, (dependencies.Length).ToString()    );
     }
 }

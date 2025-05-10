@@ -262,6 +262,7 @@ Unity EditorWindow系统
 │   │   ├── 作为独立窗口的编辑器界面
 │   │   ├── 可以停靠在Unity编辑器的任何位置
 │   │   └── 通过OnGUI方法实现自定义界面
+│   │
 │   ├── 生命周期
 │   │   ├── OnEnable - 窗口启用时调用
 │   │   ├── OnDisable - 窗口禁用时调用
@@ -273,13 +274,161 @@ Unity EditorWindow系统
 │   │   ├── OnInspectorUpdate - 检视器更新时调用
 │   │   ├── OnProjectChange - 项目变化时调用
 │   │   └── OnSelectionChange - 选择变化时调用
-│   └── 窗口管理
-│       ├── GetWindow<T>() - 获取窗口实例
-│       ├── Show() - 显示窗口
-│       ├── Close() - 关闭窗口
-│       ├── ShowUtility() - 显示工具窗口
-│       └── ShowPopup() - 显示弹出窗口
-│
+│   │
+│   ├── 窗口管理
+│   │   ├── GetWindow<T>() - 获取窗口实例
+│   │   ├── Show() - 显示窗口
+│   │   ├── Close() - 关闭窗口
+│   │   ├── ShowUtility() - 显示工具窗口
+│   │   └── ShowPopup() - 显示弹出窗口
+│   │
+│   ├── EditorApplication类
+│   │   ├── 编辑器状态管理
+│   │   │   ├── isPlaying - 是否处于播放模式
+│   │   │   ├── isPaused - 是否处于暂停状态
+│   │   │   └── isCompiling - 是否正在编译
+│   │   ├── 事件系统
+│   │   │   ├── update - 每帧更新事件
+│   │   │   ├── hierarchyChanged - 层级变化事件
+│   │   │   ├── projectChanged - 项目变化事件
+│   │   │   ├── playModeStateChanged - 播放模式变化事件
+│   │   │   ├── hierarchyWindowItemOnGUI - 层级面板项绘制事件
+│   │   │   └── projectWindowItemOnGUI - 项目面板项绘制事件
+│   │   └── 操作方法
+│   │       ├── ExecuteMenuItem - 执行菜单项
+│   │       ├── Beep - 播放提示音
+│   │       └── OpenProject - 打开项目
+│   │
+│   └── EditorUtility类
+│       ├── 对话框工具
+│       │   ├── DisplayDialog - 显示对话框
+│       │   └── DisplayProgressBar - 显示进度条
+│   │
+│   ├── 窗口类型示例
+│   │   ├── 游戏运行时辅助窗口
+│   │   │   ├── ConsoleGUIWindow - 控制台窗口
+│   │   │   │   ├── 日志显示和过滤
+│   │   │   │   ├── 性能监控(FPS)
+│   │   │   │   ├── 错误/警告/信息分类
+│   │   │   │   └── 可展开/收起的界面
+│   │   │   ├── HierarchyGUIWindow - 层级窗口
+│   │   │   │   ├── 场景对象树状展示
+│   │   │   │   ├── 对象选择功能
+│   │   │   │   ├── 树形结构的递归绘制
+│   │   │   │   └── 可展开/收起的界面
+│   │   │   └── InspectorGUIWindow - 检视器窗口
+│   │   │       ├── 组件属性编辑
+│   │   │       ├── 基于反射的动态检视器
+│   │   │       ├── 自定义属性编辑界面
+│   │   │       └── 与HierarchyGUIWindow联动
+│   │   │
+│   │   ├── 编辑器工具窗口
+│   │   │   ├── DevelopmentMemo - 开发备忘录
+│   │   │   │   ├── 团队协作笔记工具
+│   │   │   │   ├── 基于ScriptableObject的数据存储
+│   │   │   │   ├── 分类和搜索功能
+│   │   │   │   └── 富文本编辑
+│   │   │   ├── ProtoEditor - 原型编辑器
+│   │   │   │   ├── 快速游戏原型设计
+│   │   │   │   ├── 预制体组装工具
+│   │   │   │   └── 参数调整界面
+│   │   │   └── AvatarController - 角色控制器编辑器
+│   │   │       ├── 角色动画参数配置
+│   │   │       ├── 动画状态机可视化
+│   │   │       └── 角色控制器预设管理
+│   │   │
+│   │   └── 向导类窗口
+│   │       └── AvatarCreateScriptableWizard - 角色创建向导
+│   │           ├── 步骤化创建流程
+│   │           ├── 参数验证和错误提示
+│   │           └── 资源生成和配置
+│   │
+│   ├── 组件架构设计
+│   │   ├── IComponentGUIInspector接口
+│   │   │   └── Draw(Component) - 组件绘制方法
+│   │   ├── ComponentGUIInspector基类
+│   │   │   ├── 通用UI控件绘制方法
+│   │   │   │   ├── DrawText() - 文本绘制
+│   │   │   │   ├── DrawToggle() - 开关绘制
+│   │   │   │   ├── DrawInt()/DrawFloat() - 数值绘制
+│   │   │   │   ├── DrawColor() - 颜色绘制
+│   │   │   │   ├── DrawVector2()/DrawVector3() - 向量绘制
+│   │   │   │   └── DrawHorizontalSlider() - 滑动条绘制
+│   │   │   └── 模板方法模式
+│   │   │   │   └── OnDraw(Component) - 子类实现的绘制方法
+│   │   │   ├── ComponentGUIInspectorAttribute特性
+│   │   │   │   └── 标记检视器类对应的组件类型
+│   │   │   └── 具体实现类
+│   │   │       ├── TransformGUIInspector - Transform组件检视器
+│   │   │       ├── CameraGUIInspector - Camera组件检视器
+│   │   │       └── 其他组件检视器...
+│   │   │
+│   │   ├── 实现技术
+│   │   │   ├── GUI/GUILayout系统
+│   │   │   │   ├── 自动布局vs手动布局
+│   │   │   │   ├── 控件类型和使用方式
+│   │   │   │   └── 布局组织(水平/垂直/区域)
+│   │   │   ├── 窗口状态管理
+│   │   │   │   ├── 展开/收起状态切换
+│   │   │   │   ├── 位置和大小控制
+│   │   │   │   └── 拖拽功能实现
+│   │   │   ├── 反射系统应用
+│   │   │   │   ├── 动态发现和加载检视器类
+│   │   │   │   ├── 特性(Attribute)的使用
+│   │   │   │   └── 类型关联和实例创建
+│   │   │   └── 场景对象交互
+│   │   │       ├── 获取场景根对象
+│   │   │       ├── 遍历对象层级结构
+│   │   │       └── 组件访问和修改
+│   │   │
+│   │   └── 最佳实践
+│   │       ├── 性能优化
+│   │       │   ├── 避免OnGUI中的频繁计算
+│   │       │   ├── 使用缓存减少GC压力
+│   │       │   └── 合理使用布局和控件
+│   │       ├── 用户体验
+│   │       │   ├── 清晰的视觉层次和布局
+│   │       │   ├── 响应式的交互设计
+│   │       │   └── 状态保持和恢复
+│   │       ├── 模块化设计
+│   │       │   ├── 单一职责原则
+│   │       │   ├── 接口设计和实现分离
+│   │       │   └── 可扩展的架构
+│   │       └── 调试和测试
+│   │           ├── 错误处理和日志
+│   │           ├── 边界情况测试
+│   │           └── 性能分析
+│   └── 重要的类和接口
+│       ├── EditorWindow相关类和接口
+│       │   ├── 类/接口名称 | 类型 | 描述 | 重要方法/属性
+│       │   │   ├── `EditorWindow` | 基类 | Unity编辑器窗口基类 | `OnGUI()`, `OnEnable()`, `OnDisable()`, `ShowUtility()`, `position`
+│       │   │   ├── `ConsoleGUIWindow` | 窗口类 | 运行时控制台窗口 | `OnLogMessageReceived()`, `workingType`, `logs`
+│       │   │   ├── `HierarchyGUIWindow` | 窗口类 | 场景层级窗口 | `CollectRoots()`, `currentSelected`
+│       │   │   ├── `HierarchyGUIWindowItem` | 数据类 | 层级窗口的树节点 | `Draw()`, `childrens`
+│       │   │   └── `InspectorGUIWindow` | 窗口类 | 对象检视器窗口 | `OnComponentInspector()`, `inspectorDic`
+│       │   │   └── `DevelopmentMemo` | 窗口类 | 开发备忘录窗口 | `SaveMemos()`, `DrawMemoList()`
+│       │   └── 组件检视器相关类和接口
+│       │       ├── `IComponentGUIInspector` | 接口 | 组件检视器接口 | `Draw(Component)`
+│       │       ├── `ComponentGUIInspector` | 抽象类 | 组件检视器基类 | `OnDraw(Component)`, `DrawText()`, `DrawVector3()`
+│       │       ├── `ComponentGUIInspectorAttribute` | 特性 | 组件类型标记特性 | `ComponentType`
+│       │       └── `TransformGUIInspector` | 实现类 | Transform组件检视器 | `OnDraw(Component)`
+│       │       └── `CameraGUIInspector` | 实现类 | Camera组件检视器 | `OnDraw(Component)`
+│       │       └── `ConsoleItem` | 数据类 | 控制台日志项 | `type`, `message`, `stackTrace`
+│       └── 其他辅助类和枚举
+│           ├── `WorkingType` | 枚举 | 控制台窗口工作模式 | `ALWAYS_OPEN`, `ONLY_OPEN_IN_EDITOR`, `ALWAYS_CLOSE`
+│           └── `EditorApplication` | 类 | 编辑器状态管理 | 
+│               ├── 事件系统
+│               │   ├── update - 每帧更新事件
+│               │   └── hierarchyChanged - 层级变化事件
+│               └── 操作方法
+│                   ├── ExecuteMenuItem - 执行菜单项
+│                   └── Beep - 播放提示音
+│           └── `EditorUtility` | 类 | 对话框工具 | 
+│               ├── 对话框工具
+│               │   └── DisplayDialog - 显示对话框
+│               └── 其他工具
+│                   ├── CreateFolder - 创建文件夹
+│                   └── RevealInFinder - 在文件浏览器中显示
 ├── 窗口类型示例
 │   ├── 游戏运行时辅助窗口
 │   │   ├── ConsoleGUIWindow - 控制台窗口
@@ -339,42 +488,7 @@ Unity EditorWindow系统
 │       ├── CameraGUIInspector - Camera组件检视器
 │       └── 其他组件检视器...
 │
-├── 实现技术
-│   ├── GUI/GUILayout系统
-│   │   ├── 自动布局vs手动布局
-│   │   ├── 控件类型和使用方式
-│   │   └── 布局组织(水平/垂直/区域)
-│   ├── 窗口状态管理
-│   │   ├── 展开/收起状态切换
-│   │   ├── 位置和大小控制
-│   │   └── 拖拽功能实现
-│   ├── 反射系统应用
-│   │   ├── 动态发现和加载检视器类
-│   │   ├── 特性(Attribute)的使用
-│   │   └── 类型关联和实例创建
-│   └── 场景对象交互
-│       ├── 获取场景根对象
-│       ├── 遍历对象层级结构
-│       └── 组件访问和修改
-│
-└── 最佳实践
-    ├── 性能优化
-    │   ├── 避免OnGUI中的频繁计算
-    │   ├── 使用缓存减少GC压力
-    │   └── 合理使用布局和控件
-    ├── 用户体验
-    │   ├── 清晰的视觉层次和布局
-    │   ├── 响应式的交互设计
-    │   └── 状态保持和恢复
-    ├── 模块化设计
-    │   ├── 单一职责原则
-    │   ├── 接口设计和实现分离
-    │   └── 可扩展的架构
-    └── 调试和测试
-        ├── 错误处理和日志
-        ├── 边界情况测试
-        └── 性能分析
-```
+
 
 ## 重要的类和接口
 
@@ -479,5 +593,6 @@ Unity EditorWindow系统
    - 添加适当的日志和错误处理
    - 考虑边界情况和异常情况
    - 提供清晰的错误提示
+
 
 

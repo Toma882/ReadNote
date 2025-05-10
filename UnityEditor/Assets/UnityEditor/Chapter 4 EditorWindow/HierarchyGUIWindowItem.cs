@@ -9,14 +9,14 @@ public class HierarchyGUIWindowItem
     private bool expand;
     private int level;
 
-    public HierarchyGUIWindowItem(Transform transform, 
-        HierarchyGUIWindow window)
+    public HierarchyGUIWindowItem(Transform transform, HierarchyGUIWindow window)
     {
         this.transform = transform;
         this.window = window;
         childrens = new List<HierarchyGUIWindowItem>();
         GetParent(transform);
     }
+
     private void GetParent(Transform transform)
     {
         Transform parent = transform.parent;
@@ -33,10 +33,10 @@ public class HierarchyGUIWindowItem
 
         GUILayout.BeginHorizontal();
         GUILayout.Space(15f * level);
+        
         if (transform.childCount > 0)
         {
-            if (GUILayout.Button(expand ? "▾" : "▸", 
-                GUILayout.Width(17.5f), GUILayout.Height(15f)))
+            if (GUILayout.Button(expand ? "▾" : "▸", GUILayout.Width(17.5f), GUILayout.Height(15f)))
             {
                 expand = !expand;
             }
@@ -45,12 +45,14 @@ public class HierarchyGUIWindowItem
         {
             GUILayout.Label(GUIContent.none, GUILayout.Width(17.5f));
         }
-        if (GUILayout.Toggle(window.currentSelected 
-            == transform.gameObject, transform.name))
+
+        if (GUILayout.Toggle(window.currentSelected == transform.gameObject, transform.name))
         {
             window.currentSelected = transform.gameObject;
         }
+        
         GUILayout.EndHorizontal();
+
         if (expand)
         {
             for (int i = 0; i < childrens.Count; i++)

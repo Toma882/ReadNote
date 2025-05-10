@@ -7,6 +7,7 @@ public class MonoBehaviourOnGUIExample : MonoBehaviour
     private void OnGUI()
     {
         windowRect = GUI.Window(0, windowRect, OnWindowGUI, "Example Window");
+        TimeScaleExample();
     }
     private void OnWindowGUI(int windowId)
     {

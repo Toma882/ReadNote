@@ -30,8 +30,7 @@ public class InspectorGUIWindow : MonoBehaviour
     private void OnEnable()
     {
         inspectorDic = new Dictionary<string, IComponentGUIInspector>();
-        var types = GetType().Assembly.GetTypes().Where(
-            m => m.IsSubclassOf(typeof(ComponentGUIInspector))).ToArray();
+        var types = GetType().Assembly.GetTypes().Where( m => m.IsSubclassOf(typeof(ComponentGUIInspector))).ToArray();
         for (int i = 0; i < types.Length; i++)
         {
             var type = types[i];
@@ -42,8 +41,7 @@ public class InspectorGUIWindow : MonoBehaviour
                     m => m is ComponentGUIInspectorAttribute);
                 var attribute = target as ComponentGUIInspectorAttribute;
                 var instance = Activator.CreateInstance(type);
-                inspectorDic.Add(attribute.ComponentType.FullName,
-                    instance as IComponentGUIInspector);
+                inspectorDic.Add(attribute.ComponentType.FullName,instance as IComponentGUIInspector);
             }
         }
 
