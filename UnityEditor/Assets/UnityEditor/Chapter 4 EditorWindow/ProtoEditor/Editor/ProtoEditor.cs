@@ -131,7 +131,7 @@ public class ProtoEditor : EditorWindow
         GUILayout.EndScrollView();
     }
 
-    // 添加缺少的底部菜单GUI方法
+    // 添加底部菜单GUI方法
     private void OnBottomMenuGUI()
     {
         GUILayout.BeginHorizontal();
@@ -145,12 +145,13 @@ public class ProtoEditor : EditorWindow
             Repaint();
         }
         
+        
         // 保存按钮
         GUI.enabled = !string.IsNullOrEmpty(fileName);
         if (GUILayout.Button("Save"))
         {
             // 保存逻辑可以根据需要添加
-            Debug.Log("Save proto file: " + fileName);
+            UnityEngine.Debug.Log("Save proto file: " + fileName);
         }
         GUI.enabled = true;
         
@@ -158,14 +159,14 @@ public class ProtoEditor : EditorWindow
     }
 }
 
-// 添加缺少的消息类
+// 添加Message的消息类
 public class Message
 {
     public string name = "NewMessage";
     public List<Fields> fieldsList = new List<Fields>();
 }
 
-// 添加缺少的字段类
+// 添加Message的字段类
 public class Fields
 {
     public ModifierType modifier = ModifierType.None;
@@ -180,7 +181,7 @@ public class Fields
     }
 }
 
-// 添加缺少的修饰符类型枚举
+// 添加Message的修饰符类型枚举
 public enum ModifierType
 {
     None,
@@ -189,7 +190,7 @@ public enum ModifierType
     Repeated
 }
 
-// 添加缺少的字段类型枚举
+// 添加Message的字段类型枚举
 public enum FieldsType
 {
     Default,
