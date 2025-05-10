@@ -1,0 +1,18 @@
+{
+    "sourceFile": "Assets/UnityEditor/Chapter 6 Gizmos/BeizerPath/BezierCurvePath.cs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1746901004051,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1746901004051,
+            "name": "Commit-0",
+            "content": "using UnityEngine;\r\nusing System.Collections.Generic;\r\n\r\npublic class BezierCurvePath : MonoBehaviour\r\n{\r\n    /// <summary>\r\n    /// 段数\r\n    /// </summary>\r\n    [Range(1, 100)] public int segments = 10;\r\n\r\n    /// <summary>\r\n    /// 是否循环\r\n    /// </summary>\r\n    public bool loop;\r\n  \r\n    /// <summary>\r\n    /// 点集合\r\n    /// </summary>\r\n    public List<BezierCurvePoint> points = new List<BezierCurvePoint>(2)\r\n    {\r\n        new BezierCurvePoint() \r\n        {\r\n            position = Vector3.back * 5f, \r\n            tangent = Vector3.back * 5f + Vector3.left * 3f\r\n        },\r\n        new BezierCurvePoint() \r\n        { \r\n            position = Vector3.forward * 5f, \r\n            tangent = Vector3.forward * 5f + Vector3.right * 3f\r\n        }\r\n    };\r\n\r\n    /// <summary>\r\n    /// 根据归一化位置值获取对应的贝塞尔曲线上的点\r\n    /// </summary>\r\n    /// <param name=\"t\">归一化位置值 [0,1]</param>\r\n    /// <returns></returns>\r\n    public Vector3 EvaluatePosition(float t)\r\n    {\r\n        Vector3 retVal = Vector3.zero;\r\n        if (points.Count > 0)\r\n        {\r\n            float max = points.Count - 1 < 1 ? 0 \r\n                : (loop ? points.Count : points.Count - 1);\r\n            float standardized = (loop && max > 0) ? ((t %= max) + (t < 0 ? max : 0)) : Mathf.Clamp(t, 0, max);\r\n            int rounded = Mathf.RoundToInt(standardized);\r\n            int i1, i2;\r\n            if (Mathf.Abs(standardized - rounded) < Mathf.Epsilon)\r\n                i1 = i2 = (rounded == points.Count) ? 0 : rounded;\r\n            else\r\n            {\r\n                i1 = Mathf.FloorToInt(standardized);\r\n                if (i1 >= points.Count)\r\n                {\r\n                    standardized -= max;\r\n                    i1 = 0;\r\n                }\r\n                i2 = Mathf.CeilToInt(standardized);\r\n                i2 = i2 >= points.Count ? 0 : i2;\r\n            }\r\n            retVal = i1 == i2 ? points[i1].position  \r\n            : BezierCurveUtility.Bezier3(points[i1].position, points[i1].position + points[i1].tangent, points[i2].position - points[i2].tangent, points[i2].position, standardized - i1);\r\n        }\r\n        return retVal;\r\n    }\r\n\r\n    /// <summary>\r\n    /// 路径颜色(Gizmos)\r\n    /// </summary>\r\n    public Color pathColor = Color.green;\r\n\r\n    private void OnDrawGizmos()\r\n    {\r\n        if (points.Count == 0) return;\r\n        //缓存颜色\r\n        Color cacheColor = Gizmos.color;\r\n        //路径绘制颜色\r\n        Gizmos.color = pathColor;\r\n        //步长\r\n        float step = 1f / segments;\r\n        //缓存上个坐标点\r\n        Vector3 lastPos = transform.TransformPoint(EvaluatePosition(0f));\r\n        //结束位置\r\n        float end = (points.Count - 1 < 1 ? 0 : (loop ? points.Count : points.Count - 1)) + step * .5f;\r\n        //遍历\r\n        for (float t = step; t <= end; t += step)\r\n        {\r\n            //计算位置\r\n            Vector3 p = transform.TransformPoint(EvaluatePosition(t));\r\n            //绘制曲线\r\n            Gizmos.DrawLine(lastPos, p);\r\n            //记录\r\n            lastPos = p;\r\n        }\r\n        //恢复颜色\r\n        Gizmos.color = cacheColor;\r\n    }\r\n}"
+        }
+    ]
+}
