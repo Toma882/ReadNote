@@ -20,80 +20,45 @@ public class HandlesExampleEditor : Editor
         {
             Transform transform = example.transform;
             float size = HandleUtility.GetHandleSize(transform.position);
+
             Handles.color = Handles.xAxisColor;
-            Handles.CircleHandleCap(0, transform.position
-                + new Vector3(3f, 0f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.right), size,
-                EventType.Repaint);
-            Handles.ArrowHandleCap(0, transform.position
-                + new Vector3(3f, 0f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.right), size,
-                EventType.Repaint);
-            Handles.RectangleHandleCap(0, transform.position
-                + new Vector3(6f, 0f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.right), size,
-                EventType.Repaint);
-            Handles.SphereHandleCap(0, transform.position
-                + new Vector3(8f, 0f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.right), size,
-                EventType.Repaint);
+            Handles.CircleHandleCap(0, transform.position + new Vector3(3f, 0f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.right), size, EventType.Repaint);
+            Handles.ArrowHandleCap(0, transform.position + new Vector3(3f, 0f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.right), size, EventType.Repaint);
+            Handles.RectangleHandleCap(0, transform.position + new Vector3(6f, 0f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.right), size, EventType.Repaint);
+            Handles.SphereHandleCap(0, transform.position + new Vector3(8f, 0f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.right), size, EventType.Repaint);
+
             Handles.color = Handles.yAxisColor;
-            Handles.CircleHandleCap(0, transform.position
-                + new Vector3(0f, 3f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.up), size,
-                EventType.Repaint);
-            Handles.ArrowHandleCap(0, transform.position
-                + new Vector3(0f, 3f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.up), size,
-                EventType.Repaint);
-            Handles.RectangleHandleCap(0, transform.position
-                + new Vector3(0f, 6f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.up), size,
-                EventType.Repaint);
-            Handles.SphereHandleCap(0, transform.position
-                + new Vector3(0f, 8f, 0f), transform.rotation
-                * Quaternion.LookRotation(Vector3.up), size,
-                EventType.Repaint);
+            Handles.CircleHandleCap(0, transform.position + new Vector3(0f, 3f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.up), size, EventType.Repaint);
+            Handles.ArrowHandleCap(0, transform.position + new Vector3(0f, 3f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.up), size, EventType.Repaint);
+            Handles.RectangleHandleCap(0, transform.position + new Vector3(0f, 6f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.up), size, EventType.Repaint);
+            Handles.SphereHandleCap(0, transform.position + new Vector3(0f, 8f, 0f), transform.rotation * Quaternion.LookRotation(Vector3.up), size, EventType.Repaint);
+
             Handles.color = Handles.zAxisColor;
-            Handles.CircleHandleCap(0, transform.position
-                + new Vector3(0f, 0f, 3f), transform.rotation
-                * Quaternion.LookRotation(Vector3.forward), size,
-                EventType.Repaint);
-            Handles.ArrowHandleCap(0, transform.position
-                + new Vector3(0f, 0f, 3f), transform.rotation
-                * Quaternion.LookRotation(Vector3.forward), size,
-                EventType.Repaint);
-            Handles.RectangleHandleCap(0, transform.position
-                + new Vector3(0f, 0f, 6f), transform.rotation
-                * Quaternion.LookRotation(Vector3.forward), size,
-                EventType.Repaint);
-            Handles.SphereHandleCap(0, transform.position
-                + new Vector3(0f, 0f, 8f), transform.rotation
-                * Quaternion.LookRotation(Vector3.forward), size,
-                EventType.Repaint);
+            Handles.CircleHandleCap(0, transform.position + new Vector3(0f, 0f, 3f), transform.rotation * Quaternion.LookRotation(Vector3.forward), size, EventType.Repaint);
+            Handles.ArrowHandleCap(0, transform.position + new Vector3(0f, 0f, 3f), transform.rotation * Quaternion.LookRotation(Vector3.forward), size, EventType.Repaint);
+            Handles.RectangleHandleCap(0, transform.position + new Vector3(0f, 0f, 6f), transform.rotation * Quaternion.LookRotation(Vector3.forward), size, EventType.Repaint);
+            Handles.SphereHandleCap(0, transform.position + new Vector3(0f, 0f, 8f), transform.rotation * Quaternion.LookRotation(Vector3.forward), size, EventType.Repaint);
         }
     }
+
     private void LabelExample()
     {
         Handles.Label(Vector3.left * .5f, "Hello World.");
-        Handles.Label(Vector3.right * .5f, "Hellow World.",
-            EditorStyles.whiteLabel);
+        Handles.Label(Vector3.right * .5f, "Hellow World.", EditorStyles.whiteLabel);
     }
+
     private void RadiusHandleExample()
     {
-        example.radius = Handles.RadiusHandle(
-            Quaternion.identity, Vector3.left, example.radius);
-        example.radius = Handles.RadiusHandle(
-            Quaternion.identity, Vector3.right, example.radius, true);
+        example.radius = Handles.RadiusHandle(Quaternion.identity, Vector3.left, example.radius);
+        example.radius = Handles.RadiusHandle(Quaternion.identity, Vector3.right, example.radius, true);
     }
+
     private void ScaleHandleExample()
     {
-        Handles.Label(Vector3.right, 
-            string.Format("Scale: {0}", example.scale));
-        example.scale = Handles.ScaleHandle(
-            example.scale, Vector3.right, Quaternion.identity, 
-            HandleUtility.GetHandleSize(Vector3.right));
+        Handles.Label(Vector3.right, string.Format("Scale: {0}", example.scale));
+        example.scale = Handles.ScaleHandle(example.scale, Vector3.right, Quaternion.identity, HandleUtility.GetHandleSize(Vector3.right));
     }
+    
     private void RotationHandleExample()
     {
         Handles.Label(Vector3.right, 

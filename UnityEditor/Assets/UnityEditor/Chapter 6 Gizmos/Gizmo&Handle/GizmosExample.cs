@@ -1,3 +1,5 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GizmosExample : MonoBehaviour
@@ -41,7 +43,8 @@ public class GizmosExample : MonoBehaviour
         Gizmos.DrawCube(Vector3.left, Vector3.one * 0.8f);
         Gizmos.DrawWireCube(Vector3.right, Vector3.one * 0.8f);
     }
-    private void DrawLineRayExample()
+
+    public void DrawLineRayExample()
     {
         Gizmos.DrawLine(Vector3.zero, Vector3.up);
         Gizmos.DrawRay(Vector3.right, Vector3.up);
