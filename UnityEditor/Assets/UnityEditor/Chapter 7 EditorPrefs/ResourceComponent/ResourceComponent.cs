@@ -25,32 +25,25 @@ public class ResourceComponent : MonoBehaviour
         REALITY, //真实环境
     }
 
-    [SerializeField] 
-    MODE mode = MODE.EDITOR;
+    [SerializeField] MODE mode = MODE.EDITOR;
 
-    [SerializeField] 
-    string assetBundleUrl = Application.streamingAssetsPath;
+    [SerializeField] string assetBundleUrl = Application.streamingAssetsPath;
 
-    [SerializeField] 
-    string assetBundleManifestName = "AssetBundles";
+    [SerializeField] string assetBundleManifestName = "AssetBundles";
 
     private AssetBundleManifest assetBundleManifest;
 
-    private Dictionary<string, AssetInfo> map 
-        = new Dictionary<string, AssetInfo>();
+    private Dictionary<string, AssetInfo> map = new Dictionary<string, AssetInfo>();
 
     private bool isMapLoading = true;
 
     private bool isAssetBundleManifestLoading;
 
-    private readonly Dictionary<string, AssetBundle> assetBundlesDic 
-        = new Dictionary<string, AssetBundle>();
+    private readonly Dictionary<string, AssetBundle> assetBundlesDic = new Dictionary<string, AssetBundle>();
 
-    private readonly Dictionary<string, Scene> sceneDic
-        = new Dictionary<string, Scene>();
+    private readonly Dictionary<string, Scene> sceneDic = new Dictionary<string, Scene>();
 
-    private readonly Dictionary<string, UnityWebRequest> loadingDic 
-        = new Dictionary<string, UnityWebRequest>();
+    private readonly Dictionary<string, UnityWebRequest> loadingDic = new Dictionary<string, UnityWebRequest>();
 
     private void Start()
     {
@@ -58,29 +51,28 @@ public class ResourceComponent : MonoBehaviour
         if (mode != MODE.EDITOR)
             StartCoroutine(LoadAssetsMapAsync());
 #else
-            StartCoroutine(LoadAssetsMapAsync());
+        StartCoroutine(LoadAssetsMapAsync());
 #endif
     }
 
     private IEnumerator LoadAssetsMapAsync()
     {
-        string url = (mode == MODE.REALITY ? assetBundleUrl
-            : Application.streamingAssetsPath) + "/map.dat";
+        string url = (mode == MODE.REALITY ? assetBundleUrl : Application.streamingAssetsPath) + "/map.dat";
         //Debug.Log("资源下载路径：{0}", url);
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
 #if UNITY_2017_2_OR_NEWER
             yield return request.SendWebRequest();
 #else
-                yield return request.Send();
+            yield return request.Send();
 #endif
             bool flag = false;
 #if UNITY_2020_2_OR_NEWER
             flag = request.result == UnityWebRequest.Result.Success;
 #elif UNITY_2017_1_OR_NEWER
-                flag = !(request.isNetworkError || request.isHttpError);
+            flag = !(request.isNetworkError || request.isHttpError);
 #else
-                flag = !request.isError;
+            flag = !request.isError;
 #endif
             if (flag)
             {
@@ -99,15 +91,13 @@ public class ResourceComponent : MonoBehaviour
                         {
                             map = new Dictionary<string, AssetInfo>();
                             string json = Encoding.Default.GetString(buffer);
-                            var assetsInfo = JsonUtility
-                                .FromJson<AssetsInfo>(json);
+                            var assetsInfo = JsonUtility.FromJson<AssetsInfo>(json);
 
                             int counter = 0;
                             for (int i = 0; i < assetsInfo.list.Count; i++)
                             {
                                 var info = assetsInfo.list[i];
-                                info.name = Path
-                                    .GetFileNameWithoutExtension(info.path);
+                                info.name = Path.GetFileNameWithoutExtension(info.path);
                                 map.Add(info.path, info);
                                 if (++counter == 100)
                                 {
@@ -117,67 +107,55 @@ public class ResourceComponent : MonoBehaviour
                             }
                             isMapLoading = false;
                             Debug.Log("成功加载资源信息");
-
                         }
                     }
                 }
             }
             else
             {
-                Debug.LogError(string.Format("请求下载map.dat失败：{0} {1}",
-                    request.url, request.error));
+                Debug.LogError(string.Format("请求下载map.dat失败：{0} {1}", request.url, request.error));
             }
         }
     }
 
     private IEnumerator LoadAssetBundleManifestAsync()
     {
-        using (UnityWebRequest request = UnityWebRequestAssetBundle
-            .GetAssetBundle((mode == MODE.REALITY ? assetBundleUrl 
-                : Application.streamingAssetsPath) + "/"
-                    + assetBundleManifestName))
+        using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle((mode == MODE.REALITY ? assetBundleUrl : Application.streamingAssetsPath) + "/" + assetBundleManifestName))
         {
 #if UNITY_2017_2_OR_NEWER
             yield return request.SendWebRequest();
 #else
-                yield return request.Send();
+            yield return request.Send();
 #endif
             bool flag = false;
 #if UNITY_2020_2_OR_NEWER
             flag = request.result == UnityWebRequest.Result.Success;
 #elif UNITY_2017_1_OR_NEWER
-                flag = !(request.isNetworkError || request.isHttpError);
+            flag = !(request.isNetworkError || request.isHttpError);
 #else
-                flag = !request.isError;
+            flag = !request.isError;
 #endif
             if (flag)
             {
-                AssetBundle ab = DownloadHandlerAssetBundle
-                    .GetContent(request);
+                AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
                 if (ab != null)
                 {
-                    assetBundleManifest = ab
-                        .LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    assetBundleManifest = ab.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                     isAssetBundleManifestLoading = false;
                 }
                 else
                 {
-                    Debug.LogError(string.Format(
-                        "下载AssetBundleManifest失败：{0}", 
-                            request.url));
+                    Debug.LogError(string.Format("下载AssetBundleManifest失败：{0}", request.url));
                 }
             }
             else
             {
-                Debug.LogError(string.Format(
-                    "请求下载AssetBundleManifest失败：{0} {1}",
-                        request.url, request.error));
+                Debug.LogError(string.Format("请求下载AssetBundleManifest失败：{0} {1}", request.url, request.error));
             }
         }
     }
 
-    private IEnumerator LoadAssetBundleAsync(string assetBundleName, 
-        Action<float> onLoading = null)
+    private IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> onLoading = null)
     {
         DateTime beginTime = DateTime.Now;
 
@@ -192,20 +170,17 @@ public class ResourceComponent : MonoBehaviour
                     yield return null;
                 }
             }
-            yield return new WaitUntil(() => 
-                !loadingDic.ContainsKey(assetBundleName));
+            yield return new WaitUntil(() => !loadingDic.ContainsKey(assetBundleName));
         }
         else
         {
-            using (UnityWebRequest request = UnityWebRequestAssetBundle
-                .GetAssetBundle((mode == MODE.REALITY ? assetBundleUrl 
-                : Application.streamingAssetsPath) + "/" + assetBundleName))
+            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle((mode == MODE.REALITY ? assetBundleUrl : Application.streamingAssetsPath) + "/" + assetBundleName))
             {
                 loadingDic.Add(assetBundleName, request);
 #if UNITY_2017_2_OR_NEWER
                 yield return request.SendWebRequest();
 #else
-                    yield return request.Send();
+                yield return request.Send();
 #endif
                 while (!request.isDone)
                 {
@@ -217,35 +192,31 @@ public class ResourceComponent : MonoBehaviour
 #if UNITY_2020_2_OR_NEWER
                 flag = request.result == UnityWebRequest.Result.Success;
 #elif UNITY_2017_1_OR_NEWER
-                    flag = !(request.isNetworkError || request.isHttpError);
+                flag = !(request.isNetworkError || request.isHttpError);
 #else
-                    flag = !request.isError;
+                flag = !request.isError;
 #endif
                 if (flag)
                 {
-                    AssetBundle ab = DownloadHandlerAssetBundle
-                        .GetContent(request);
+                    AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
                     if (ab != null)
                     {
                         assetBundlesDic.Add(assetBundleName, ab);
                         Debug.Log(string.Format("于{0}发起下载AssetBundle请求 {1} " +
                             "于{2}下载完成 耗时{3}毫秒（{4}秒）",
-                            beginTime.ToString("T"), request.url, 
+                            beginTime.ToString("T"), request.url,
                             DateTime.Now.ToString("T"),
-                            (DateTime.Now - beginTime).TotalMilliseconds, 
+                            (DateTime.Now - beginTime).TotalMilliseconds,
                             (DateTime.Now - beginTime).TotalSeconds));
                     }
                     else
                     {
-                        Debug.LogError(string.Format(
-                            "下载AssetBundle失败：{0}", request.url));
+                        Debug.LogError(string.Format("下载AssetBundle失败：{0}", request.url));
                     }
                 }
                 else
                 {
-                    Debug.LogError(string.Format(
-                        "请求下载AssetBundle失败：{0} {1}",
-                        request.url, request.error));
+                    Debug.LogError(string.Format("请求下载AssetBundle失败：{0} {1}", request.url, request.error));
                 }
                 yield return null;
                 loadingDic.Remove(assetBundleName);
@@ -259,8 +230,7 @@ public class ResourceComponent : MonoBehaviour
         {
             if (isAssetBundleManifestLoading)
             {
-                yield return new WaitUntil(()
-                    => assetBundleManifest != null);
+                yield return new WaitUntil(() => assetBundleManifest != null);
             }
             else
             {
@@ -269,8 +239,7 @@ public class ResourceComponent : MonoBehaviour
             }
         }
 
-        string[] dependencies = assetBundleManifest
-            .GetAllDependencies(assetBundleName);
+        string[] dependencies = assetBundleManifest.GetAllDependencies(assetBundleName);
         for (int i = 0; i < dependencies.Length; i++)
         {
             string dep = dependencies[i];
@@ -281,8 +250,7 @@ public class ResourceComponent : MonoBehaviour
         }
     }
 
-    IEnumerator LoadAssetAsyncCoroutine<T>(string assetPath,
-        Action<bool, T> onCompleted, Action<float> onLoading) where T : Object
+    IEnumerator LoadAssetAsyncCoroutine<T>(string assetPath, Action<bool, T> onCompleted, Action<float> onLoading) where T : Object
     {
         Object asset = null;
 
@@ -315,54 +283,47 @@ public class ResourceComponent : MonoBehaviour
 
             if (!assetBundlesDic.ContainsKey(assetInfo.abName))
             {
-                yield return LoadAssetBundleAsync(
-                    assetInfo.abName, onLoading);
+                yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
             }
             else
             {
                 onLoading?.Invoke(1);
                 yield return null;
             }
-            asset = assetBundlesDic[assetInfo.abName]
-                .LoadAsset<T>(assetInfo.name);
+            asset = assetBundlesDic[assetInfo.abName].LoadAsset<T>(assetInfo.name);
             if (asset == null)
             {
-                Debug.LogError(string.Format("加载资源失败：{0} {1}", 
-                    assetInfo.abName, asset.name));
+                Debug.LogError(string.Format("加载资源失败：{0} {1}", assetInfo.abName, asset.name));
             }
         }
 #else
-            if (isMapLoading)
-            {
-                yield return new WaitUntil(() => isMapLoading == false);
-            }
+        if (isMapLoading)
+        {
+            yield return new WaitUntil(() => isMapLoading == false);
+        }
 
-            if (!map.TryGetValue(assetPath, out var assetInfo))
-            {
-                Debug.LogError(string.Format("加载资源失败：{0}", assetPath));
-                yield break;
-            }
+        if (!map.TryGetValue(assetPath, out var assetInfo))
+        {
+            Debug.LogError(string.Format("加载资源失败：{0}", assetPath));
+            yield break;
+        }
 
-            yield return LoadAssetBundleDependeciesAsync(assetInfo.abName);
+        yield return LoadAssetBundleDependeciesAsync(assetInfo.abName);
 
-            if (!assetBundlesDic.ContainsKey(assetInfo.abName))
-            {
-                yield return LoadAssetBundleAsync(
-                    assetInfo.abName, onLoading);
-            }
-            else
-            {
-                onLoading?.Invoke(1);
-                yield return null;
-            }
-            asset = assetBundlesDic[assetInfo.abName]
-                .LoadAsset<T>(assetInfo.name);
-            if (asset == null)
-            {
-                Debug.LogError(string.Format("加载资源失败：{0} {1}", 
-                    assetInfo.abName, asset.name));
-            }
-
+        if (!assetBundlesDic.ContainsKey(assetInfo.abName))
+        {
+            yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
+        }
+        else
+        {
+            onLoading?.Invoke(1);
+            yield return null;
+        }
+        asset = assetBundlesDic[assetInfo.abName].LoadAsset<T>(assetInfo.name);
+        if (asset == null)
+        {
+            Debug.LogError(string.Format("加载资源失败：{0} {1}", assetInfo.abName, asset.name));
+        }
 #endif
         if (asset != null)
         {
@@ -374,36 +335,31 @@ public class ResourceComponent : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath,
-        Action<bool> onCompleted, Action<float> onLoading)
+    private IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath, Action<bool> onCompleted, Action<float> onLoading)
     {
 #if UNITY_EDITOR
         if (mode == MODE.EDITOR)
         {
             if (sceneDic.ContainsKey(sceneAssetPath))
             {
-                Debug.LogWarning(string.Format("场景{0}已加载",
-                    sceneAssetPath));
+                Debug.LogWarning(string.Format("场景{0}已加载", sceneAssetPath));
                 onCompleted?.Invoke(false);
                 yield break;
             }
 
             sceneDic.Add(sceneAssetPath, new Scene());
-            AsyncOperation asyncOperation = EditorSceneManager
-                .LoadSceneAsyncInPlayMode(sceneAssetPath, 
-                new LoadSceneParameters()
-                {
-                    loadSceneMode = LoadSceneMode.Additive,
-                    localPhysicsMode = LocalPhysicsMode.None
-                });
+            AsyncOperation asyncOperation = EditorSceneManager.LoadSceneAsyncInPlayMode(sceneAssetPath, new LoadSceneParameters()
+            {
+                loadSceneMode = LoadSceneMode.Additive,
+                localPhysicsMode = LocalPhysicsMode.None
+            });
             while (!asyncOperation.isDone)
             {
                 onLoading?.Invoke(asyncOperation.progress);
                 yield return null;
             }
             onLoading?.Invoke(1f);
-            Scene scene = EditorSceneManager
-                .GetSceneByPath(sceneAssetPath);
+            Scene scene = EditorSceneManager.GetSceneByPath(sceneAssetPath);
             sceneDic[sceneAssetPath] = scene;
         }
         else
@@ -414,14 +370,12 @@ public class ResourceComponent : MonoBehaviour
             }
             if (!map.TryGetValue(sceneAssetPath, out var assetInfo))
             {
-                Debug.LogError(string.Format("加载场景失败：{0}", 
-                    sceneAssetPath));
+                Debug.LogError(string.Format("加载场景失败：{0}", sceneAssetPath));
                 yield break;
             }
             if (sceneDic.ContainsKey(assetInfo.name))
             {
-                Debug.LogWarning(string.Format("场景{0}已加载",
-                    sceneAssetPath));
+                Debug.LogWarning(string.Format("场景{0}已加载", sceneAssetPath));
                 onCompleted?.Invoke(false);
                 yield break;
             }
@@ -432,11 +386,9 @@ public class ResourceComponent : MonoBehaviour
             sceneDic.Add(assetInfo.name, scene);
             if (!assetBundlesDic.ContainsKey(assetInfo.abName))
             {
-                yield return LoadAssetBundleAsync(
-                    assetInfo.abName, onLoading);
+                yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
             }
-            AsyncOperation asyncOperation = SceneManager
-                .LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
+            AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
             while (!asyncOperation.isDone)
             {
                 onLoading?.Invoke(asyncOperation.progress);
@@ -445,41 +397,37 @@ public class ResourceComponent : MonoBehaviour
             onLoading?.Invoke(1f);
         }
 #else
-            if (isMapLoading)
-            {
-                yield return new WaitUntil(() => isMapLoading == false);
-            }
-            if (!map.TryGetValue(sceneAssetPath, out var assetInfo))
-            {
-                Debug.LogError(string.Format("加载场景失败：{0}",
-                    sceneAssetPath));
-                yield break;
-            }
-            if (sceneDic.ContainsKey(assetInfo.name))
-            {
-                Debug.LogWarning(string.Format("场景{0}已加载",
-                    sceneAssetPath));
-                onCompleted?.Invoke(false);
-                yield break;
-            }
+        if (isMapLoading)
+        {
+            yield return new WaitUntil(() => isMapLoading == false);
+        }
+        if (!map.TryGetValue(sceneAssetPath, out var assetInfo))
+        {
+            Debug.LogError(string.Format("加载场景失败：{0}", sceneAssetPath));
+            yield break;
+        }
+        if (sceneDic.ContainsKey(assetInfo.name))
+        {
+            Debug.LogWarning(string.Format("场景{0}已加载", sceneAssetPath));
+            onCompleted?.Invoke(false);
+            yield break;
+        }
 
-            yield return LoadAssetBundleDependeciesAsync(assetInfo.abName);
+        yield return LoadAssetBundleDependeciesAsync(assetInfo.abName);
 
-            Scene scene = SceneManager.GetSceneByPath(sceneAssetPath);
-            sceneDic.Add(assetInfo.name, scene);
-            if (!assetBundlesDic.ContainsKey(assetInfo.abName))
-            {
-                yield return LoadAssetBundleAsync(
-                    assetInfo.abName, onLoading);
-            }
-            AsyncOperation asyncOperation = SceneManager
-                .LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
-            while (!asyncOperation.isDone)
-            {
-                onLoading?.Invoke(asyncOperation.progress);
-                yield return null;
-            }
-            onLoading?.Invoke(1f);
+        Scene scene = SceneManager.GetSceneByPath(sceneAssetPath);
+        sceneDic.Add(assetInfo.name, scene);
+        if (!assetBundlesDic.ContainsKey(assetInfo.abName))
+        {
+            yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
+        }
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
+        while (!asyncOperation.isDone)
+        {
+            onLoading?.Invoke(asyncOperation.progress);
+            yield return null;
+        }
+        onLoading?.Invoke(1f);
 #endif
         onCompleted?.Invoke(true);
     }
@@ -491,12 +439,9 @@ public class ResourceComponent : MonoBehaviour
     /// <param name="assetPath">资产路径</param>
     /// <param name="onCompleted">加载完成回调事件</param>
     /// <param name="onLoading">加载进度回调事件</param>
-    public void LoadAssetAsync<T>(string assetPath, 
-        Action<bool, T> onCompleted = null, 
-        Action<float> onLoading = null) where T : Object
+    public void LoadAssetAsync<T>(string assetPath, Action<bool, T> onCompleted = null, Action<float> onLoading = null) where T : Object
     {
-        StartCoroutine(LoadAssetAsyncCoroutine(
-            assetPath, onCompleted, onLoading));
+        StartCoroutine(LoadAssetAsyncCoroutine(assetPath, onCompleted, onLoading));
     }
 
     /// <summary>
@@ -505,12 +450,9 @@ public class ResourceComponent : MonoBehaviour
     /// <param name="sceneAssetPath">场景资产路径</param>
     /// <param name="onCompleted">加载完成回调事件</param>
     /// <param name="onLoading">加载过程回调事件</param>
-    public void LoadSceneAsync(string sceneAssetPath, 
-        Action<bool> onCompleted = null,
-        Action<float> onLoading = null)
+    public void LoadSceneAsync(string sceneAssetPath, Action<bool> onCompleted = null, Action<float> onLoading = null)
     {
-        StartCoroutine(LoadSceneAsyncCoroutine(
-            sceneAssetPath, onCompleted, onLoading));
+        StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onCompleted, onLoading));
     }
 
     /// <summary>
@@ -518,15 +460,13 @@ public class ResourceComponent : MonoBehaviour
     /// </summary>
     /// <param name="assetPath">资产路径</param>
     /// <param name="unloadAllLoadedObjects">是否卸载相关实例化对象</param>
-    public void UnloadAsset(string assetPath,
-        bool unloadAllLoadedObjects = false)
+    public void UnloadAsset(string assetPath, bool unloadAllLoadedObjects = false)
     {
         if (map.TryGetValue(assetPath, out var assetInfo))
         {
             if (assetBundlesDic.ContainsKey(assetInfo.abName))
             {
-                assetBundlesDic[assetInfo.abName]
-                    .Unload(unloadAllLoadedObjects);
+                assetBundlesDic[assetInfo.abName].Unload(unloadAllLoadedObjects);
                 assetBundlesDic.Remove(assetInfo.abName);
             }
         }
@@ -578,16 +518,16 @@ public class ResourceComponent : MonoBehaviour
             return false;
         }
 #else
-            if (map.TryGetValue(sceneAssetPath, out var assetInfo))
+        if (map.TryGetValue(sceneAssetPath, out var assetInfo))
+        {
+            if (sceneDic.ContainsKey(assetInfo.name))
             {
-                if (sceneDic.ContainsKey(assetInfo.name))
-                {
-                    sceneDic.Remove(assetInfo.name);
-                    SceneManager.UnloadSceneAsync(assetInfo.name);
-                    return true;
-                }
+                sceneDic.Remove(assetInfo.name);
+                SceneManager.UnloadSceneAsync(assetInfo.name);
+                return true;
             }
-            return false;
+        }
+        return false;
 #endif
     }
 }
