@@ -14,4 +14,9 @@ public class CustomComponent : MonoBehaviour
         Enum3,
     }
     [SerializeField] private ExampleEnum enumValue;
+
+    private void ToggleBoolValue()
+    {
+        boolValue = !boolValue;
+    }
 }

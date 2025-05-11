@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-using System.Reflection;
+using System.Reflection; //引入反射命名空间
 
 [CustomEditor(typeof(CustomComponent))]
 public class CustomComponentEditor : Editor 
@@ -8,6 +8,9 @@ public class CustomComponentEditor : Editor
     private CustomComponent component;
     private SerializedProperty stringValueProperty;
     private FieldInfo boolValueFieldInfo;
+
+    private MethodInfo ToggleBoolValueMethodInfo;
+
     private SerializedProperty gameObjectProperty;
     private SerializedProperty enumValue;
 
@@ -15,13 +18,17 @@ public class CustomComponentEditor : Editor
     {
         //target 和 serializedObject 是哪里来的？
         //target 是来自于 Editor 类
-        //serializedObject 是来自于 Editor 类
+        //  是来自于 Editor 类
 
         component = target as CustomComponent;
 
         //获取序列化属性
         stringValueProperty = serializedObject.FindProperty("stringValue");
+        //获取字段信息
         boolValueFieldInfo = typeof(CustomComponent).GetField("boolValue", BindingFlags.Instance | BindingFlags.NonPublic);
+        //获取方法信息
+        ToggleBoolValueMethodInfo = typeof(CustomComponent).GetMethod("ToggleBoolValue", BindingFlags.Instance | BindingFlags.NonPublic);
+
         gameObjectProperty = serializedObject.FindProperty("go");
         enumValue = serializedObject.FindProperty("enumValue");
     }
@@ -93,7 +100,10 @@ public class CustomComponentEditor : Editor
         //private修饰的字段 通过序列化属性的方式访问和修改其值
         stringValueProperty.stringValue = EditorGUILayout.TextField("String Value", stringValueProperty.stringValue);
         //private修饰的字段 通过反射的方式访问和修改其值
-        boolValueFieldInfo.SetValue(component, EditorGUILayout.Toggle("Bool Value", (bool)boolValueFieldInfo.GetValue(component)));
+        // 显示布尔值的切换控件
+        bool toggleValue = EditorGUILayout.Toggle("Bool Value", (bool)boolValueFieldInfo.GetValue(component));
+        // 设置布尔值
+        boolValueFieldInfo.SetValue(component, toggleValue);
         EditorGUILayout.PropertyField(gameObjectProperty);
         enumValue.enumValueIndex = EditorGUILayout.Popup("Enum Value", enumValue.enumValueIndex, enumValue.enumNames);
 
@@ -144,6 +154,15 @@ public class CustomComponentEditor : Editor
         stringValueProperty.stringValue = EditorGUILayout.TextField("String Value", stringValueProperty.stringValue);
         //private修饰的字段 通过反射的方式访问和修改其值
         boolValueFieldInfo.SetValue(component, EditorGUILayout.Toggle("Bool Value", (bool)boolValueFieldInfo.GetValue(component)));
+
+        //private修饰的方法 通过反射的方式调用
+        if (GUILayout.Button("Toggle Bool Value"))
+        {
+            //调用方法
+            ToggleBoolValueMethodInfo.Invoke(component, null);
+        }
+
+        
         EditorGUILayout.PropertyField(gameObjectProperty);
         enumValue.enumValueIndex = EditorGUILayout.Popup("Enum Value", enumValue.enumValueIndex, enumValue.enumNames);
     }
