@@ -44,3 +44,99 @@
 /UnityEditor/Temp/FSTimeGet-bc5cdb7cda8f2064396ad4ffaf28750b
 /UnityEditor/Logs/AssetImportWorker8.log
 /UnityEditor/Logs/AssetImportWorker9.log
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Assemblies/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Custom Attribute Processors/Scripts/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Custom Drawers/Scripts/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Editor Windows/Scripts/Editor/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Character/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Editor/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Items/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Misc/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/*.json
+/UnityEditor/.lh/Assets/Plugins/Sirenix/*.json
+/UnityEditor/.lh/Assets/UnityEditor/OdinLocalization/*.json
+/UnityEditor/*.csproj
+/UnityEditor/Assets/*.meta
+/UnityEditor/Assets/Plugins/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/NoEditor/*.dll
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/NoEditor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/NoEditor/*.pdb
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/*.dll
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/*.pdb
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/*.dll
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/*.pdb
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/*.xml
+/UnityEditor/Assets/Plugins/Sirenix/Assemblies/*.json
+/UnityEditor/Assets/Plugins/Sirenix/Demos/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/*.unitypackage
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Attribute Processors/*.unity
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Attribute Processors/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Attribute Processors/Scripts/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Attribute Processors/Scripts/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Drawers/*.unity
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Drawers/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Drawers/*.lighting
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Drawers/Scripts/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Custom Drawers/Scripts/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Editor Windows/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Editor Windows/Scripts/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Editor Windows/Scripts/Editor/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Editor Windows/Scripts/Editor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Character/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Character/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Characters/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Characters/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Icons/*.png
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Icons/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Icons/*.txt
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/Armours/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/Armours/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/Consumables/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/Consumables/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/Weapons/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Items/Weapons/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Character/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Character/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Editor/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Editor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Items/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Items/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Misc/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/Scripts/Misc/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/*.txt
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/*.bytes
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/*.shader
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/Hidden/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Assets/Editor/*.png
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Config/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Config/Editor/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Config/Editor/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Config/Resources/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Config/Resources/Sirenix/*.asset
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Config/Resources/Sirenix/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Modules/*.data
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Modules/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Modules/Unity.Mathematics/*.cs
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Modules/Unity.Mathematics/*.meta
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Modules/Unity.Mathematics/*.asmdef
+/UnityEditor/Assets/Plugins/Sirenix/Odin Inspector/Modules/Unity.Mathematics/*.txt
+/UnityEditor/Assets/Settings/*.asset
+/UnityEditor/Assets/Settings/*.meta
+/UnityEditor/Assets/UnityEditor/*.meta
+/UnityEditor/Assets/UnityEditor/OdinLocalization/*.cs
+/UnityEditor/Assets/UnityEditor/OdinLocalization/*.meta
+/UnityEditor/Assets/UnityEditor/OdinLocalization/*.md
+/UnityEditor/Logs/*.log
+/UnityEditor/*.user
+/UnityEditor/UserSettings/*.settings
+/UnityEditor/obj/Debug/*.cache
