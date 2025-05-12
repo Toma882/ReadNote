@@ -63,8 +63,7 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
 
                 tree.Selection.SupportsMultiSelect = false;
                 tree.Config.DrawSearchToolbar = true;
-                tree.AddRange(scriptableObjectTypes, x => x.GetNiceName())
-                    .AddThumbnailIcons();
+                tree.AddRange(scriptableObjectTypes, x => x.GetNiceName()).AddThumbnailIcons();
             }
 
             private void ShowSaveFileDialog(IEnumerable<Type> selection)

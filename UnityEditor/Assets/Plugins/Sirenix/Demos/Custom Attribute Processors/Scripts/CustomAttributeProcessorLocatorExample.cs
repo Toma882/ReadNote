@@ -13,7 +13,7 @@ namespace Sirenix.OdinInspector.Demos
     [TypeInfoBox("此示例演示了如何创建自定义AttributeProcessorLocator来完全改变整个PropertyTree解析属性的方式，从而改变树中所有对象的显示方式。")]
     public class CustomAttributeProcessorLocatorExample : MonoBehaviour
     {
-        [Button(ButtonSizes.Large)]
+        [Button("展示窗口", ButtonSizes.Large)]
         private void OpenEditorWindow()
         {
             var window = Editor.CreateInstance<SomeCustomEditorWindow>();
@@ -66,18 +66,19 @@ namespace Sirenix.OdinInspector.Demos
         }
     }
 
+    //默认定位器类
     public class SomeClass
     {
-        [HorizontalGroup("Split", LabelWidth = 80)]
+        //[HorizontalGroup("Split", LabelWidth = 80)]
         [BoxGroup("Split/$Name", showLabel: false)]
-        [BoxGroup("Split/$Name/NameId", showLabel: false)]
+        [BoxGroup("Split/$Name/BaseInfo", showLabel: true)]
         public string Name, Id;
 
-        [HideLabel, PropertyOrder(5)]
+        //[HideLabel, PropertyOrder(5)]
         [PreviewField(Height = 105), HorizontalGroup("Split", width: 105)]
         public Texture2D Icon;
 
-        [BoxGroup("Split/$Name/Properties", showLabel: false)]
+        [BoxGroup("Split/$Name/Properties", showLabel: true)]
         public int Health, Damage, Speed;
     }
 

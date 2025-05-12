@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca2b15df8c4ceff41b655ce8b1c672d2, type: 3}
-  m_Name: Baldr
+  m_Name: Toma
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 11400000, guid: c3191bc4db2097f489c2fea5510b960b, type: 2}
-    - {fileID: 11400000, guid: 3915d4dc6b1333c44b6b7cc22cf48c05, type: 2}
+    ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -39,18 +37,6 @@ MonoBehaviour:
       Entry: 3
       Data: 0
     - Name: Item
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: Sirenix.OdinInspector.Demos.RPGEditor.ItemSlot, Assembly-CSharp-firstpass
-    - Name: ItemCount
-      Entry: 3
-      Data: 0
-    - Name: Item
       Entry: 6
       Data: 
     - Name: 
@@ -111,8 +97,20 @@ MonoBehaviour:
       Entry: 3
       Data: 0
     - Name: Item
-      Entry: 10
-      Data: 1
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: Sirenix.OdinInspector.Demos.RPGEditor.ItemSlot, Assembly-CSharp-firstpass
+    - Name: ItemCount
+      Entry: 3
+      Data: 0
+    - Name: Item
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -902,28 +900,16 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  Icon: {fileID: 2800000, guid: 3af7666693284e04eacc2fcd7c0f6c43, type: 3}
-  Name: Baldr
+  Icon: {fileID: 0}
+  Name: 
   Surname: 
-  Age: 33
-  CharacterAlignment: 2
+  Age: 0
+  CharacterAlignment: 0
   Skills:
     Stats:
-      stats:
-      - Type: 0
-        Value: 42.127476
-      - Type: 1
-        Value: 40.356865
-      - Type: 2
-        Value: 23.033136
-      - Type: 3
-        Value: 16.103643
-      - Type: 4
-        Value: 10.204426
-      - Type: 7
-        Value: 4.685077
+      stats: []
   StartingEquipment:
-    MainHand: {fileID: 11400000, guid: 98efc1438872f0b458fefa279e5ee972, type: 2}
+    MainHand: {fileID: 0}
     Offhand: {fileID: 0}
-    Head: {fileID: 11400000, guid: c3191bc4db2097f489c2fea5510b960b, type: 2}
+    Head: {fileID: 0}
     Body: {fileID: 0}

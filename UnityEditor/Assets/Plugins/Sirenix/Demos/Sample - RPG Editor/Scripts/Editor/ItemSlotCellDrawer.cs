@@ -44,7 +44,7 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
 
             value = DragAndDropUtilities.DropZone(rect, value);                                     // 用于ItemSlot结构的放置区域。
             value.Item = DragAndDropUtilities.DropZone<Item>(rect, value.Item);                     // 用于Item类型的放置区域。
-            value = DragAndDropUtilities.DragZone(rect, value, true, true);                         // 启用ItemSlot的拖拽功能
+            value = DragAndDropUtilities.DragZone(rect, value, true, true);       // 启用ItemSlot的拖拽功能
 
             return value;
         }

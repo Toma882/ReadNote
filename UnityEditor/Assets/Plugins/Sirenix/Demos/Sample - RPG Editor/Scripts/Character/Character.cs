@@ -32,14 +32,14 @@ namespace Sirenix.OdinInspector.Demos.RPGEditor
         [HorizontalGroup("Split", 290), EnumToggleButtons, HideLabel]
         public CharacterAlignment CharacterAlignment;
 
-        [TabGroup("起始物品栏", "Starting Inventory")]
+        [TabGroup("起始物品栏", "起始物品栏")]
         public ItemSlot[,] Inventory = new ItemSlot[12, 6];
 
-        [TabGroup("起始属性", "Starting Stats"), HideLabel]
+        [TabGroup("起始属性", "起始属性"), HideLabel]
         public CharacterStats Skills = new CharacterStats();
 
         [HideLabel]
-        [TabGroup("起始装备", "Starting Equipment")]
+        [TabGroup("起始装备", "起始装备")]
         public CharacterEquipment StartingEquipment;
     }
 }
