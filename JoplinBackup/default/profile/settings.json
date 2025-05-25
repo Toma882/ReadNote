@@ -1,6 +1,7 @@
 {
 	"$schema": "https://joplinapp.org/schema/settings.json",
-	"editor.codeView": false,
+	"altInstanceId": "",
+	"editor.codeView": true,
 	"sync.target": 3,
 	"richTextBannerDismissed": true,
 	"editor.pluginCompatibilityBannerDismissedFor": [
@@ -29,14 +30,19 @@
 	"ocr.enabled": false,
 	"theme": 1,
 	"preferredLightTheme": 1,
-	"notes.sortOrder.field": "todo_due",
-	"notes.sortOrder.reverse": true,
+	"notes.sortOrder.field": "user_updated_time",
+	"notes.sortOrder.reverse": false,
 	"notes.perFieldReverse": {
 		"user_updated_time": false,
 		"user_created_time": true,
 		"title": false,
 		"order": false,
-		"todo_due": true
+		"todo_due": true,
+		"todo_completed": true
+	},
+	"notes.perFolderSortOrders": {
+		"957adcfc5017429e9cf4b888c3f09bfd$field": "title",
+		"957adcfc5017429e9cf4b888c3f09bfd$reverse": false
 	},
 	"plugins.devPluginPaths": "C:\\Users\\Toma1\\AppData\\Roaming\\Joplin\\plugins",
 	"markdown.plugin.softbreaks": true,
@@ -56,7 +62,7 @@
 			},
 			{
 				"key": "noteList",
-				"width": 263,
+				"width": 381,
 				"visible": true
 			},
 			{
