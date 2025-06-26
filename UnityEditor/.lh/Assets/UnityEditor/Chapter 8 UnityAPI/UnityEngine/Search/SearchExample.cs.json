@@ -1,0 +1,18 @@
+{
+    "sourceFile": "Assets/UnityEditor/Chapter 8 UnityAPI/UnityEngine/Search/SearchExample.cs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1750932594525,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1750932594525,
+            "name": "Commit-0",
+            "content": "using UnityEngine;\r\n#if UNITY_2020_1_OR_NEWER\r\nusing UnityEngine.SearchService;\r\n#endif\r\n\r\n/// <summary>\r\n/// UnityEngine.Search 命名空间案例演示\r\n/// 展示SearchService、SearchProvider等核心功能\r\n/// </summary>\r\npublic class SearchExample : MonoBehaviour\r\n{\r\n    [Header(\"搜索设置\")]\r\n    [SerializeField] private string searchQuery = \"GameObject\"; //搜索查询\r\n    [SerializeField] private bool enableSearch = true; //是否启用搜索\r\n    [SerializeField] private int maxResults = 10; //最大结果数\r\n\r\n    private void Start()\r\n    {\r\n#if UNITY_2020_1_OR_NEWER\r\n        if (enableSearch)\r\n        {\r\n            Debug.Log(\"Search Service 已启用\");\r\n            // 这里可以初始化搜索服务\r\n        }\r\n#endif\r\n    }\r\n\r\n    private void Update()\r\n    {\r\n        if (Input.GetKeyDown(KeyCode.S) && enableSearch)\r\n        {\r\n            PerformSearch();\r\n        }\r\n    }\r\n\r\n    /// <summary>\r\n    /// 执行搜索\r\n    /// </summary>\r\n    private void PerformSearch()\r\n    {\r\n#if UNITY_2020_1_OR_NEWER\r\n        Debug.Log($\"执行搜索: {searchQuery}\");\r\n        // 这里可以实现具体的搜索逻辑\r\n        // 由于SearchService主要用于编辑器，这里只是演示框架\r\n#else\r\n        Debug.Log(\"Search Service 需要 Unity 2020.1 或更高版本\");\r\n#endif\r\n    }\r\n\r\n    private void OnGUI()\r\n    {\r\n        GUILayout.BeginArea(new Rect(10, 10, 350, 200));\r\n        GUILayout.Label(\"Search 搜索系统演示\", UnityEditor.EditorStyles.boldLabel);\r\n        searchQuery = GUILayout.TextField(searchQuery);\r\n        maxResults = int.TryParse(GUILayout.TextField(maxResults.ToString()), out var max) ? max : maxResults;\r\n        enableSearch = GUILayout.Toggle(enableSearch, \"启用搜索\");\r\n        if (GUILayout.Button(\"执行搜索\") || Input.GetKeyDown(KeyCode.S))\r\n        {\r\n            PerformSearch();\r\n        }\r\n        GUILayout.Label(\"按S键快速搜索\");\r\n        GUILayout.EndArea();\r\n    }\r\n} "
+        }
+    ]
+}

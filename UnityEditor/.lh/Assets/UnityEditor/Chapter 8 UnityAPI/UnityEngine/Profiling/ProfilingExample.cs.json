@@ -1,0 +1,18 @@
+{
+    "sourceFile": "Assets/UnityEditor/Chapter 8 UnityAPI/UnityEngine/Profiling/ProfilingExample.cs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1750932334177,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1750932334177,
+            "name": "Commit-0",
+            "content": "using UnityEngine;\r\nusing UnityEngine.Profiling;\r\n\r\n/// <summary>\r\n/// UnityEngine.Profiling 命名空间案例演示\r\n/// 展示Profiler采样、性能统计等核心功能\r\n/// </summary>\r\npublic class ProfilingExample : MonoBehaviour\r\n{\r\n    [Header(\"Profiler 设置\")]\r\n    [SerializeField] private string sampleName = \"CustomSample\";\r\n    [SerializeField] private int loopCount = 10000;\r\n    [SerializeField] private float lastSampleTime = 0f;\r\n\r\n    private void Update()\r\n    {\r\n        Profiler.BeginSample(sampleName);\r\n        float sum = 0f;\r\n        for (int i = 0; i < loopCount; i++)\r\n        {\r\n            sum += Mathf.Sin(i);\r\n        }\r\n        Profiler.EndSample();\r\n        lastSampleTime = Time.realtimeSinceStartup;\r\n    }\r\n\r\n    private void OnGUI()\r\n    {\r\n        GUILayout.BeginArea(new Rect(10, 10, 350, 180));\r\n        GUILayout.Label(\"Profiling 性能分析演示\", UnityEditor.EditorStyles.boldLabel);\r\n        sampleName = GUILayout.TextField(sampleName);\r\n        loopCount = int.TryParse(GUILayout.TextField(loopCount.ToString()), out var l) ? l : loopCount;\r\n        GUILayout.Label($\"上次采样时间: {lastSampleTime:F3}s\");\r\n        GUILayout.Label(\"请在Unity Profiler窗口查看自定义采样段\");\r\n        GUILayout.EndArea();\r\n    }\r\n} "
+        }
+    ]
+}

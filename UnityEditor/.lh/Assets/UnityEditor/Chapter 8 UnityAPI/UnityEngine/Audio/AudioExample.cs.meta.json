@@ -1,0 +1,18 @@
+{
+    "sourceFile": "Assets/UnityEditor/Chapter 8 UnityAPI/UnityEngine/Audio/AudioExample.cs.meta",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1750930790082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1750930790082,
+            "name": "Commit-0",
+            "content": "fileFormatVersion: 2\r\nguid: 01234567890123456789012345678901\r\nMonoImporter:\r\n  externalObjects: {}\r\n  serializedVersion: 2\r\n  defaultReferences: []\r\n  executionOrder: 0\r\n  icon: {instanceID: 0}\r\n  userData: \r\n  assetBundleName: \r\n  assetBundleVariant: "
+        }
+    ]
+}

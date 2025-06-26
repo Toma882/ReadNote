@@ -28,9 +28,9 @@
 	],
 	"locale": "zh_CN",
 	"ocr.enabled": false,
-	"theme": 1,
-	"preferredLightTheme": 1,
-	"notes.sortOrder.field": "user_updated_time",
+	"theme": 2,
+	"preferredLightTheme": 2,
+	"notes.sortOrder.field": "order",
 	"notes.sortOrder.reverse": false,
 	"notes.perFieldReverse": {
 		"user_updated_time": false,
@@ -50,19 +50,22 @@
 	"markdown.plugin.sub": true,
 	"markdown.plugin.sup": true,
 	"markdown.plugin.deflist": true,
+	"markdown.plugin.abbr": false,
 	"markdown.plugin.emoji": true,
 	"markdown.plugin.multitable": true,
+	"style.editor.fontSize": 16,
+	"style.editor.fontFamily": "Arial",
 	"ui.layout": {
 		"key": "root",
 		"children": [
 			{
 				"key": "sideBar",
-				"width": 197,
+				"width": 600,
 				"visible": true
 			},
 			{
 				"key": "noteList",
-				"width": 381,
+				"width": 178,
 				"visible": true
 			},
 			{

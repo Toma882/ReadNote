@@ -1,0 +1,30 @@
+{
+    "sourceFile": "Assets/UnityEditor/Chapter 8 UnityAPI/UnityEngine/Assertions/AssertionsExample.cs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1750932281659,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1750932287705,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,12 +7,12 @@\n /// </summary>\r\n public class AssertionsExample : MonoBehaviour\r\n {\r\n     [Header(\"断言测试参数\")]\r\n-    [SerializeField] private int a = 5;\r\n-    [SerializeField] private int b = 5;\r\n-    [SerializeField] private int c = 10;\r\n-    [SerializeField] private string str = \"hello\";\r\n+    [SerializeField] private int a = 5;//测试参数a\r\n+    [SerializeField] private int b = 5;//测试参数b\r\n+    [SerializeField] private int c = 10;//测试参数c\r\n+    [SerializeField] private string str = \"hello\";//测试参数str\r\n     [SerializeField] private string str2 = \"hello\";\r\n     [SerializeField] private GameObject go;\r\n \r\n     private void Start()\r\n"
+                },
+                {
+                    "date": 1750932300947,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,9 +29,9 @@\n     private void OnGUI()\r\n     {\r\n         GUILayout.BeginArea(new Rect(10, 10, 350, 200));\r\n         GUILayout.Label(\"Assertions 断言演示\", UnityEditor.EditorStyles.boldLabel);\r\n-        a = int.TryParse(GUILayout.TextField(a.ToString()), out var aVal) ? aVal : a;\r\n+        a = int.TryParse(GUILayout.TextField(a.ToString()), out var aVal) ? aVal : a;   //\r\n         b = int.TryParse(GUILayout.TextField(b.ToString()), out var bVal) ? bVal : b;\r\n         c = int.TryParse(GUILayout.TextField(c.ToString()), out var cVal) ? cVal : c;\r\n         str = GUILayout.TextField(str);\r\n         str2 = GUILayout.TextField(str2);\r\n"
+                },
+                {
+                    "date": 1750932306489,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,12 +29,12 @@\n     private void OnGUI()\r\n     {\r\n         GUILayout.BeginArea(new Rect(10, 10, 350, 200));\r\n         GUILayout.Label(\"Assertions 断言演示\", UnityEditor.EditorStyles.boldLabel);\r\n-        a = int.TryParse(GUILayout.TextField(a.ToString()), out var aVal) ? aVal : a;   //\r\n-        b = int.TryParse(GUILayout.TextField(b.ToString()), out var bVal) ? bVal : b;\r\n-        c = int.TryParse(GUILayout.TextField(c.ToString()), out var cVal) ? cVal : c;\r\n-        str = GUILayout.TextField(str);\r\n+        a = int.TryParse(GUILayout.TextField(a.ToString()), out var aVal) ? aVal : a;   //测试参数a\r\n+        b = int.TryParse(GUILayout.TextField(b.ToString()), out var bVal) ? bVal : b;   //测试参数b\r\n+        c = int.TryParse(GUILayout.TextField(c.ToString()), out var cVal) ? cVal : c;   //测试参数c\r\n+        str = GUILayout.TextField(str);   //测试参数str\r\n         str2 = GUILayout.TextField(str2);\r\n         go = (GameObject)UnityEditor.EditorGUILayout.ObjectField(\"GameObject\", go, typeof(GameObject), true);\r\n         if (GUILayout.Button(\"执行断言测试\"))\r\n         {\r\n"
+                }
+            ],
+            "date": 1750932281659,
+            "name": "Commit-0",
+            "content": "using UnityEngine;\r\nusing UnityEngine.Assertions;\r\n\r\n/// <summary>\r\n/// UnityEngine.Assertions 命名空间案例演示\r\n/// 展示断言的核心功能\r\n/// </summary>\r\npublic class AssertionsExample : MonoBehaviour\r\n{\r\n    [Header(\"断言测试参数\")]\r\n    [SerializeField] private int a = 5;\r\n    [SerializeField] private int b = 5;\r\n    [SerializeField] private int c = 10;\r\n    [SerializeField] private string str = \"hello\";\r\n    [SerializeField] private string str2 = \"hello\";\r\n    [SerializeField] private GameObject go;\r\n\r\n    private void Start()\r\n    {\r\n        // 基本断言\r\n        Assert.IsTrue(a == b, \"a 应该等于 b\");\r\n        Assert.AreEqual(a, b, \"a 和 b 应该相等\");\r\n        Assert.AreNotEqual(a, c, \"a 和 c 不应该相等\");\r\n        Assert.IsNotNull(go, \"GameObject 不应为 null\");\r\n        Assert.AreEqual(str, str2, \"字符串应该相等\");\r\n        Debug.Log(\"断言测试已执行，若无报错则全部通过\");\r\n    }\r\n\r\n    private void OnGUI()\r\n    {\r\n        GUILayout.BeginArea(new Rect(10, 10, 350, 200));\r\n        GUILayout.Label(\"Assertions 断言演示\", UnityEditor.EditorStyles.boldLabel);\r\n        a = int.TryParse(GUILayout.TextField(a.ToString()), out var aVal) ? aVal : a;\r\n        b = int.TryParse(GUILayout.TextField(b.ToString()), out var bVal) ? bVal : b;\r\n        c = int.TryParse(GUILayout.TextField(c.ToString()), out var cVal) ? cVal : c;\r\n        str = GUILayout.TextField(str);\r\n        str2 = GUILayout.TextField(str2);\r\n        go = (GameObject)UnityEditor.EditorGUILayout.ObjectField(\"GameObject\", go, typeof(GameObject), true);\r\n        if (GUILayout.Button(\"执行断言测试\"))\r\n        {\r\n            try\r\n            {\r\n                Assert.IsTrue(a == b, \"a 应该等于 b\");\r\n                Assert.AreEqual(a, b, \"a 和 b 应该相等\");\r\n                Assert.AreNotEqual(a, c, \"a 和 c 不应该相等\");\r\n                Assert.IsNotNull(go, \"GameObject 不应为 null\");\r\n                Assert.AreEqual(str, str2, \"字符串应该相等\");\r\n                Debug.Log(\"断言全部通过\");\r\n            }\r\n            catch (AssertionException ex)\r\n            {\r\n                Debug.LogError($\"断言失败: {ex.Message}\");\r\n            }\r\n        }\r\n        GUILayout.EndArea();\r\n    }\r\n} "
+        }
+    ]
+}
