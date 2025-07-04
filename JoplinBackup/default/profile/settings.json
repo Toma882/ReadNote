@@ -1,7 +1,7 @@
 {
 	"$schema": "https://joplinapp.org/schema/settings.json",
 	"altInstanceId": "",
-	"editor.codeView": true,
+	"editor.codeView": false,
 	"sync.target": 3,
 	"richTextBannerDismissed": true,
 	"editor.pluginCompatibilityBannerDismissedFor": [
@@ -60,12 +60,12 @@
 		"children": [
 			{
 				"key": "sideBar",
-				"width": 600,
+				"width": 215,
 				"visible": true
 			},
 			{
 				"key": "noteList",
-				"width": 178,
+				"width": 107,
 				"visible": true
 			},
 			{
