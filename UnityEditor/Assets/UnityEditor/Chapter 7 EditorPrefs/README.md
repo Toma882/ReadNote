@@ -30,12 +30,13 @@ Unity的资源管理系统包含多个组件，本章涉及：
 
 - **基本用法**: `EditorPrefs.SetString(string key, string value)`, `EditorPrefs.GetString(string key, string defaultValue)`
 - **用途**: 在编辑器会话之间保存和读取设置
-- **支持的数据类型**: 
+- **支持的数据类型**:
   - `int` (SetInt/GetInt)
   - `float` (SetFloat/GetFloat)
   - `string` (SetString/GetString)
   - `bool` (SetBool/GetBool)
-- **示例**:  
+- **示例**:
+
   ```csharp
   // 保存设置
   EditorPrefs.SetString("LastProjectPath", projectPath);
@@ -56,7 +57,8 @@ Unity的资源管理系统包含多个组件，本章涉及：
   - 资源查询和加载
   - 资源依赖和引用关系
   - 资源序列化和反序列化
-- **示例**:  
+- **示例**:
+
   ```csharp
   // 创建资源
   Material newMaterial = new Material(Shader.Find("Standard"));
@@ -104,7 +106,8 @@ Unity的资源管理系统包含多个组件，本章涉及：
   - `OnPreprocessModel` - 模型导入前处理
   - `OnPostprocessModel` - 模型导入后处理
   - `OnPostprocessAllAssets` - 所有资源导入后处理
-- **示例**:  
+- **示例**:
+
   ```csharp
   public class TextureProcessor : AssetPostprocessor
   {
@@ -128,7 +131,8 @@ Unity的资源管理系统包含多个组件，本章涉及：
   - `OnWillCreateAsset` - 资源创建前
   - `OnWillDeleteAsset` - 资源删除前
   - `OnWillMoveAsset` - 资源移动前
-- **示例**:  
+- **示例**:
+
   ```csharp
   public class AssetTracker : AssetModificationProcessor
   {
@@ -148,7 +152,8 @@ Unity的资源管理系统包含多个组件，本章涉及：
   - `AssetBundleBuild` - 定义AssetBundle的构建信息
   - `BuildPipeline` - 提供构建AssetBundle的方法
   - `AssetDatabase` - 管理项目中的资源
-- **示例**:  
+- **示例**:
+
   ```csharp
   public static void BuildAllAssetBundles(string outputPath)
   {
@@ -176,7 +181,7 @@ Unity的资源管理系统包含多个组件，本章涉及：
 
 ## 思维导图
 
-```
+```text
 Unity EditorPrefs和资源管理系统
 ├── EditorPrefs系统
 │   ├── 基本操作
@@ -314,7 +319,7 @@ Unity EditorPrefs和资源管理系统
 
 ## UML类图
 
-```
+```text
 +--------------------+         +-----------------------+         +-----------------------+
 |     EditorPrefs    |         |   AssetPostprocessor  |         |AssetModificationProcessor|
 +--------------------+         +-----------------------+         +-----------------------+
@@ -462,6 +467,228 @@ Unity EditorPrefs和资源管理系统
    - 实现资源生命周期管理
    - 提供优雅的错误处理机制
 
+## Unity 编辑器资源控制相关接口补充
+
+除了本章涵盖的核心接口外，Unity 还提供了更多用于编辑器资源控制和管理的接口：
+
+### 编辑器持久化与设置管理
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **SettingsProvider** | 自定义设置提供者 | 在 Project Settings 窗口中添加自定义设置页面 | `OnGUI()`, `OnActivate()`, `OnDeactivate()` |
+| **EditorSettings** | 编辑器全局设置 | 访问和修改编辑器的全局配置 | `serializationMode`, `defaultBehaviorMode`, `spritePackerMode` |
+| **ProjectSettings** | 项目设置管理 | 管理项目级别的设置和配置 | `SetDirty()`, `SaveSettings()` |
+| **PlayerSettings** | 播放器设置 | 配置构建播放器时的各种设置 | `companyName`, `productName`, `bundleIdentifier` |
+| **EditorUserBuildSettings** | 用户构建设置 | 管理用户的构建设置和偏好 | `selectedBuildTargetGroup`, `selectedStandaloneTarget` |
+
+### 序列化与属性处理
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **SerializedObject** | 序列化对象处理 | 在编辑器中安全地编辑对象属性 | `FindProperty()`, `ApplyModifiedProperties()`, `Update()` |
+| **SerializedProperty** | 序列化属性处理 | 访问和修改序列化属性 | `stringValue`, `intValue`, `boolValue`, `objectReferenceValue` |
+| **PropertyDrawer** | 自定义属性绘制器 | 为特定属性类型创建自定义绘制器 | `OnGUI()`, `GetPropertyHeight()` |
+| **PropertyAttribute** | 属性特性基类 | 为属性添加元数据和自定义行为 | `order`, `hideInInspector` |
+
+### 编辑器应用程序控制
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **EditorApplication** | 编辑器应用程序控制 | 控制编辑器的生命周期和行为 | `isPlaying`, `isPaused`, `isCompiling`, `ExecuteMenuItem()` |
+| **EditorUtility** | 编辑器实用工具 | 提供各种编辑器实用功能 | `DisplayDialog()`, `OpenFilePanel()`, `SetDirty()`, `FocusProjectWindow()` |
+| **EditorGUIUtility** | 编辑器GUI实用工具 | 提供GUI相关的实用功能 | `systemCopyBuffer`, `LoadRequired()`, `GetControlID()` |
+
+### 资源导入器系统
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **AssetImporter** | 资源导入器基类 | 所有资源导入器的基类 | `assetPath`, `userData`, `assetTimeStamp` |
+| **TextureImporter** | 纹理导入器 | 控制纹理资源的导入设置 | `textureType`, `textureFormat`, `maxTextureSize` |
+| **ModelImporter** | 模型导入器 | 控制3D模型的导入设置 | `importMaterials`, `meshCompression`, `animationType` |
+| **AudioImporter** | 音频导入器 | 控制音频资源的导入设置 | `loadType`, `compressionFormat`, `quality` |
+
+### 资源加载与管理
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **Resources** | 资源加载系统 | 运行时加载 Resources 文件夹中的资源 | `Load()`, `LoadAll()`, `UnloadAsset()` |
+| **StreamingAssets** | 流媒体资源 | 存储构建后需要直接访问的资源 | `Application.streamingAssetsPath` |
+| **Addressables** | 可寻址资源系统 | 现代化的资源管理和加载系统 | `Addressables.LoadAssetAsync()`, `Addressables.Release()` |
+| **AssetBundle** | 资源包系统 | 将资源打包为可单独加载的包 | `AssetBundle.LoadAsset()`, `AssetBundle.Unload()` |
+
+### 编辑器GUI系统
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **EditorGUI** | 编辑器GUI绘制 | 在编辑器中绘制GUI控件 | `LabelField()`, `PropertyField()`, `ObjectField()` |
+| **EditorGUILayout** | 编辑器GUI布局 | 自动布局的GUI控件绘制 | `BeginHorizontal()`, `EndHorizontal()`, `Space()` |
+| **GUILayout** | GUI布局系统 | 运行时和编辑器的GUI布局 | `Button()`, `TextField()`, `Toggle()` |
+| **UIElements** | 现代UI框架 | 基于XML和CSS的现代UI系统 | `VisualElement`, `BindableProperty`, `USS` |
+
+### 预制体与场景管理
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **PrefabUtility** | 预制体工具 | 处理预制体的创建、应用和还原 | `SaveAsPrefabAsset()`, `ApplyPrefabInstance()`, `RevertPrefabInstance()`, `LoadPrefabContents()` |
+| **PrefabInstanceStatus** | 预制体实例状态 | 检查预制体实例的状态 | `Connected`, `Disconnected`, `MissingPrefab` |
+| **SceneManager** | 场景管理器 | 管理场景的加载、保存和切换 | `LoadScene()`, `SaveScene()`, `CreateScene()` |
+| **SceneView** | 场景视图 | 控制场景视图的行为和显示 | `onSceneGUIDelegate`, `Repaint()` |
+
+#### PrefabUtility 详细接口说明
+
+PrefabUtility 是 Unity 编辑器中处理预制体的核心工具类，提供了丰富的接口来管理预制体的整个生命周期：
+
+| 方法名称 | 功能描述 | 参数说明 | 返回值 | 使用场景 |
+|---------|---------|---------|-------|----------|
+| **SaveAsPrefabAsset** | 将场景中的游戏对象保存为预制体资源 | `(GameObject instance, string assetPath)` | `GameObject` | 创建新的预制体资源 |
+| **SaveAsPrefabAssetAndConnect** | 保存预制体并连接实例 | `(GameObject instance, string assetPath, out bool success)` | `GameObject` | 创建预制体并建立连接关系 |
+| **LoadPrefabContents** | 加载预制体内容到临时场景 | `(string assetPath)` | `GameObject` | 编辑预制体内容 |
+| **UnloadPrefabContents** | 卸载预制体内容 | `(GameObject contentsRoot)` | `void` | 释放预制体编辑资源 |
+| **SavePrefabAsset** | 保存预制体资源 | `(GameObject asset)` | `bool` | 保存预制体修改 |
+| **InstantiatePrefab** | 实例化预制体 | `(Object assetComponentOrGameObject)` | `GameObject` | 在场景中创建预制体实例 |
+| **ApplyPrefabInstance** | 应用预制体实例的修改到资源 | `(GameObject instanceRoot, InteractionMode action)` | `void` | 将实例修改应用到预制体 |
+| **RevertPrefabInstance** | 还原预制体实例的修改 | `(GameObject instanceRoot, InteractionMode action)` | `void` | 撤销实例修改 |
+| **UnpackPrefabInstance** | 解包预制体实例 | `(GameObject instanceRoot, PrefabUnpackMode unpackMode, InteractionMode action)` | `void` | 将预制体实例转换为普通对象 |
+| **GetPrefabAssetType** | 获取预制体资源类型 | `(Object targetObject)` | `PrefabAssetType` | 检查预制体类型 |
+| **GetPrefabInstanceStatus** | 获取预制体实例状态 | `(GameObject targetObject)` | `PrefabInstanceStatus` | 检查实例连接状态 |
+| **GetPrefabAssetPathOfNearestInstanceRoot** | 获取最近预制体实例的路径 | `(GameObject instanceRoot)` | `string` | 获取预制体资源路径 |
+| **GetCorrespondingObjectFromSource** | 获取源对象对应的预制体对象 | `(Object componentOrGameObject)` | `Object` | 获取预制体中的对应对象 |
+| **GetCorrespondingObjectFromSourceAtPath** | 从路径获取对应的预制体对象 | `(Object componentOrGameObject, string assetPath)` | `Object` | 从指定路径获取对应对象 |
+| **GetPrefabInstanceHandle** | 获取预制体实例句柄 | `(GameObject instanceRoot)` | `PrefabInstanceHandle` | 获取实例的唯一标识 |
+| **GetOutermostPrefabInstanceRoot** | 获取最外层预制体实例根 | `(GameObject gameObject)` | `GameObject` | 获取预制体实例的根对象 |
+| **IsPartOfPrefabInstance** | 检查是否为预制体实例的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于预制体实例 |
+| **IsPartOfPrefabAsset** | 检查是否为预制体资源的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于预制体资源 |
+| **IsPartOfVariantPrefab** | 检查是否为预制体变体的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于预制体变体 |
+| **IsPartOfModelPrefab** | 检查是否为模型预制体的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于模型预制体 |
+| **IsPartOfRegularPrefab** | 检查是否为常规预制体的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于常规预制体 |
+| **IsPrefabAssetMissing** | 检查预制体资源是否缺失 | `(Object componentOrGameObject)` | `bool` | 检查预制体资源是否存在 |
+| **IsDisconnectedPrefabInstance** | 检查预制体实例是否断开连接 | `(Object componentOrGameObject)` | `bool` | 检查实例连接状态 |
+| **IsOutermostPrefabInstanceRoot** | 检查是否为最外层预制体实例根 | `(GameObject gameObject)` | `bool` | 检查是否为预制体根对象 |
+| **IsAnyPrefabInstanceRoot** | 检查是否为任何预制体实例根 | `(GameObject gameObject)` | `bool` | 检查是否为预制体实例根 |
+| **IsAddedComponentOverride** | 检查是否为添加的组件覆盖 | `(Object component)` | `bool` | 检查组件是否为添加的覆盖 |
+| **IsRemovedComponentOverride** | 检查是否为移除的组件覆盖 | `(Object component)` | `bool` | 检查组件是否为移除的覆盖 |
+| **IsAddedGameObjectOverride** | 检查是否为添加的游戏对象覆盖 | `(GameObject gameObject)` | `bool` | 检查游戏对象是否为添加的覆盖 |
+| **IsRemovedGameObjectOverride** | 检查是否为移除的游戏对象覆盖 | `(GameObject gameObject)` | `bool` | 检查游戏对象是否为移除的覆盖 |
+| **GetAddedComponents** | 获取添加的组件列表 | `(GameObject prefabInstanceRoot)` | `Component[]` | 获取实例中添加的组件 |
+| **GetRemovedComponents** | 获取移除的组件列表 | `(GameObject prefabInstanceRoot)` | `Component[]` | 获取实例中移除的组件 |
+| **GetAddedGameObjects** | 获取添加的游戏对象列表 | `(GameObject prefabInstanceRoot)` | `GameObject[]` | 获取实例中添加的游戏对象 |
+| **GetRemovedGameObjects** | 获取移除的游戏对象列表 | `(GameObject prefabInstanceRoot)` | `GameObject[]` | 获取实例中移除的游戏对象 |
+| **GetPropertyModifications** | 获取属性修改列表 | `(GameObject prefabInstanceRoot)` | `PropertyModification[]` | 获取实例中的属性修改 |
+| **SetPropertyModifications** | 设置属性修改列表 | `(GameObject prefabInstanceRoot, PropertyModification[] modifications)` | `void` | 设置实例中的属性修改 |
+| **ClearPropertyModifications** | 清除属性修改 | `(GameObject prefabInstanceRoot)` | `void` | 清除实例中的所有属性修改 |
+| **MergePrefabInstance** | 合并预制体实例 | `(GameObject instanceRoot)` | `void` | 将实例合并到预制体中 |
+| **DisconnectPrefabInstance** | 断开预制体实例连接 | `(GameObject instanceRoot)` | `void` | 断开实例与预制体的连接 |
+| **ConnectGameObjectToPrefab** | 连接游戏对象到预制体 | `(GameObject gameObject, GameObject prefabRoot)` | `void` | 建立对象与预制体的连接 |
+| **ReplacePrefab** | 替换预制体 | `(GameObject go, Object targetPrefab, ReplacePrefabOptions options)` | `GameObject` | 替换现有预制体 |
+| **CreatePrefab** | 创建预制体（已废弃） | `(string path, GameObject go)` | `GameObject` | 创建预制体（使用 SaveAsPrefabAsset 替代） |
+| **CreateEmptyPrefab** | 创建空预制体（已废弃） | `(string path)` | `GameObject` | 创建空预制体（使用 SaveAsPrefabAsset 替代） |
+| **GetPrefabParent** | 获取预制体父对象（已废弃） | `(Object source)` | `Object` | 获取预制体父对象（使用 GetCorrespondingObjectFromSource 替代） |
+| **GetPrefabObject** | 获取预制体对象（已废弃） | `(Object source)` | `Object` | 获取预制体对象（使用 GetCorrespondingObjectFromSource 替代） |
+| **FindPrefabRoot** | 查找预制体根（已废弃） | `(GameObject source)` | `GameObject` | 查找预制体根（使用 GetOutermostPrefabInstanceRoot 替代） |
+| **FindRootGameObjectWithSameParentPrefab** | 查找具有相同父预制体的根游戏对象 | `(GameObject gameObject)` | `GameObject` | 查找具有相同父预制体的根对象 |
+| **FindValidUploadPrefabInstanceRoot** | 查找有效的上传预制体实例根 | `(GameObject gameObject)` | `GameObject` | 查找有效的上传预制体实例根 |
+| **IsPartOfNonAssetPrefabInstance** | 检查是否为非资源预制体实例的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于非资源预制体实例 |
+| **IsPartOfImmutablePrefab** | 检查是否为不可变预制体的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于不可变预制体 |
+| **IsPartOfPrefabThatCanBeAppliedTo** | 检查是否为可应用的预制体的一部分 | `(Object componentOrGameObject)` | `bool` | 检查对象是否属于可应用的预制体 |
+| **GetNearestPrefabInstanceRoot** | 获取最近的预制体实例根 | `(GameObject gameObject)` | `GameObject` | 获取最近的预制体实例根对象 |
+
+#### PrefabUtility 使用示例
+
+```csharp
+// 创建预制体
+public static void CreatePrefabFromSelection()
+{
+    GameObject selected = Selection.activeGameObject;
+    if (selected != null)
+    {
+        string path = EditorUtility.SaveFilePanelInProject(
+            "Save Prefab", 
+            selected.name, 
+            "prefab", 
+            "Choose where to save the prefab");
+        
+        if (!string.IsNullOrEmpty(path))
+        {
+            GameObject prefab = PrefabUtility.SaveAsPrefabAsset(selected, path);
+            Debug.Log($"Created prefab: {prefab.name}");
+        }
+    }
+}
+
+// 应用预制体实例修改
+public static void ApplyPrefabChanges()
+{
+    GameObject selected = Selection.activeGameObject;
+    if (selected != null && PrefabUtility.IsPartOfPrefabInstance(selected))
+    {
+        PrefabUtility.ApplyPrefabInstance(selected, InteractionMode.UserAction);
+        Debug.Log("Applied prefab changes");
+    }
+}
+
+// 还原预制体实例修改
+public static void RevertPrefabChanges()
+{
+    GameObject selected = Selection.activeGameObject;
+    if (selected != null && PrefabUtility.IsPartOfPrefabInstance(selected))
+    {
+        PrefabUtility.RevertPrefabInstance(selected, InteractionMode.UserAction);
+        Debug.Log("Reverted prefab changes");
+    }
+}
+
+// 检查预制体状态
+public static void CheckPrefabStatus()
+{
+    GameObject selected = Selection.activeGameObject;
+    if (selected != null)
+    {
+        PrefabInstanceStatus status = PrefabUtility.GetPrefabInstanceStatus(selected);
+        Debug.Log($"Prefab status: {status}");
+        
+        if (PrefabUtility.IsPartOfPrefabInstance(selected))
+        {
+            string prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(selected);
+            Debug.Log($"Prefab path: {prefabPath}");
+        }
+    }
+}
+
+// 批量处理预制体
+public static void ProcessAllPrefabsInScene()
+{
+    GameObject[] allObjects = FindObjectsOfType<GameObject>();
+    foreach (GameObject obj in allObjects)
+    {
+        if (PrefabUtility.IsPartOfPrefabInstance(obj))
+        {
+            PrefabInstanceStatus status = PrefabUtility.GetPrefabInstanceStatus(obj);
+            if (status == PrefabInstanceStatus.Disconnected)
+            {
+                Debug.Log($"Disconnected prefab found: {obj.name}");
+            }
+        }
+    }
+}
+```
+
+### 构建与部署
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **BuildPipeline** | 构建管线 | 提供构建应用程序的功能 | `BuildPlayer()`, `BuildAssetBundles()`, `BuildAssetBundle()` |
+| **BuildTarget** | 构建目标 | 定义支持的构建平台 | `StandaloneWindows`, `Android`, `iOS` |
+| **BuildOptions** | 构建选项 | 定义构建时的各种选项 | `Development`, `AllowDebugging`, `ConnectWithProfiler` |
+| **BuildReport** | 构建报告 | 提供构建过程的详细信息 | `summary`, `steps`, `files` |
+
+### 调试与性能分析
+
+| 接口/类名称 | 功能描述 | 主要用途 | 重要方法/属性 |
+|------------|---------|---------|--------------|
+| **Debug** | 调试工具 | 提供调试输出和断点功能 | `Log()`, `LogError()`, `LogWarning()`, `DrawRay()` |
+| **Profiler** | 性能分析器 | 分析应用程序的性能 | `BeginSample()`, `EndSample()`, `enabled` |
+| **EditorUtility** | 编辑器实用工具 | 提供各种编辑器实用功能 | `DisplayProgressBar()`, `ClearProgressBar()`, `SetDirty()` |
+
 ## 相关资源
 
 ### 官方文档
@@ -473,6 +700,11 @@ Unity EditorPrefs和资源管理系统
 - [Unity BuildPipeline 类参考](https://docs.unity3d.com/ScriptReference/BuildPipeline.html)
 - [Unity AssetDatabase 类参考](https://docs.unity3d.com/ScriptReference/AssetDatabase.html)
 - [Unity 编辑器脚本化](https://docs.unity3d.com/Manual/ExtendingTheEditor.html)
+- [Unity SettingsProvider 类参考](https://docs.unity3d.com/ScriptReference/SettingsProvider.html)
+- [Unity SerializedObject 类参考](https://docs.unity3d.com/ScriptReference/SerializedObject.html)
+- [Unity EditorApplication 类参考](https://docs.unity3d.com/ScriptReference/EditorApplication.html)
+- [Unity Addressables 系统](https://docs.unity3d.com/Packages/com.unity.addressables@latest/)
+- [Unity UIElements 系统](https://docs.unity3d.com/Manual/UIElements.html)
 
 ### 教程与参考
 
@@ -480,4 +712,9 @@ Unity EditorPrefs和资源管理系统
 - [优化资源导入工作流](https://blog.unity.com/technology/optimizing-unity-asset-import-workflow)
 - [Unity 编辑器扩展基础](https://learn.unity.com/tutorial/editor-scripting)
 - [Unity CI/CD 自动化构建](https://unity.com/how-to/set-cicd-pipeline-unity-projects)
-- [资源管理系统设计](https://blog.unity.com/technology/asset-management-in-unity) 
+- [资源管理系统设计](https://blog.unity.com/technology/asset-management-in-unity)
+- [Unity Addressables 系统指南](https://docs.unity3d.com/Packages/com.unity.addressables@latest/manual/index.html)
+- [Unity UIElements 开发指南](https://docs.unity3d.com/Manual/UIElements.html)
+- [Unity 序列化系统详解](https://docs.unity3d.com/Manual/script-Serialization.html)
+- [Unity 预制体系统最佳实践](https://docs.unity3d.com/Manual/Prefabs.html)
+- [Unity 构建系统优化](https://docs.unity3d.com/Manual/BuildPlayer.html)

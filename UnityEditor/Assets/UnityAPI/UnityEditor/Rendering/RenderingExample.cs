@@ -613,12 +613,12 @@ public class RenderingExample : MonoBehaviour
         try
         {
             // 开始性能分析
-            Profiler.BeginSample("Rendering Profile");
+            UnityEngine.Profiling.Profiler.BeginSample("Rendering Profile");
             
             // 模拟分析过程
             System.Threading.Thread.Sleep(1000);
             
-            Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.EndSample();
             
             float profileTime = Time.time - renderingStartTime;
             isProfiling = false;

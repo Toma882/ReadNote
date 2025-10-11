@@ -32,7 +32,7 @@ public class AssetImporterExample : MonoBehaviour
     [SerializeField] private float scaleFactor = 1.0f;
     
     [Header("音频导入设置")]
-    [SerializeField] private AudioImporterLoadType audioLoadType = AudioImporterLoadType.StreamFromDisc;
+    [SerializeField] private AudioClipLoadType audioLoadType = AudioClipLoadType.Streaming;
     [SerializeField] private AudioCompressionFormat audioCompressionFormat = AudioCompressionFormat.Vorbis;
     [SerializeField] private float audioQuality = 0.5f;
     [SerializeField] private bool forceToMono = false;
@@ -413,7 +413,7 @@ public class AssetImporterExample : MonoBehaviour
     /// <param name="loadType">加载类型</param>
     /// <param name="compressionFormat">压缩格式</param>
     /// <param name="quality">质量</param>
-    public void SetAudioImportSettings(AudioImporterLoadType loadType, AudioCompressionFormat compressionFormat, float quality)
+    public void SetAudioImportSettings(AudioClipLoadType loadType, AudioCompressionFormat compressionFormat, float quality)
     {
         audioLoadType = loadType;
         audioCompressionFormat = compressionFormat;
@@ -500,7 +500,7 @@ public class AssetImporterExample : MonoBehaviour
         scaleFactor = 1.0f;
         
         // 重置音频设置
-        audioLoadType = AudioImporterLoadType.StreamFromDisc;
+        audioLoadType = AudioClipLoadType.Streaming;
         audioCompressionFormat = AudioCompressionFormat.Vorbis;
         audioQuality = 0.5f;
         forceToMono = false;
@@ -570,7 +570,7 @@ public class AssetImporterExample : MonoBehaviour
         // 音频设置
         GUILayout.Label("音频导入设置:", EditorStyles.boldLabel);
         
-        audioLoadType = (AudioImporterLoadType)EditorGUILayout.EnumPopup("加载类型", audioLoadType);
+        audioLoadType = (AudioClipLoadType)EditorGUILayout.EnumPopup("加载类型", audioLoadType);
         audioCompressionFormat = (AudioCompressionFormat)EditorGUILayout.EnumPopup("压缩格式", audioCompressionFormat);
         audioQuality = EditorGUILayout.Slider("质量", audioQuality, 0f, 1f);
         forceToMono = EditorGUILayout.Toggle("强制单声道", forceToMono);

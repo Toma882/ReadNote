@@ -9,11 +9,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
+using System.Runtime;
+using Sirenix.OdinInspector.Editor.Validation;
+using Sirenix.OdinInspector;
 
 namespace DotNet.SystemNS
 {
@@ -66,7 +69,7 @@ namespace DotNet.SystemNS
                 // ========== 数学常量 ==========
                 Debug.Log($"PI: {Math.PI}");
                 Debug.Log($"E: {Math.E}");
-                Debug.Log($"Tau: {Math.Tau}");
+                Debug.Log($"Tau: {Math.Atanh(1)}");
                 
                 // ========== 基本运算 ==========
                 double sqrt = Math.Sqrt(16);
@@ -467,15 +470,31 @@ namespace DotNet.SystemNS
                 
                 // ========== 性能计数器 ==========
                 // 注意：在Unity中某些性能计数器可能不可用
-                try
+                // 确保引入必要的命名空间
+                //using System.Diagnostics;
+
+                // 使用 PerformanceCounter 之前检查是否可用
+                // if (PerformanceCounterCategory.Exists("Processor"))
+                // {
+                //     try
+                //     {
+                //         using (PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total"))
+                //         {
+                //             float cpuUsage = cpuCounter.NextValue();
+                //             Debug.Log($"CPU使用率: {cpuUsage:F2}%");
+                //         }
+                //     }
+                //     catch (Exception ex)
+                //     {
+                //         Debug.LogWarning($"性能计数器不可用: {ex.Message}");
+                //     }
+                // }
+                // else
+                // {
+                //     Debug.LogWarning("性能计数器类别 'Processor' 不存在。");
+                // }
                 {
-                    PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-                    float cpuUsage = cpuCounter.NextValue();
-                    Debug.Log($"CPU使用率: {cpuUsage:F2}%");
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning($"性能计数器不可用: {ex.Message}");
+                  //  Debug.LogWarning($"性能计数器不可用: {ex.Message}");
                 }
                 
                 // ========== 调试断言 ==========
@@ -813,18 +832,29 @@ namespace DotNet.SystemNS
                 // ========== 数据验证 ==========
                 var user = new User { Name = "李四", Age = 25, Email = "invalid-email" };
                 var validationResults = new List<ValidationResult>();
-                var validationContext = new ValidationContext(user);
                 
-                bool isValid = Validator.TryValidateObject(user, validationContext, validationResults, true);
-                Debug.Log($"用户数据验证结果: {isValid}");
+                // // 确保引入必要的命名空间
+                // var validationContext = new ValidationContext(user);
                 
-                if (!isValid)
-                {
-                    foreach (var result in validationResults)
-                    {
-                        Debug.LogWarning($"验证错误: {result.ErrorMessage}");
-                    }
-                }
+                // // 使用早期返回提高可读性
+                // if (!Validator.TryValidateObject(user, validationContext, validationResults, true))
+                // {
+                //     Debug.Log($"用户数据验证结果: false");
+                //     foreach (var result in validationResults)
+                //     {
+                //         Debug.LogWarning($"验证错误: {result.ErrorMessage}");
+                //     }
+                //     return; // 早期返回
+                // }
+                
+                // Debug.Log($"用户数据验证结果: true");
+                // if (!isValid)
+                // {
+                //     foreach (var result in validationResults)
+                //     {
+                //         Debug.LogWarning($"验证错误: {result.ErrorMessage}");
+                //     }
+                // }
                 
                 // ========== 属性变化通知 ==========
                 var observablePerson = new ObservablePerson { Name = "王五", Age = 30 };
@@ -904,13 +934,13 @@ namespace DotNet.SystemNS
         private class User
         {
             [Required(ErrorMessage = "姓名不能为空")]
-            [StringLength(50, MinimumLength = 2, ErrorMessage = "姓名长度必须在2-50个字符之间")]
+            //[StringLength(50, MinimumLength = 2, ErrorMessage = "姓名长度必须在2-50个字符之间")]
             public string Name { get; set; }
             
-            [Range(0, 150, ErrorMessage = "年龄必须在0-150之间")]
+            //[Range(0, 150, ErrorMessage = "年龄必须在0-150之间")]
             public int Age { get; set; }
             
-            [EmailAddress(ErrorMessage = "邮箱格式不正确")]
+            //[EmailAddress(ErrorMessage = "邮箱格式不正确")]
             public string Email { get; set; }
         }
         

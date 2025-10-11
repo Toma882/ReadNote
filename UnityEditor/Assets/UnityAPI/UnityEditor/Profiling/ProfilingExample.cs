@@ -199,7 +199,7 @@ public class ProfilingExample : MonoBehaviour
         // 设置性能分析器回调
         if (enableProfilerWindow)
         {
-            Profiler.enabled = true;
+            UnityEngine.Profiling.Profiler.enabled = true;
         }
         
         Debug.Log("性能分析器回调设置完成");
@@ -279,7 +279,7 @@ public class ProfilingExample : MonoBehaviour
             memoryInfo.totalMemory = SystemInfo.systemMemorySize * 1024L * 1024L;
             memoryInfo.usedMemory = SystemInfo.systemMemorySize * 1024L * 1024L - SystemInfo.systemMemorySize * 1024L * 1024L;
             memoryInfo.freeMemory = SystemInfo.systemMemorySize * 1024L * 1024L;
-            memoryInfo.reservedMemory = Profiler.GetTotalReservedMemoryLong();
+            memoryInfo.reservedMemory = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong();
             memoryInfo.systemMemory = SystemInfo.systemMemorySize * 1024L * 1024L;
             memoryInfo.graphicsMemory = SystemInfo.graphicsMemorySize * 1024L * 1024L;
             
@@ -291,11 +291,11 @@ public class ProfilingExample : MonoBehaviour
             graphicsMemory = memoryInfo.graphicsMemory;
             
             // 估算其他内存使用
-            audioMemory = Profiler.GetMonoUsedSizeLong() / 4;
-            physicsMemory = Profiler.GetMonoUsedSizeLong() / 8;
+            audioMemory = UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong() / 4;
+            physicsMemory = UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong() / 8;
             renderingMemory = graphicsMemory / 2;
-            scriptingMemory = Profiler.GetMonoUsedSizeLong();
-            uiMemory = Profiler.GetMonoUsedSizeLong() / 6;
+            scriptingMemory = UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong();
+            uiMemory = UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong() / 6;
         }
     }
 
