@@ -164,6 +164,49 @@
 - 装饰器模式和条件注册
 - 作用域管理和资源释放
 
+#### 📁 示例文件
+
+**Security (安全)**
+- `SecurityExample.cs` - 安全API综合示例
+  - AES/DES/RSA加密解密
+  - SHA/MD5/HMAC哈希算法
+  - 密码安全和盐值处理
+  - X.509证书管理
+  - Windows身份验证
+  - 安全随机数生成
+
+**Diagnostics (诊断)**
+- `DiagnosticsExample.cs` - 诊断API综合示例
+  - Debug/Trace基础日志
+  - 结构化日志记录
+  - Stopwatch性能计时
+  - 性能计数器监控
+  - 进程监控和分析
+  - Activity活动跟踪
+  - 内存和GC监控
+  - 调试器支持
+  - 事件日志管理
+
+**Configuration (配置)**
+- `ConfigurationExample.cs` - 配置API综合示例
+  - 基础配置构建
+  - JSON/XML/INI配置文件
+  - 环境变量和命令行参数
+  - 强类型配置绑定
+  - 配置验证和选项模式
+  - 配置热重载
+  - 配置加密和多环境
+
+**DependencyInjection (依赖注入)**
+- `DependencyInjectionExample.cs` - 依赖注入API综合示例
+  - 基础服务注册和解析
+  - 服务生命周期管理
+  - 工厂模式和条件注册
+  - 装饰器模式实现
+  - 服务集合扩展
+  - 实际应用场景
+  - 最佳实践指导
+
 #### 🔄 工作流程
 
 ```
