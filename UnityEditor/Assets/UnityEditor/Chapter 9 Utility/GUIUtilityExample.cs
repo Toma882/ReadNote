@@ -260,6 +260,221 @@ namespace UnityEditor.Examples
 
         #endregion
 
+        #region GUI状态管理示例
+
+        /// <summary>
+        /// 获取GUI状态对象
+        /// </summary>
+        public static void GetStateObjectExample()
+        {
+            // 获取或创建状态对象
+            object stateObject = GUIUtility.GetStateObject(typeof(Dictionary<string, object>), 123);
+            Debug.Log($"状态对象: {stateObject.GetType().Name}");
+        }
+
+        /// <summary>
+        /// 查询GUI状态对象
+        /// </summary>
+        public static void QueryStateObjectExample()
+        {
+            // 查询状态对象
+            object stateObject = GUIUtility.QueryStateObject(typeof(List<string>), 456);
+            Debug.Log($"查询状态对象: {(stateObject != null ? "找到" : "未找到")}");
+        }
+
+        /// <summary>
+        /// 获取永久控制ID
+        /// </summary>
+        public static void GetPermanentControlIDExample()
+        {
+            int controlID = GUIUtility.GetPermanentControlID();
+            Debug.Log($"永久控制ID: {controlID}");
+        }
+
+        /// <summary>
+        /// 设置键盘控制
+        /// </summary>
+        public static void SetKeyboardControlExample()
+        {
+            int controlID = GUIUtility.GetControlID(FocusType.Keyboard);
+            GUIUtility.keyboardControl = controlID;
+            Debug.Log($"设置键盘控制ID: {controlID}");
+        }
+
+        #endregion
+
+        #region GUI变换示例
+
+        /// <summary>
+        /// 围绕轴心旋转
+        /// </summary>
+        public static void RotateAroundPivotExample()
+        {
+            Vector2 pivot = new Vector2(100, 100);
+            float angle = 45f;
+            
+            Matrix4x4 matrix = GUIUtility.RotateAroundPivot(angle, pivot);
+            Debug.Log($"旋转矩阵: {matrix}");
+        }
+
+        /// <summary>
+        /// 围绕轴心缩放
+        /// </summary>
+        public static void ScaleAroundPivotExample()
+        {
+            Vector2 pivot = new Vector2(100, 100);
+            Vector2 scale = new Vector2(2f, 2f);
+            
+            Matrix4x4 matrix = GUIUtility.ScaleAroundPivot(scale, pivot);
+            Debug.Log($"缩放矩阵: {matrix}");
+        }
+
+        /// <summary>
+        /// 组合变换
+        /// </summary>
+        public static void CombinedTransformExample()
+        {
+            Vector2 pivot = new Vector2(100, 100);
+            
+            // 先旋转
+            Matrix4x4 rotationMatrix = GUIUtility.RotateAroundPivot(30f, pivot);
+            
+            // 再缩放
+            Matrix4x4 scaleMatrix = GUIUtility.ScaleAroundPivot(new Vector2(1.5f, 1.5f), pivot);
+            
+            // 组合变换
+            Matrix4x4 combinedMatrix = scaleMatrix * rotationMatrix;
+            Debug.Log($"组合变换矩阵: {combinedMatrix}");
+        }
+
+        #endregion
+
+        #region GUI事件处理示例
+
+        /// <summary>
+        /// 处理GUI事件
+        /// </summary>
+        public static void HandleGUIEventExample()
+        {
+            Event currentEvent = Event.current;
+            if (currentEvent != null)
+            {
+                Debug.Log($"当前GUI事件: {currentEvent.type}");
+                
+                if (currentEvent.type == EventType.MouseDown)
+                {
+                    Debug.Log($"鼠标按下位置: {currentEvent.mousePosition}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 检查GUI事件类型
+        /// </summary>
+        public static void CheckGUIEventTypeExample()
+        {
+            Event currentEvent = Event.current;
+            if (currentEvent != null)
+            {
+                bool isMouseEvent = currentEvent.type == EventType.MouseDown || 
+                                  currentEvent.type == EventType.MouseUp || 
+                                  currentEvent.type == EventType.MouseMove;
+                
+                bool isKeyboardEvent = currentEvent.type == EventType.KeyDown || 
+                                     currentEvent.type == EventType.KeyUp;
+                
+                Debug.Log($"是否鼠标事件: {isMouseEvent}, 是否键盘事件: {isKeyboardEvent}");
+            }
+        }
+
+        #endregion
+
+        #region GUI布局示例
+
+        /// <summary>
+        /// GUI布局计算
+        /// </summary>
+        public static void GUILayoutCalculationExample()
+        {
+            // 计算布局矩形
+            Rect layoutRect = GUILayoutUtility.GetRect(100, 50);
+            Debug.Log($"布局矩形: {layoutRect}");
+            
+            // 获取最后使用的矩形
+            Rect lastRect = GUILayoutUtility.GetLastRect();
+            Debug.Log($"最后矩形: {lastRect}");
+        }
+
+        /// <summary>
+        /// GUI区域管理
+        /// </summary>
+        public static void GUIAreaManagementExample()
+        {
+            Rect areaRect = new Rect(10, 10, 200, 100);
+            
+            // 开始GUI区域
+            GUILayout.BeginArea(areaRect);
+            Debug.Log("GUI区域已开始");
+            
+            // 结束GUI区域
+            GUILayout.EndArea();
+            Debug.Log("GUI区域已结束");
+        }
+
+        #endregion
+
+        #region GUI样式示例
+
+        /// <summary>
+        /// 获取GUI样式
+        /// </summary>
+        public static void GetGUIStyleExample()
+        {
+            GUIStyle labelStyle = GUI.skin.label;
+            Debug.Log($"标签样式: {labelStyle.name}");
+            
+            GUIStyle buttonStyle = GUI.skin.button;
+            Debug.Log($"按钮样式: {buttonStyle.name}");
+        }
+
+        /// <summary>
+        /// 设置GUI样式
+        /// </summary>
+        public static void SetGUIStyleExample()
+        {
+            GUIStyle customStyle = new GUIStyle();
+            customStyle.normal.textColor = Color.blue;
+            customStyle.fontSize = 16;
+            customStyle.fontStyle = FontStyle.Bold;
+            
+            Debug.Log("自定义GUI样式已设置");
+        }
+
+        #endregion
+
+        #region GUI调试示例
+
+        /// <summary>
+        /// GUI调试信息
+        /// </summary>
+        public static void GUIDebugInfoExample()
+        {
+            Debug.Log($"当前GUI深度: {GUI.depth}");
+            Debug.Log($"GUI是否启用: {GUI.enabled}");
+            Debug.Log($"GUI是否改变: {GUI.changed}");
+        }
+
+        /// <summary>
+        /// GUI状态重置
+        /// </summary>
+        public static void GUIStateResetExample()
+        {
+            GUI.changed = false;
+            Debug.Log("GUI状态已重置");
+        }
+
+        #endregion
+
         #region 综合示例
 
         /// <summary>

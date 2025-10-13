@@ -404,5 +404,270 @@ namespace UnityEditor.Examples
         }
 
         #endregion
-    }
-}
+
+        #region 高级构建工具示例
+
+        /// <summary>
+        /// 构建配置管理
+        /// </summary>
+        public static void BuildConfigurationManagementExample()
+        {
+            Debug.Log("=== 构建配置管理 ===");
+            
+            // 获取当前构建配置
+            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            BuildTargetGroup targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            
+            Debug.Log($"当前构建目标: {currentTarget}");
+            Debug.Log($"当前构建目标组: {targetGroup}");
+            
+            // 设置构建配置
+            EditorUserBuildSettings.SwitchActiveBuildTarget(targetGroup, currentTarget);
+            Debug.Log("构建配置已设置");
+            
+            // 获取构建选项
+            BuildOptions buildOptions = EditorUserBuildSettings.GetBuildLocation(currentTarget);
+            Debug.Log($"构建选项: {buildOptions}");
+        }
+
+        /// <summary>
+        /// 构建路径管理
+        /// </summary>
+        public static void BuildPathManagementExample()
+        {
+            Debug.Log("=== 构建路径管理 ===");
+            
+            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            
+            // 获取构建路径
+            string buildPath = EditorUserBuildSettings.GetBuildLocation(currentTarget);
+            Debug.Log($"当前构建路径: {buildPath}");
+            
+            // 设置构建路径
+            string newBuildPath = "Builds/MyGame";
+            EditorUserBuildSettings.SetBuildLocation(currentTarget, newBuildPath);
+            Debug.Log($"构建路径已设置为: {newBuildPath}");
+            
+            // 获取默认构建路径
+            string defaultPath = GetDefaultBuildPath(currentTarget);
+            Debug.Log($"默认构建路径: {defaultPath}");
+        }
+
+        /// <summary>
+        /// 构建脚本管理
+        /// </summary>
+        public static void BuildScriptManagementExample()
+        {
+            Debug.Log("=== 构建脚本管理 ===");
+            
+            // 获取构建脚本
+            string[] buildScripts = GetBuildScripts();
+            Debug.Log($"可用构建脚本数量: {buildScripts.Length}");
+            
+            foreach (string script in buildScripts)
+            {
+                Debug.Log($"构建脚本: {script}");
+            }
+            
+            // 执行构建脚本
+            if (buildScripts.Length > 0)
+            {
+                ExecuteBuildScript(buildScripts[0]);
+                Debug.Log($"构建脚本 {buildScripts[0]} 已执行");
+            }
+        }
+
+        /// <summary>
+        /// 构建验证
+        /// </summary>
+        public static void BuildValidationExample()
+        {
+            Debug.Log("=== 构建验证 ===");
+            
+            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            
+            // 验证构建设置
+            bool isValid = ValidateBuildSettings(currentTarget);
+            Debug.Log($"构建设置是否有效: {isValid}");
+            
+            if (!isValid)
+            {
+                string[] errors = GetBuildValidationErrors(currentTarget);
+                Debug.Log($"构建验证错误数量: {errors.Length}");
+                
+                foreach (string error in errors)
+                {
+                    Debug.LogError($"构建错误: {error}");
+                }
+            }
+            
+            // 检查构建依赖
+            string[] missingDependencies = GetMissingDependencies(currentTarget);
+            if (missingDependencies.Length > 0)
+            {
+                Debug.LogWarning($"缺少依赖项数量: {missingDependencies.Length}");
+                foreach (string dependency in missingDependencies)
+                {
+                    Debug.LogWarning($"缺少依赖: {dependency}");
+                }
+            }
+            else
+            {
+                Debug.Log("所有依赖项都已满足");
+            }
+        }
+
+        /// <summary>
+        /// 构建优化
+        /// </summary>
+        public static void BuildOptimizationExample()
+        {
+            Debug.Log("=== 构建优化 ===");
+            
+            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            
+            // 获取构建优化建议
+            BuildOptimizationSuggestion[] suggestions = GetBuildOptimizationSuggestions(currentTarget);
+            Debug.Log($"构建优化建议数量: {suggestions.Length}");
+            
+            foreach (BuildOptimizationSuggestion suggestion in suggestions)
+            {
+                Debug.Log($"优化建议: {suggestion.description}");
+                Debug.Log($"预期收益: {suggestion.expectedBenefit}");
+                Debug.Log($"优先级: {suggestion.priority}");
+            }
+            
+            // 应用优化设置
+            ApplyBuildOptimizations(currentTarget);
+            Debug.Log("构建优化设置已应用");
+        }
+
+        #endregion
+
+        #region 构建工具示例
+
+        /// <summary>
+        /// 构建工具函数
+        /// </summary>
+        public static void BuildToolsExample()
+        {
+            Debug.Log("=== 构建工具函数 ===");
+            
+            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            
+            // 获取构建信息
+            BuildInfo buildInfo = GetBuildInfo(currentTarget);
+            Debug.Log($"构建信息: {buildInfo}");
+            
+            // 获取构建统计
+            BuildStatistics stats = GetBuildStatistics(currentTarget);
+            Debug.Log($"构建统计: {stats}");
+            
+            // 检查构建状态
+            BuildStatus status = GetBuildStatus(currentTarget);
+            Debug.Log($"构建状态: {status}");
+            
+            // 获取构建历史
+            BuildHistoryEntry[] history = GetBuildHistory(currentTarget);
+            Debug.Log($"构建历史记录数量: {history.Length}");
+            
+            foreach (BuildHistoryEntry entry in history)
+            {
+                Debug.Log($"构建记录: {entry.buildTime} - {entry.buildSize}MB");
+            }
+        }
+
+        /// <summary>
+        /// 构建调试
+        /// </summary>
+        public static void BuildDebuggingExample()
+        {
+            Debug.Log("=== 构建调试 ===");
+            
+            BuildTarget currentTarget = EditorUserBuildSettings.activeBuildTarget;
+            
+            // 启用构建调试
+            EnableBuildDebugging(currentTarget, true);
+            Debug.Log("构建调试已启用");
+            
+            // 设置调试级别
+            SetBuildDebugLevel(currentTarget, BuildDebugLevel.Verbose);
+            Debug.Log("构建调试级别已设置为详细");
+            
+            // 获取调试信息
+            string debugInfo = GetBuildDebugInfo(currentTarget);
+            Debug.Log($"构建调试信息: {debugInfo}");
+            
+            // 清除调试信息
+            ClearBuildDebugInfo(currentTarget);
+            Debug.Log("构建调试信息已清除");
+        }
+
+        #endregion
+
+        #region 构建管理示例
+
+        /// <summary>
+        /// 构建管理
+        /// </summary>
+        public static void BuildManagementExample()
+        {
+            Debug.Log("=== 构建管理 ===");
+            
+            // 获取所有构建目标
+            BuildTarget[] allTargets = GetAllBuildTargets();
+            Debug.Log($"总构建目标数量: {allTargets.Length}");
+            
+            // 按平台分类
+            Dictionary<string, List<BuildTarget>> platformGroups = new Dictionary<string, List<BuildTarget>>();
+            
+            foreach (BuildTarget target in allTargets)
+            {
+                string platform = BuildUtilities.GetBuildTargetName(target).Split(' ')[0];
+                if (!platformGroups.ContainsKey(platform))
+                {
+                    platformGroups[platform] = new List<BuildTarget>();
+                }
+                platformGroups[platform].Add(target);
+            }
+            
+            foreach (var group in platformGroups)
+            {
+                Debug.Log($"平台 {group.Key}: {group.Value.Count} 个目标");
+            }
+        }
+
+        /// <summary>
+        /// 构建统计
+        /// </summary>
+        public static void BuildStatisticsExample()
+        {
+            Debug.Log("=== 构建统计 ===");
+            
+            BuildTarget[] allTargets = GetAllBuildTargets();
+            
+            int totalBuilds = 0;
+            long totalBuildSize = 0;
+            float totalBuildTime = 0f;
+            
+            foreach (BuildTarget target in allTargets)
+            {
+                BuildHistoryEntry[] history = GetBuildHistory(target);
+                totalBuilds += history.Length;
+                
+                foreach (BuildHistoryEntry entry in history)
+                {
+                    totalBuildSize += entry.buildSize;
+                    totalBuildTime += entry.buildTime;
+                }
+            }
+            
+            Debug.Log($"=== 构建统计 ===");
+            Debug.Log($"总构建次数: {totalBuilds}");
+            Debug.Log($"总构建大小: {totalBuildSize / 1024 / 1024} MB");
+            Debug.Log($"总构建时间: {totalBuildTime} 秒");
+            Debug.Log($"平均构建大小: {totalBuildSize / totalBuilds / 1024 / 1024} MB");
+            Debug.Log($"平均构建时间: {totalBuildTime / totalBuilds} 秒");
+        }
+
+        #endregion

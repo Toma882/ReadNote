@@ -396,5 +396,383 @@ namespace UnityEditor.Examples
         }
 
         #endregion
-    }
-}
+
+        #region 高级图集操作示例
+
+        /// <summary>
+        /// 图集管理
+        /// </summary>
+        public static void AtlasManagementExample()
+        {
+            Debug.Log("=== 图集管理 ===");
+            
+            // 获取所有图集
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            Debug.Log($"场景中图集数量: {guids.Length}");
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    Debug.Log($"图集: {atlas.name}");
+                    
+                    // 获取图集信息
+                    AtlasInfo info = GetAtlasInfo(atlas);
+                    Debug.Log($"  图集信息: {info}");
+                    
+                    // 检查图集状态
+                    bool isPacked = IsAtlasPacked(atlas);
+                    Debug.Log($"  是否已打包: {isPacked}");
+                    
+                    // 获取图集大小
+                    Vector2Int atlasSize = GetAtlasSize(atlas);
+                    Debug.Log($"  图集大小: {atlasSize}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 图集性能分析
+        /// </summary>
+        public static void AtlasPerformanceAnalysisExample()
+        {
+            Debug.Log("=== 图集性能分析 ===");
+            
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            
+            int totalAtlases = guids.Length;
+            int packedAtlases = 0;
+            int totalSprites = 0;
+            long totalAtlasSize = 0;
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    if (IsAtlasPacked(atlas)) packedAtlases++;
+                    
+                    int spriteCount = GetAtlasSpriteCount(atlas);
+                    totalSprites += spriteCount;
+                    
+                    long atlasSize = GetAtlasFileSize(atlas);
+                    totalAtlasSize += atlasSize;
+                }
+            }
+            
+            Debug.Log($"=== 图集性能统计 ===");
+            Debug.Log($"总图集数量: {totalAtlases}");
+            Debug.Log($"已打包图集数量: {packedAtlases}");
+            Debug.Log($"总精灵数量: {totalSprites}");
+            Debug.Log($"总图集大小: {totalAtlasSize / 1024 / 1024} MB");
+            Debug.Log($"平均精灵数量: {totalSprites / (float)totalAtlases:F2}");
+            Debug.Log($"平均图集大小: {totalAtlasSize / (float)totalAtlases / 1024 / 1024:F2} MB");
+        }
+
+        /// <summary>
+        /// 图集优化建议
+        /// </summary>
+        public static void AtlasOptimizationSuggestionsExample()
+        {
+            Debug.Log("=== 图集优化建议 ===");
+            
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    Debug.Log($"图集: {atlas.name}");
+                    
+                    // 检查图集大小
+                    Vector2Int atlasSize = GetAtlasSize(atlas);
+                    if (atlasSize.x > 2048 || atlasSize.y > 2048)
+                    {
+                        Debug.LogWarning($"  建议: 图集大小过大 ({atlasSize.x}x{atlasSize.y})，建议不超过2048x2048");
+                    }
+                    
+                    // 检查精灵数量
+                    int spriteCount = GetAtlasSpriteCount(atlas);
+                    if (spriteCount > 100)
+                    {
+                        Debug.LogWarning($"  建议: 精灵数量过多 ({spriteCount})，建议不超过100个");
+                    }
+                    
+                    // 检查图集利用率
+                    float utilization = GetAtlasUtilization(atlas);
+                    if (utilization < 0.7f)
+                    {
+                        Debug.LogWarning($"  建议: 图集利用率过低 ({utilization:P1})，建议优化精灵排列");
+                    }
+                    
+                    // 检查重复精灵
+                    int duplicateCount = GetDuplicateSpriteCount(atlas);
+                    if (duplicateCount > 0)
+                    {
+                        Debug.LogWarning($"  建议: 发现 {duplicateCount} 个重复精灵，建议移除重复项");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 图集验证
+        /// </summary>
+        public static void AtlasValidationExample()
+        {
+            Debug.Log("=== 图集验证 ===");
+            
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    Debug.Log($"验证图集: {atlas.name}");
+                    
+                    bool isValid = true;
+                    
+                    // 验证图集设置
+                    if (!ValidateAtlasSettings(atlas))
+                    {
+                        Debug.LogError("  错误: 图集设置无效");
+                        isValid = false;
+                    }
+                    
+                    // 验证精灵引用
+                    if (!ValidateAtlasSprites(atlas))
+                    {
+                        Debug.LogError("  错误: 图集精灵引用无效");
+                        isValid = false;
+                    }
+                    
+                    // 验证图集大小
+                    Vector2Int atlasSize = GetAtlasSize(atlas);
+                    if (atlasSize.x <= 0 || atlasSize.y <= 0)
+                    {
+                        Debug.LogError($"  错误: 图集大小无效 ({atlasSize})");
+                        isValid = false;
+                    }
+                    
+                    // 验证图集格式
+                    if (!ValidateAtlasFormat(atlas))
+                    {
+                        Debug.LogError("  错误: 图集格式不支持");
+                        isValid = false;
+                    }
+                    
+                    Debug.Log($"  验证结果: {(isValid ? "通过" : "失败")}");
+                }
+            }
+        }
+
+        #endregion
+
+        #region 图集工具示例
+
+        /// <summary>
+        /// 图集工具函数
+        /// </summary>
+        public static void AtlasToolsExample()
+        {
+            Debug.Log("=== 图集工具函数 ===");
+            
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            if (guids.Length == 0)
+            {
+                Debug.LogWarning("场景中没有找到图集");
+                return;
+            }
+            
+            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+            
+            if (atlas != null)
+            {
+                // 获取图集信息
+                AtlasInfo info = GetAtlasInfo(atlas);
+                Debug.Log($"图集信息: {info}");
+                
+                // 检查图集状态
+                bool isPacked = IsAtlasPacked(atlas);
+                bool isDirty = IsAtlasDirty(atlas);
+                Debug.Log($"是否已打包: {isPacked}");
+                Debug.Log($"是否需要重新打包: {isDirty}");
+                
+                // 获取图集统计
+                AtlasStatistics stats = GetAtlasStatistics(atlas);
+                Debug.Log($"图集统计: {stats}");
+                
+                // 检查图集错误
+                string[] errors = GetAtlasErrors(atlas);
+                if (errors.Length > 0)
+                {
+                    Debug.LogWarning($"图集错误数量: {errors.Length}");
+                    foreach (string error in errors)
+                    {
+                        Debug.LogWarning($"  {error}");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 图集调试
+        /// </summary>
+        public static void AtlasDebuggingExample()
+        {
+            Debug.Log("=== 图集调试 ===");
+            
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    Debug.Log($"调试图集: {atlas.name}");
+                    
+                    // 获取图集调试信息
+                    AtlasDebugInfo debugInfo = GetAtlasDebugInfo(atlas);
+                    Debug.Log($"  调试信息: {debugInfo}");
+                    
+                    // 获取图集性能统计
+                    AtlasPerformanceStats perfStats = GetAtlasPerformanceStats(atlas);
+                    Debug.Log($"  性能统计: {perfStats}");
+                    
+                    // 检查图集警告
+                    string[] warnings = GetAtlasWarnings(atlas);
+                    if (warnings.Length > 0)
+                    {
+                        Debug.LogWarning($"  警告数量: {warnings.Length}");
+                        foreach (string warning in warnings)
+                        {
+                            Debug.LogWarning($"    {warning}");
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region 图集管理示例
+
+        /// <summary>
+        /// 图集管理
+        /// </summary>
+        public static void AtlasManagementExample()
+        {
+            Debug.Log("=== 图集管理 ===");
+            
+            // 获取所有图集
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            Debug.Log($"场景中图集数量: {guids.Length}");
+            
+            // 按类型分类
+            Dictionary<string, List<SpriteAtlas>> typeGroups = new Dictionary<string, List<SpriteAtlas>>();
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    string type = GetAtlasType(atlas);
+                    if (!typeGroups.ContainsKey(type))
+                    {
+                        typeGroups[type] = new List<SpriteAtlas>();
+                    }
+                    typeGroups[type].Add(atlas);
+                }
+            }
+            
+            foreach (var group in typeGroups)
+            {
+                Debug.Log($"类型 {group.Key}: {group.Value.Count} 个图集");
+            }
+            
+            // 按大小分类
+            Dictionary<string, List<SpriteAtlas>> sizeGroups = new Dictionary<string, List<SpriteAtlas>>();
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    Vector2Int atlasSize = GetAtlasSize(atlas);
+                    string sizeCategory = GetAtlasSizeCategory(atlasSize);
+                    if (!sizeGroups.ContainsKey(sizeCategory))
+                    {
+                        sizeGroups[sizeCategory] = new List<SpriteAtlas>();
+                    }
+                    sizeGroups[sizeCategory].Add(atlas);
+                }
+            }
+            
+            foreach (var group in sizeGroups)
+            {
+                Debug.Log($"大小 {group.Key}: {group.Value.Count} 个图集");
+            }
+        }
+
+        /// <summary>
+        /// 图集统计
+        /// </summary>
+        public static void AtlasStatisticsExample()
+        {
+            Debug.Log("=== 图集统计 ===");
+            
+            string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas");
+            
+            int totalAtlases = guids.Length;
+            int packedAtlases = 0;
+            int totalSprites = 0;
+            long totalAtlasSize = 0;
+            int totalErrors = 0;
+            int totalWarnings = 0;
+            
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(path);
+                
+                if (atlas != null)
+                {
+                    if (IsAtlasPacked(atlas)) packedAtlases++;
+                    
+                    totalSprites += GetAtlasSpriteCount(atlas);
+                    totalAtlasSize += GetAtlasFileSize(atlas);
+                    totalErrors += GetAtlasErrors(atlas).Length;
+                    totalWarnings += GetAtlasWarnings(atlas).Length;
+                }
+            }
+            
+            Debug.Log($"=== 图集统计 ===");
+            Debug.Log($"总图集数: {totalAtlases}");
+            Debug.Log($"已打包图集数: {packedAtlases}");
+            Debug.Log($"总精灵数: {totalSprites}");
+            Debug.Log($"总图集大小: {totalAtlasSize / 1024 / 1024} MB");
+            Debug.Log($"总错误数: {totalErrors}");
+            Debug.Log($"总警告数: {totalWarnings}");
+            Debug.Log($"平均精灵数: {totalSprites / (float)totalAtlases:F2}");
+            Debug.Log($"平均图集大小: {totalAtlasSize / (float)totalAtlases / 1024 / 1024:F2} MB");
+        }
+
+        #endregion

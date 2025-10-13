@@ -693,7 +693,344 @@ namespace UnityEditor.Chapter9Utility.AnimationUtility
         }
 
         #endregion
-    }
-}
+
+        #region 高级动画操作示例
+
+        /// <summary>
+        /// 动画剪辑属性操作
+        /// </summary>
+        public static void AnimationClipPropertiesExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip clip = clips[0];
+                
+                // 设置动画剪辑属性
+                AnimationUtility.SetAnimationClipSettings(clip, new AnimationClipSettings
+                {
+                    loopTime = true,
+                    loopBlend = true,
+                    loopBlendOrientation = true,
+                    loopBlendPositionY = true,
+                    loopBlendPositionXZ = true,
+                    keepOriginalOrientation = false,
+                    keepOriginalPositionY = false,
+                    keepOriginalPositionXZ = false,
+                    heightFromFeet = false,
+                    mirror = false
+                });
+                
+                Debug.Log($"动画剪辑 {clip.name} 属性已设置");
+            }
+        }
+
+        /// <summary>
+        /// 动画曲线操作
+        /// </summary>
+        public static void AnimationCurveOperationsExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip clip = clips[0];
+                
+                // 获取所有曲线绑定
+                EditorCurveBinding[] bindings = AnimationUtility.GetCurveBindings(clip);
+                
+                foreach (EditorCurveBinding binding in bindings)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
+                    if (curve != null)
+                    {
+                        Debug.Log($"曲线: {binding.path}.{binding.propertyName}, 关键帧数: {curve.length}");
+                        
+                        // 修改曲线
+                        Keyframe[] keys = curve.keys;
+                        for (int i = 0; i < keys.Length; i++)
+                        {
+                            keys[i].value *= 1.1f; // 放大10%
+                        }
+                        curve.keys = keys;
+                        
+                        AnimationUtility.SetEditorCurve(clip, binding, curve);
+                    }
+                }
+                
+                Debug.Log($"动画曲线操作完成");
+            }
+        }
+
+        /// <summary>
+        /// 动画事件批量操作
+        /// </summary>
+        public static void AnimationEventBatchOperationsExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip clip = clips[0];
+                
+                // 批量添加事件
+                AnimationEvent[] events = new AnimationEvent[]
+                {
+                    new AnimationEvent { time = 0.5f, functionName = "OnAnimationEvent1" },
+                    new AnimationEvent { time = 1.0f, functionName = "OnAnimationEvent2" },
+                    new AnimationEvent { time = 1.5f, functionName = "OnAnimationEvent3" }
+                };
+                
+                AnimationUtility.SetAnimationEvents(clip, events);
+                Debug.Log($"批量添加了 {events.Length} 个动画事件");
+            }
+        }
+
+        /// <summary>
+        /// 动画剪辑复制
+        /// </summary>
+        public static void AnimationClipCopyExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip sourceClip = clips[0];
+                AnimationClip newClip = new AnimationClip();
+                
+                // 复制曲线
+                EditorCurveBinding[] bindings = AnimationUtility.GetCurveBindings(sourceClip);
+                foreach (EditorCurveBinding binding in bindings)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(sourceClip, binding);
+                    AnimationUtility.SetEditorCurve(newClip, binding, curve);
+                }
+                
+                // 复制事件
+                AnimationEvent[] events = AnimationUtility.GetAnimationEvents(sourceClip);
+                AnimationUtility.SetAnimationEvents(newClip, events);
+                
+                Debug.Log($"动画剪辑复制完成: {sourceClip.name} -> {newClip.name}");
+            }
+        }
+
+        /// <summary>
+        /// 动画剪辑合并
+        /// </summary>
+        public static void AnimationClipMergeExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length >= 2)
+            {
+                AnimationClip clip1 = clips[0];
+                AnimationClip clip2 = clips[1];
+                AnimationClip mergedClip = new AnimationClip();
+                
+                // 合并第一个剪辑
+                EditorCurveBinding[] bindings1 = AnimationUtility.GetCurveBindings(clip1);
+                foreach (EditorCurveBinding binding in bindings1)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(clip1, binding);
+                    AnimationUtility.SetEditorCurve(mergedClip, binding, curve);
+                }
+                
+                // 合并第二个剪辑（偏移时间）
+                EditorCurveBinding[] bindings2 = AnimationUtility.GetCurveBindings(clip2);
+                foreach (EditorCurveBinding binding in bindings2)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(clip2, binding);
+                    
+                    // 偏移关键帧时间
+                    Keyframe[] keys = curve.keys;
+                    for (int i = 0; i < keys.Length; i++)
+                    {
+                        keys[i].time += clip1.length; // 偏移到第一个剪辑之后
+                    }
+                    curve.keys = keys;
+                    
+                    AnimationUtility.SetEditorCurve(mergedClip, binding, curve);
+                }
+                
+                Debug.Log($"动画剪辑合并完成: {clip1.name} + {clip2.name} -> {mergedClip.name}");
+            }
+        }
+
+        #endregion
+
+        #region 动画优化示例
+
+        /// <summary>
+        /// 动画优化
+        /// </summary>
+        public static void AnimationOptimizationExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip clip = clips[0];
+                
+                // 获取所有曲线
+                EditorCurveBinding[] bindings = AnimationUtility.GetCurveBindings(clip);
+                
+                foreach (EditorCurveBinding binding in bindings)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
+                    if (curve != null && curve.length > 2)
+                    {
+                        // 简化曲线（移除冗余关键帧）
+                        Keyframe[] keys = curve.keys;
+                        List<Keyframe> optimizedKeys = new List<Keyframe>();
+                        
+                        optimizedKeys.Add(keys[0]); // 保留第一个关键帧
+                        
+                        for (int i = 1; i < keys.Length - 1; i++)
+                        {
+                            // 检查是否冗余
+                            float prevValue = keys[i - 1].value;
+                            float currentValue = keys[i].value;
+                            float nextValue = keys[i + 1].value;
+                            
+                            // 如果值变化超过阈值，保留关键帧
+                            if (Mathf.Abs(currentValue - prevValue) > 0.01f || 
+                                Mathf.Abs(currentValue - nextValue) > 0.01f)
+                            {
+                                optimizedKeys.Add(keys[i]);
+                            }
+                        }
+                        
+                        optimizedKeys.Add(keys[keys.Length - 1]); // 保留最后一个关键帧
+                        
+                        if (optimizedKeys.Count < keys.Length)
+                        {
+                            curve.keys = optimizedKeys.ToArray();
+                            AnimationUtility.SetEditorCurve(clip, binding, curve);
+                            Debug.Log($"曲线 {binding.propertyName} 优化: {keys.Length} -> {optimizedKeys.Count} 关键帧");
+                        }
+                    }
+                }
+                
+                Debug.Log("动画优化完成");
+            }
+        }
+
+        /// <summary>
+        /// 动画压缩
+        /// </summary>
+        public static void AnimationCompressionExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip clip = clips[0];
+                
+                // 设置压缩设置
+                AnimationClipSettings settings = AnimationUtility.GetAnimationClipSettings(clip);
+                settings.loopTime = true;
+                settings.loopBlend = true;
+                
+                AnimationUtility.SetAnimationClipSettings(clip, settings);
+                
+                // 压缩曲线精度
+                EditorCurveBinding[] bindings = AnimationUtility.GetCurveBindings(clip);
+                foreach (EditorCurveBinding binding in bindings)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
+                    if (curve != null)
+                    {
+                        Keyframe[] keys = curve.keys;
+                        for (int i = 0; i < keys.Length; i++)
+                        {
+                            // 压缩精度到小数点后2位
+                            keys[i].value = Mathf.Round(keys[i].value * 100f) / 100f;
+                            keys[i].time = Mathf.Round(keys[i].time * 100f) / 100f;
+                        }
+                        curve.keys = keys;
+                        AnimationUtility.SetEditorCurve(clip, binding, curve);
+                    }
+                }
+                
+                Debug.Log("动画压缩完成");
+            }
+        }
+
+        #endregion
+
+        #region 动画分析示例
+
+        /// <summary>
+        /// 动画分析
+        /// </summary>
+        public static void AnimationAnalysisExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            if (clips.Length > 0)
+            {
+                AnimationClip clip = clips[0];
+                
+                Debug.Log($"=== 动画分析: {clip.name} ===");
+                Debug.Log($"长度: {clip.length}秒");
+                Debug.Log($"帧率: {clip.frameRate}fps");
+                Debug.Log($"是否循环: {clip.isLooping}");
+                
+                // 分析曲线
+                EditorCurveBinding[] bindings = AnimationUtility.GetCurveBindings(clip);
+                Debug.Log($"曲线数量: {bindings.Length}");
+                
+                foreach (EditorCurveBinding binding in bindings)
+                {
+                    AnimationCurve curve = AnimationUtility.GetEditorCurve(clip, binding);
+                    if (curve != null)
+                    {
+                        Debug.Log($"曲线: {binding.propertyName}, 关键帧: {curve.length}");
+                        
+                        // 分析值范围
+                        float minValue = float.MaxValue;
+                        float maxValue = float.MinValue;
+                        
+                        foreach (Keyframe keyframe in curve.keys)
+                        {
+                            minValue = Mathf.Min(minValue, keyframe.value);
+                            maxValue = Mathf.Max(maxValue, keyframe.value);
+                        }
+                        
+                        Debug.Log($"  值范围: {minValue} ~ {maxValue}");
+                    }
+                }
+                
+                // 分析事件
+                AnimationEvent[] events = AnimationUtility.GetAnimationEvents(clip);
+                Debug.Log($"事件数量: {events.Length}");
+                
+                foreach (AnimationEvent animEvent in events)
+                {
+                    Debug.Log($"事件: {animEvent.functionName} at {animEvent.time}s");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 动画统计
+        /// </summary>
+        public static void AnimationStatisticsExample()
+        {
+            AnimationClip[] clips = AnimationUtility.GetAnimationClips(Selection.activeGameObject);
+            
+            int totalCurves = 0;
+            int totalEvents = 0;
+            float totalLength = 0f;
+            
+            foreach (AnimationClip clip in clips)
+            {
+                totalCurves += AnimationUtility.GetCurveBindings(clip).Length;
+                totalEvents += AnimationUtility.GetAnimationEvents(clip).Length;
+                totalLength += clip.length;
+            }
+            
+            Debug.Log($"=== 动画统计 ===");
+            Debug.Log($"总剪辑数: {clips.Length}");
+            Debug.Log($"总曲线数: {totalCurves}");
+            Debug.Log($"总事件数: {totalEvents}");
+            Debug.Log($"总长度: {totalLength}秒");
+            Debug.Log($"平均长度: {totalLength / clips.Length}秒");
+        }
+
+        #endregion
 
 

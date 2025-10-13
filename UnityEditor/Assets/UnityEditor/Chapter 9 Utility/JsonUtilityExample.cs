@@ -443,4 +443,70 @@ namespace UnityEditor.Chapter9Utility.JsonUtility
 
         #endregion
     }
+
+    // 扩展数据类定义
+    [System.Serializable]
+    public class ComplexData
+    {
+        public int id;
+        public string name;
+        public List<ItemData> items;
+        public Dictionary<string, object> metadata;
+    }
+
+    [System.Serializable]
+    public class ItemData
+    {
+        public int id;
+        public string name;
+        public int count;
+    }
+
+    [System.Serializable]
+    public class ArrayData
+    {
+        public int[] numbers;
+        public string[] strings;
+        public Vector3[] vectors;
+    }
+
+    [System.Serializable]
+    public class BaseData
+    {
+        public int baseValue;
+        public string baseName;
+    }
+
+    [System.Serializable]
+    public class DerivedData : BaseData
+    {
+        public int derivedValue;
+        public string derivedName;
+    }
+
+    [System.Serializable]
+    public class AnotherDerivedData : BaseData
+    {
+        public int anotherValue;
+        public string anotherName;
+    }
+
+    [System.Serializable]
+    public class CustomData
+    {
+        public string name;
+        public int value;
+        public string customField;
+    }
+
+    [System.Serializable]
+    public class NetworkData
+    {
+        public int playerId;
+        public string playerName;
+        public Vector3 position;
+        public int health;
+        public int level;
+        public long timestamp;
+    }
 }

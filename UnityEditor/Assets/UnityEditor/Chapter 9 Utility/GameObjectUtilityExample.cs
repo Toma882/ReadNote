@@ -372,5 +372,383 @@ namespace UnityEditor.Examples
         }
 
         #endregion
-    }
-}
+
+        #region 高级游戏对象操作示例
+
+        /// <summary>
+        /// 游戏对象层级管理
+        /// </summary>
+        public static void GameObjectHierarchyManagementExample()
+        {
+            Debug.Log("=== 游戏对象层级管理 ===");
+            
+            GameObject[] selectedObjects = Selection.gameObjects;
+            if (selectedObjects.Length == 0)
+            {
+                Debug.LogWarning("请先选择游戏对象");
+                return;
+            }
+            
+            foreach (GameObject obj in selectedObjects)
+            {
+                // 获取层级信息
+                int depth = GetGameObjectDepth(obj);
+                string hierarchyPath = GetGameObjectHierarchyPath(obj);
+                
+                Debug.Log($"对象: {obj.name}");
+                Debug.Log($"  层级深度: {depth}");
+                Debug.Log($"  层级路径: {hierarchyPath}");
+                
+                // 检查是否为根对象
+                bool isRoot = obj.transform.parent == null;
+                Debug.Log($"  是否为根对象: {isRoot}");
+                
+                // 获取子对象数量
+                int childCount = obj.transform.childCount;
+                Debug.Log($"  子对象数量: {childCount}");
+            }
+        }
+
+        /// <summary>
+        /// 游戏对象组件管理
+        /// </summary>
+        public static void GameObjectComponentManagementExample()
+        {
+            Debug.Log("=== 游戏对象组件管理 ===");
+            
+            GameObject selected = Selection.activeGameObject;
+            if (selected == null)
+            {
+                Debug.LogWarning("请先选择一个游戏对象");
+                return;
+            }
+            
+            // 获取所有组件
+            Component[] components = selected.GetComponents<Component>();
+            Debug.Log($"对象 '{selected.name}' 的组件数量: {components.Length}");
+            
+            foreach (Component component in components)
+            {
+                Debug.Log($"  组件: {component.GetType().Name}");
+                
+                // 检查组件是否启用
+                if (component is Behaviour behaviour)
+                {
+                    Debug.Log($"    启用状态: {behaviour.enabled}");
+                }
+                
+                // 检查组件是否必需
+                bool isRequired = IsComponentRequired(component);
+                Debug.Log($"    是否必需: {isRequired}");
+            }
+            
+            // 添加组件
+            if (selected.GetComponent<Rigidbody>() == null)
+            {
+                Rigidbody rb = selected.AddComponent<Rigidbody>();
+                Debug.Log($"已添加Rigidbody组件: {rb}");
+            }
+            
+            // 移除组件
+            Component[] componentsToRemove = selected.GetComponents<Component>();
+            foreach (Component component in componentsToRemove)
+            {
+                if (component.GetType() == typeof(Rigidbody))
+                {
+                    DestroyImmediate(component);
+                    Debug.Log($"已移除Rigidbody组件");
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 游戏对象标签管理
+        /// </summary>
+        public static void GameObjectTagManagementExample()
+        {
+            Debug.Log("=== 游戏对象标签管理 ===");
+            
+            GameObject selected = Selection.activeGameObject;
+            if (selected == null)
+            {
+                Debug.LogWarning("请先选择一个游戏对象");
+                return;
+            }
+            
+            // 获取当前标签
+            string currentTag = selected.tag;
+            Debug.Log($"当前标签: {currentTag}");
+            
+            // 获取所有可用标签
+            string[] allTags = UnityEditorInternal.InternalEditorUtility.tags;
+            Debug.Log($"可用标签数量: {allTags.Length}");
+            
+            foreach (string tag in allTags)
+            {
+                Debug.Log($"  标签: {tag}");
+            }
+            
+            // 设置新标签
+            if (allTags.Length > 1)
+            {
+                string newTag = allTags[1]; // 使用第二个标签
+                selected.tag = newTag;
+                Debug.Log($"标签已设置为: {newTag}");
+            }
+            
+            // 检查标签是否存在
+            bool tagExists = !string.IsNullOrEmpty(selected.tag) && 
+                            System.Array.IndexOf(allTags, selected.tag) >= 0;
+            Debug.Log($"标签是否存在: {tagExists}");
+        }
+
+        /// <summary>
+        /// 游戏对象层管理
+        /// </summary>
+        public static void GameObjectLayerManagementExample()
+        {
+            Debug.Log("=== 游戏对象层管理 ===");
+            
+            GameObject selected = Selection.activeGameObject;
+            if (selected == null)
+            {
+                Debug.LogWarning("请先选择一个游戏对象");
+                return;
+            }
+            
+            // 获取当前层
+            int currentLayer = selected.layer;
+            string layerName = LayerMask.LayerToName(currentLayer);
+            Debug.Log($"当前层: {currentLayer} ({layerName})");
+            
+            // 获取所有层
+            string[] allLayers = UnityEditorInternal.InternalEditorUtility.layers;
+            Debug.Log($"可用层数量: {allLayers.Length}");
+            
+            for (int i = 0; i < allLayers.Length; i++)
+            {
+                int layerIndex = LayerMask.NameToLayer(allLayers[i]);
+                Debug.Log($"  层 {layerIndex}: {allLayers[i]}");
+            }
+            
+            // 设置新层
+            if (allLayers.Length > 1)
+            {
+                string newLayerName = allLayers[1]; // 使用第二个层
+                int newLayerIndex = LayerMask.NameToLayer(newLayerName);
+                selected.layer = newLayerIndex;
+                Debug.Log($"层已设置为: {newLayerIndex} ({newLayerName})");
+            }
+        }
+
+        /// <summary>
+        /// 游戏对象引用管理
+        /// </summary>
+        public static void GameObjectReferenceManagementExample()
+        {
+            Debug.Log("=== 游戏对象引用管理 ===");
+            
+            GameObject selected = Selection.activeGameObject;
+            if (selected == null)
+            {
+                Debug.LogWarning("请先选择一个游戏对象");
+                return;
+            }
+            
+            // 查找引用此对象的组件
+            Component[] allComponents = FindObjectsOfType<Component>();
+            int referenceCount = 0;
+            
+            foreach (Component component in allComponents)
+            {
+                if (HasReferenceToGameObject(component, selected))
+                {
+                    referenceCount++;
+                    Debug.Log($"引用对象: {component.gameObject.name}.{component.GetType().Name}");
+                }
+            }
+            
+            Debug.Log($"总引用数量: {referenceCount}");
+            
+            // 查找此对象引用的其他对象
+            Component[] objectComponents = selected.GetComponents<Component>();
+            int referencedCount = 0;
+            
+            foreach (Component component in objectComponents)
+            {
+                GameObject[] referencedObjects = GetReferencedGameObjects(component);
+                referencedCount += referencedObjects.Length;
+                
+                foreach (GameObject referencedObj in referencedObjects)
+                {
+                    Debug.Log($"引用其他对象: {referencedObj.name}");
+                }
+            }
+            
+            Debug.Log($"引用的其他对象数量: {referencedCount}");
+        }
+
+        #endregion
+
+        #region 游戏对象工具示例
+
+        /// <summary>
+        /// 游戏对象工具函数
+        /// </summary>
+        public static void GameObjectToolsExample()
+        {
+            Debug.Log("=== 游戏对象工具函数 ===");
+            
+            GameObject selected = Selection.activeGameObject;
+            if (selected == null)
+            {
+                Debug.LogWarning("请先选择一个游戏对象");
+                return;
+            }
+            
+            // 获取对象信息
+            GameObjectInfo info = GetGameObjectInfo(selected);
+            Debug.Log($"对象信息: {info}");
+            
+            // 检查对象状态
+            bool isActive = selected.activeInHierarchy;
+            bool isStatic = selected.isStatic;
+            Debug.Log($"是否激活: {isActive}");
+            Debug.Log($"是否静态: {isStatic}");
+            
+            // 获取对象边界
+            Bounds bounds = GetGameObjectBounds(selected);
+            Debug.Log($"对象边界: {bounds}");
+            
+            // 检查对象可见性
+            bool isVisible = IsGameObjectVisible(selected);
+            Debug.Log($"是否可见: {isVisible}");
+        }
+
+        /// <summary>
+        /// 游戏对象验证
+        /// </summary>
+        public static void GameObjectValidationExample()
+        {
+            Debug.Log("=== 游戏对象验证 ===");
+            
+            GameObject selected = Selection.activeGameObject;
+            if (selected == null)
+            {
+                Debug.LogWarning("请先选择一个游戏对象");
+                return;
+            }
+            
+            // 验证对象完整性
+            ValidationResult result = ValidateGameObject(selected);
+            Debug.Log($"验证结果: {result}");
+            
+            if (!result.isValid)
+            {
+                Debug.LogWarning($"验证失败: {result.errorMessage}");
+                
+                // 尝试修复
+                bool fixed = TryFixGameObject(selected);
+                Debug.Log($"修复尝试: {(fixed ? "成功" : "失败")}");
+            }
+            
+            // 检查命名规范
+            bool nameValid = IsGameObjectNameValid(selected.name);
+            Debug.Log($"命名是否规范: {nameValid}");
+            
+            if (!nameValid)
+            {
+                string suggestedName = SuggestGameObjectName(selected);
+                Debug.Log($"建议名称: {suggestedName}");
+            }
+        }
+
+        #endregion
+
+        #region 游戏对象管理示例
+
+        /// <summary>
+        /// 游戏对象管理
+        /// </summary>
+        public static void GameObjectManagementExample()
+        {
+            Debug.Log("=== 游戏对象管理 ===");
+            
+            // 获取场景中的所有对象
+            GameObject[] allObjects = FindObjectsOfType<GameObject>();
+            Debug.Log($"场景中总对象数量: {allObjects.Length}");
+            
+            // 按类型分类
+            Dictionary<string, List<GameObject>> typeGroups = new Dictionary<string, List<GameObject>>();
+            
+            foreach (GameObject obj in allObjects)
+            {
+                string type = obj.GetType().Name;
+                if (!typeGroups.ContainsKey(type))
+                {
+                    typeGroups[type] = new List<GameObject>();
+                }
+                typeGroups[type].Add(obj);
+            }
+            
+            foreach (var group in typeGroups)
+            {
+                Debug.Log($"类型 {group.Key}: {group.Value.Count} 个对象");
+            }
+            
+            // 按层分类
+            Dictionary<int, List<GameObject>> layerGroups = new Dictionary<int, List<GameObject>>();
+            
+            foreach (GameObject obj in allObjects)
+            {
+                int layer = obj.layer;
+                if (!layerGroups.ContainsKey(layer))
+                {
+                    layerGroups[layer] = new List<GameObject>();
+                }
+                layerGroups[layer].Add(obj);
+            }
+            
+            foreach (var group in layerGroups)
+            {
+                string layerName = LayerMask.LayerToName(group.Key);
+                Debug.Log($"层 {group.Key} ({layerName}): {group.Value.Count} 个对象");
+            }
+        }
+
+        /// <summary>
+        /// 游戏对象统计
+        /// </summary>
+        public static void GameObjectStatisticsExample()
+        {
+            Debug.Log("=== 游戏对象统计 ===");
+            
+            GameObject[] allObjects = FindObjectsOfType<GameObject>();
+            
+            int totalObjects = allObjects.Length;
+            int activeObjects = 0;
+            int staticObjects = 0;
+            int totalComponents = 0;
+            int totalChildren = 0;
+            
+            foreach (GameObject obj in allObjects)
+            {
+                if (obj.activeInHierarchy) activeObjects++;
+                if (obj.isStatic) staticObjects++;
+                
+                totalComponents += obj.GetComponents<Component>().Length;
+                totalChildren += obj.transform.childCount;
+            }
+            
+            Debug.Log($"=== 游戏对象统计 ===");
+            Debug.Log($"总对象数: {totalObjects}");
+            Debug.Log($"激活对象数: {activeObjects}");
+            Debug.Log($"静态对象数: {staticObjects}");
+            Debug.Log($"总组件数: {totalComponents}");
+            Debug.Log($"总子对象数: {totalChildren}");
+            Debug.Log($"平均组件数: {totalComponents / (float)totalObjects:F2}");
+            Debug.Log($"平均子对象数: {totalChildren / (float)totalObjects:F2}");
+        }
+
+        #endregion

@@ -271,6 +271,219 @@ namespace UnityEditor.Examples
 
         #endregion
 
+        #region 内置资源示例
+
+        /// <summary>
+        /// 获取内置皮肤
+        /// </summary>
+        public static void GetBuiltinSkinExample()
+        {
+            GUISkin builtinSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector);
+            Debug.Log($"内置检查器皮肤: {builtinSkin.name}");
+            
+            GUISkin gameSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Game);
+            Debug.Log($"内置游戏皮肤: {gameSkin.name}");
+            
+            GUISkin sceneSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
+            Debug.Log($"内置场景皮肤: {sceneSkin.name}");
+        }
+
+        /// <summary>
+        /// 获取内置额外皮肤
+        /// </summary>
+        public static void GetBuiltinExtraSkinExample()
+        {
+            GUISkin extraSkin = EditorGUIUtility.GetBuiltinExtraSkin(EditorSkin.Inspector);
+            Debug.Log($"内置额外检查器皮肤: {extraSkin.name}");
+        }
+
+        /// <summary>
+        /// 获取默认字体
+        /// </summary>
+        public static void GetDefaultFontExample()
+        {
+            Font defaultFont = EditorGUIUtility.GetDefaultFont();
+            Debug.Log($"默认字体: {defaultFont.name}");
+            
+            Font boldFont = EditorGUIUtility.GetBoldDefaultFont();
+            Debug.Log($"默认粗体字体: {boldFont.name}");
+        }
+
+        #endregion
+
+        #region 图标资源示例
+
+        /// <summary>
+        /// 查找图标
+        /// </summary>
+        public static void LookupIconExample()
+        {
+            // 查找内置图标
+            Texture2D helpIcon = EditorGUIUtility.LookupIcon("_Help");
+            Debug.Log($"帮助图标: {(helpIcon != null ? "找到" : "未找到")}");
+            
+            Texture2D infoIcon = EditorGUIUtility.LookupIcon("_Info");
+            Debug.Log($"信息图标: {(infoIcon != null ? "找到" : "未找到")}");
+            
+            Texture2D warningIcon = EditorGUIUtility.LookupIcon("_Warning");
+            Debug.Log($"警告图标: {(warningIcon != null ? "找到" : "未找到")}");
+            
+            Texture2D errorIcon = EditorGUIUtility.LookupIcon("_Error");
+            Debug.Log($"错误图标: {(errorIcon != null ? "找到" : "未找到")}");
+        }
+
+        /// <summary>
+        /// 获取帮助图标
+        /// </summary>
+        public static void GetHelpIconExample()
+        {
+            Texture2D helpIcon = EditorGUIUtility.GetHelpIcon();
+            Debug.Log($"帮助图标: {(helpIcon != null ? "获取成功" : "获取失败")}");
+        }
+
+        /// <summary>
+        /// 获取信息图标
+        /// </summary>
+        public static void GetInfoIconExample()
+        {
+            Texture2D infoIcon = EditorGUIUtility.GetInfoIcon();
+            Debug.Log($"信息图标: {(infoIcon != null ? "获取成功" : "获取失败")}");
+        }
+
+        /// <summary>
+        /// 获取警告图标
+        /// </summary>
+        public static void GetWarningIconExample()
+        {
+            Texture2D warningIcon = EditorGUIUtility.GetWarningIcon();
+            Debug.Log($"警告图标: {(warningIcon != null ? "获取成功" : "获取失败")}");
+        }
+
+        /// <summary>
+        /// 获取错误图标
+        /// </summary>
+        public static void GetErrorIconExample()
+        {
+            Texture2D errorIcon = EditorGUIUtility.GetErrorIcon();
+            Debug.Log($"错误图标: {(errorIcon != null ? "获取成功" : "获取失败")}");
+        }
+
+        #endregion
+
+        #region GUI样式示例
+
+        /// <summary>
+        /// 获取GUI样式
+        /// </summary>
+        public static void GetGUIStyleExample()
+        {
+            GUIStyle labelStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).label;
+            Debug.Log($"标签样式: {labelStyle.name}");
+            
+            GUIStyle buttonStyle = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).button;
+            Debug.Log($"按钮样式: {buttonStyle.name}");
+        }
+
+        /// <summary>
+        /// 设置GUI样式
+        /// </summary>
+        public static void SetGUIStyleExample()
+        {
+            GUIStyle customStyle = new GUIStyle();
+            customStyle.normal.textColor = Color.red;
+            customStyle.fontSize = 14;
+            
+            Debug.Log("自定义GUI样式已设置");
+        }
+
+        #endregion
+
+        #region 编辑器状态示例
+
+        /// <summary>
+        /// 检查编辑器状态
+        /// </summary>
+        public static void CheckEditorStateExample()
+        {
+            bool isProSkin = EditorGUIUtility.isProSkin;
+            Debug.Log($"是否专业版皮肤: {isProSkin}");
+            
+            bool isDisplayReferencedBy = EditorGUIUtility.isDisplayReferencedBy;
+            Debug.Log($"是否显示引用: {isDisplayReferencedBy}");
+        }
+
+        /// <summary>
+        /// 设置编辑器状态
+        /// </summary>
+        public static void SetEditorStateExample()
+        {
+            EditorGUIUtility.isDisplayReferencedBy = true;
+            Debug.Log("已设置显示引用状态");
+        }
+
+        #endregion
+
+        #region 编辑器窗口示例
+
+        /// <summary>
+        /// 获取编辑器窗口
+        /// </summary>
+        public static void GetEditorWindowExample()
+        {
+            EditorWindow focusedWindow = EditorWindow.focusedWindow;
+            if (focusedWindow != null)
+            {
+                Debug.Log($"当前聚焦窗口: {focusedWindow.titleContent.text}");
+            }
+            
+            EditorWindow mouseOverWindow = EditorWindow.mouseOverWindow;
+            if (mouseOverWindow != null)
+            {
+                Debug.Log($"鼠标悬停窗口: {mouseOverWindow.titleContent.text}");
+            }
+        }
+
+        /// <summary>
+        /// 设置编辑器窗口
+        /// </summary>
+        public static void SetEditorWindowExample()
+        {
+            EditorWindow focusedWindow = EditorWindow.focusedWindow;
+            if (focusedWindow != null)
+            {
+                focusedWindow.titleContent = new GUIContent("自定义标题");
+                Debug.Log("编辑器窗口标题已设置");
+            }
+        }
+
+        #endregion
+
+        #region 编辑器工具示例
+
+        /// <summary>
+        /// 获取编辑器工具
+        /// </summary>
+        public static void GetEditorToolsExample()
+        {
+            EditorTool activeTool = EditorTools.activeTool;
+            if (activeTool != null)
+            {
+                Debug.Log($"当前活动工具: {activeTool.GetType().Name}");
+            }
+        }
+
+        /// <summary>
+        /// 设置编辑器工具
+        /// </summary>
+        public static void SetEditorToolsExample()
+        {
+            // 切换到移动工具
+            EditorTools.SetActiveTool<MoveTool>();
+            Debug.Log("已切换到移动工具");
+        }
+
+        #endregion
+
         #region 综合示例
 
         /// <summary>

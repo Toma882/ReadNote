@@ -476,5 +476,212 @@ namespace UnityEditor.Chapter9Utility.GeometryUtility
         }
 
         #endregion
+
+        #region 高级几何计算示例
+
+        /// <summary>
+        /// 计算包围盒
+        /// </summary>
+        public static void CalculateBoundsExample()
+        {
+            GameObject[] objects = FindObjectsOfType<GameObject>();
+            if (objects.Length > 0)
+            {
+                Bounds bounds = GeometryUtility.CalculateBounds(objects[0].transform.position, objects[0].transform.rotation, Vector3.one);
+                Debug.Log($"计算包围盒: {bounds}");
+            }
+        }
+
+        /// <summary>
+        /// 测试平面与AABB相交
+        /// </summary>
+        public static void TestPlanesAABBExample()
+        {
+            Plane[] planes = new Plane[]
+            {
+                new Plane(Vector3.up, Vector3.zero),
+                new Plane(Vector3.down, Vector3.up * 10),
+                new Plane(Vector3.left, Vector3.zero),
+                new Plane(Vector3.right, Vector3.right * 10)
+            };
+
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.one * 5);
+            bool intersects = GeometryUtility.TestPlanesAABB(planes, bounds);
+            Debug.Log($"平面与AABB相交: {intersects}");
+        }
+
+        /// <summary>
+        /// 尝试平面相交
+        /// </summary>
+        public static void TryPlanesIntersectExample()
+        {
+            Plane plane1 = new Plane(Vector3.up, Vector3.zero);
+            Plane plane2 = new Plane(Vector3.right, Vector3.zero);
+            Plane plane3 = new Plane(Vector3.forward, Vector3.zero);
+
+            Vector3 intersectionPoint;
+            bool intersects = GeometryUtility.TryPlanesIntersect(plane1, plane2, plane3, out intersectionPoint);
+            Debug.Log($"平面相交: {intersects}, 交点: {intersectionPoint}");
+        }
+
+        /// <summary>
+        /// 检查点是否在三角形内
+        /// </summary>
+        public static void IsPointInTriangleExample()
+        {
+            Vector3 point = new Vector3(0.5f, 0.5f, 0);
+            Vector3 a = new Vector3(0, 0, 0);
+            Vector3 b = new Vector3(1, 0, 0);
+            Vector3 c = new Vector3(0.5f, 1, 0);
+
+            bool isInside = GeometryUtility.IsPointInTriangle(point, a, b, c);
+            Debug.Log($"点是否在三角形内: {isInside}");
+        }
+
+        /// <summary>
+        /// 计算OBB（有向包围盒）
+        /// </summary>
+        public static void CalculateOBBExample()
+        {
+            Vector3[] points = new Vector3[]
+            {
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0),
+                new Vector3(0, 1, 0),
+                new Vector3(1, 1, 0)
+            };
+
+            Bounds obb = GeometryUtility.CalculateBounds(points);
+            Debug.Log($"OBB包围盒: {obb}");
+        }
+
+        #endregion
+
+        #region 几何变换示例
+
+        /// <summary>
+        /// 几何变换矩阵
+        /// </summary>
+        public static void GeometryTransformExample()
+        {
+            Vector3[] originalPoints = new Vector3[]
+            {
+                new Vector3(0, 0, 0),
+                new Vector3(1, 0, 0),
+                new Vector3(0, 1, 0)
+            };
+
+            Matrix4x4 transformMatrix = Matrix4x4.TRS(
+                new Vector3(5, 0, 0),
+                Quaternion.Euler(0, 45, 0),
+                Vector3.one * 2
+            );
+
+            Vector3[] transformedPoints = new Vector3[originalPoints.Length];
+            for (int i = 0; i < originalPoints.Length; i++)
+            {
+                transformedPoints[i] = transformMatrix.MultiplyPoint(originalPoints[i]);
+            }
+
+            Debug.Log($"变换后的点: {string.Join(", ", transformedPoints)}");
+        }
+
+        /// <summary>
+        /// 几何投影
+        /// </summary>
+        public static void GeometryProjectionExample()
+        {
+            Vector3 point = new Vector3(1, 2, 3);
+            Plane plane = new Plane(Vector3.up, Vector3.zero);
+
+            Vector3 projectedPoint = plane.ClosestPointOnPlane(point);
+            Debug.Log($"投影点: {projectedPoint}");
+        }
+
+        #endregion
+
+        #region 几何碰撞检测示例
+
+        /// <summary>
+        /// 几何碰撞检测
+        /// </summary>
+        public static void GeometryCollisionExample()
+        {
+            Bounds bounds1 = new Bounds(Vector3.zero, Vector3.one);
+            Bounds bounds2 = new Bounds(Vector3.one * 0.5f, Vector3.one);
+
+            bool intersects = bounds1.Intersects(bounds2);
+            Debug.Log($"包围盒相交: {intersects}");
+
+            Bounds intersection = bounds1;
+            intersection.Intersect(bounds2);
+            Debug.Log($"相交区域: {intersection}");
+        }
+
+        /// <summary>
+        /// 射线与几何体相交
+        /// </summary>
+        public static void RayGeometryIntersectionExample()
+        {
+            Ray ray = new Ray(Vector3.zero, Vector3.forward);
+            Bounds bounds = new Bounds(Vector3.forward * 5, Vector3.one);
+
+            float distance;
+            bool intersects = bounds.IntersectRay(ray, out distance);
+            Debug.Log($"射线与包围盒相交: {intersects}, 距离: {distance}");
+        }
+
+        #endregion
+
+        #region 几何工具示例
+
+        /// <summary>
+        /// 几何工具函数
+        /// </summary>
+        public static void GeometryToolsExample()
+        {
+            // 计算距离
+            Vector3 point1 = new Vector3(0, 0, 0);
+            Vector3 point2 = new Vector3(3, 4, 0);
+            float distance = Vector3.Distance(point1, point2);
+            Debug.Log($"两点距离: {distance}");
+
+            // 计算角度
+            Vector3 vector1 = new Vector3(1, 0, 0);
+            Vector3 vector2 = new Vector3(0, 1, 0);
+            float angle = Vector3.Angle(vector1, vector2);
+            Debug.Log($"两向量夹角: {angle}度");
+
+            // 计算叉积
+            Vector3 crossProduct = Vector3.Cross(vector1, vector2);
+            Debug.Log($"叉积: {crossProduct}");
+        }
+
+        /// <summary>
+        /// 几何优化
+        /// </summary>
+        public static void GeometryOptimizationExample()
+        {
+            Vector3[] points = new Vector3[1000];
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i] = Random.insideUnitSphere * 10;
+            }
+
+            // 计算包围盒
+            Bounds bounds = GeometryUtility.CalculateBounds(points);
+            Debug.Log($"优化后的包围盒: {bounds}");
+
+            // 计算中心点
+            Vector3 center = Vector3.zero;
+            foreach (Vector3 point in points)
+            {
+                center += point;
+            }
+            center /= points.Length;
+            Debug.Log($"几何中心: {center}");
+        }
+
+        #endregion
     }
 }

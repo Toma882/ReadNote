@@ -380,5 +380,357 @@ namespace UnityEditor.Examples
         }
 
         #endregion
-    }
-}
+
+        #region 高级LOD操作示例
+
+        /// <summary>
+        /// LOD组管理
+        /// </summary>
+        public static void LODGroupManagementExample()
+        {
+            Debug.Log("=== LOD组管理 ===");
+            
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            Debug.Log($"场景中LOD组数量: {allLODGroups.Length}");
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                Debug.Log($"LOD组: {lodGroup.name}");
+                
+                // 获取LOD信息
+                LOD[] lods = lodGroup.GetLODs();
+                Debug.Log($"  LOD级别数量: {lods.Length}");
+                
+                for (int i = 0; i < lods.Length; i++)
+                {
+                    Debug.Log($"    LOD {i}: 屏幕高度 {lods[i].screenRelativeTransitionHeight:F3}, 渲染器数量 {lods[i].renderers.Length}");
+                }
+                
+                // 获取包围盒
+                Bounds bounds = LODUtility.CalculateLODGroupBoundingBox(lodGroup);
+                Debug.Log($"  包围盒大小: {bounds.size}");
+            }
+        }
+
+        /// <summary>
+        /// LOD性能分析
+        /// </summary>
+        public static void LODPerformanceAnalysisExample()
+        {
+            Debug.Log("=== LOD性能分析 ===");
+            
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            
+            int totalLODGroups = allLODGroups.Length;
+            int totalLODLevels = 0;
+            int totalRenderers = 0;
+            float totalScreenSpace = 0f;
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                LOD[] lods = lodGroup.GetLODs();
+                totalLODLevels += lods.Length;
+                
+                foreach (LOD lod in lods)
+                {
+                    totalRenderers += lod.renderers.Length;
+                    totalScreenSpace += lod.screenRelativeTransitionHeight;
+                }
+            }
+            
+            Debug.Log($"=== LOD性能统计 ===");
+            Debug.Log($"总LOD组数量: {totalLODGroups}");
+            Debug.Log($"总LOD级别数量: {totalLODLevels}");
+            Debug.Log($"总渲染器数量: {totalRenderers}");
+            Debug.Log($"平均LOD级别: {totalLODLevels / (float)totalLODGroups:F2}");
+            Debug.Log($"平均渲染器数量: {totalRenderers / (float)totalLODLevels:F2}");
+            Debug.Log($"平均屏幕空间: {totalScreenSpace / totalLODLevels:F3}");
+        }
+
+        /// <summary>
+        /// LOD优化建议
+        /// </summary>
+        public static void LODOptimizationSuggestionsExample()
+        {
+            Debug.Log("=== LOD优化建议 ===");
+            
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                LOD[] lods = lodGroup.GetLODs();
+                
+                Debug.Log($"LOD组: {lodGroup.name}");
+                
+                // 检查LOD级别数量
+                if (lods.Length < 2)
+                {
+                    Debug.LogWarning("  建议: LOD级别数量过少，建议至少2个级别");
+                }
+                else if (lods.Length > 4)
+                {
+                    Debug.LogWarning("  建议: LOD级别数量过多，建议不超过4个级别");
+                }
+                
+                // 检查屏幕空间分布
+                for (int i = 0; i < lods.Length - 1; i++)
+                {
+                    float currentScreenSpace = lods[i].screenRelativeTransitionHeight;
+                    float nextScreenSpace = lods[i + 1].screenRelativeTransitionHeight;
+                    float ratio = currentScreenSpace / nextScreenSpace;
+                    
+                    if (ratio < 1.5f)
+                    {
+                        Debug.LogWarning($"  建议: LOD {i} 和 LOD {i + 1} 的屏幕空间差距过小 ({ratio:F2})");
+                    }
+                }
+                
+                // 检查渲染器数量
+                for (int i = 0; i < lods.Length; i++)
+                {
+                    int rendererCount = lods[i].renderers.Length;
+                    if (rendererCount == 0)
+                    {
+                        Debug.LogWarning($"  警告: LOD {i} 没有渲染器");
+                    }
+                    else if (rendererCount > 10)
+                    {
+                        Debug.LogWarning($"  建议: LOD {i} 渲染器数量过多 ({rendererCount})");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// LOD验证
+        /// </summary>
+        public static void LODValidationExample()
+        {
+            Debug.Log("=== LOD验证 ===");
+            
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                Debug.Log($"验证LOD组: {lodGroup.name}");
+                
+                LOD[] lods = lodGroup.GetLODs();
+                bool isValid = true;
+                
+                // 验证LOD级别数量
+                if (lods.Length == 0)
+                {
+                    Debug.LogError("  错误: LOD组没有LOD级别");
+                    isValid = false;
+                }
+                
+                // 验证屏幕空间值
+                for (int i = 0; i < lods.Length; i++)
+                {
+                    float screenSpace = lods[i].screenRelativeTransitionHeight;
+                    if (screenSpace < 0f || screenSpace > 1f)
+                    {
+                        Debug.LogError($"  错误: LOD {i} 屏幕空间值无效 ({screenSpace})");
+                        isValid = false;
+                    }
+                }
+                
+                // 验证屏幕空间顺序
+                for (int i = 0; i < lods.Length - 1; i++)
+                {
+                    if (lods[i].screenRelativeTransitionHeight <= lods[i + 1].screenRelativeTransitionHeight)
+                    {
+                        Debug.LogError($"  错误: LOD {i} 屏幕空间值应该大于 LOD {i + 1}");
+                        isValid = false;
+                    }
+                }
+                
+                // 验证渲染器
+                for (int i = 0; i < lods.Length; i++)
+                {
+                    foreach (Renderer renderer in lods[i].renderers)
+                    {
+                        if (renderer == null)
+                        {
+                            Debug.LogError($"  错误: LOD {i} 包含空渲染器");
+                            isValid = false;
+                        }
+                        else if (renderer.gameObject == null)
+                        {
+                            Debug.LogError($"  错误: LOD {i} 包含无效渲染器");
+                            isValid = false;
+                        }
+                    }
+                }
+                
+                Debug.Log($"  验证结果: {(isValid ? "通过" : "失败")}");
+            }
+        }
+
+        #endregion
+
+        #region LOD工具示例
+
+        /// <summary>
+        /// LOD工具函数
+        /// </summary>
+        public static void LODToolsExample()
+        {
+            Debug.Log("=== LOD工具函数 ===");
+            
+            LODGroup selectedLODGroup = GetSelectedLODGroup();
+            if (selectedLODGroup == null)
+            {
+                Debug.LogWarning("请先选择一个LOD组");
+                return;
+            }
+            
+            // 获取LOD信息
+            LODInfo info = GetLODInfo(selectedLODGroup);
+            Debug.Log($"LOD信息: {info}");
+            
+            // 检查LOD状态
+            bool isActive = selectedLODGroup.enabled;
+            bool isStatic = selectedLODGroup.gameObject.isStatic;
+            Debug.Log($"是否激活: {isActive}");
+            Debug.Log($"是否静态: {isStatic}");
+            
+            // 获取LOD距离
+            float[] distances = GetLODDistances(selectedLODGroup);
+            Debug.Log($"LOD距离: {string.Join(", ", distances)}");
+            
+            // 检查LOD可见性
+            bool isVisible = IsLODGroupVisible(selectedLODGroup);
+            Debug.Log($"是否可见: {isVisible}");
+        }
+
+        /// <summary>
+        /// LOD调试
+        /// </summary>
+        public static void LODDebuggingExample()
+        {
+            Debug.Log("=== LOD调试 ===");
+            
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                Debug.Log($"调试LOD组: {lodGroup.name}");
+                
+                // 获取当前LOD级别
+                int currentLOD = GetCurrentLODLevel(lodGroup);
+                Debug.Log($"  当前LOD级别: {currentLOD}");
+                
+                // 获取LOD切换距离
+                float[] switchDistances = GetLODSwitchDistances(lodGroup);
+                Debug.Log($"  LOD切换距离: {string.Join(", ", switchDistances)}");
+                
+                // 获取LOD性能统计
+                LODPerformanceStats stats = GetLODPerformanceStats(lodGroup);
+                Debug.Log($"  LOD性能统计: {stats}");
+                
+                // 检查LOD错误
+                string[] errors = GetLODErrors(lodGroup);
+                if (errors.Length > 0)
+                {
+                    Debug.LogWarning($"  LOD错误数量: {errors.Length}");
+                    foreach (string error in errors)
+                    {
+                        Debug.LogWarning($"    {error}");
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region LOD管理示例
+
+        /// <summary>
+        /// LOD管理
+        /// </summary>
+        public static void LODManagementExample()
+        {
+            Debug.Log("=== LOD管理 ===");
+            
+            // 获取所有LOD组
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            Debug.Log($"场景中LOD组数量: {allLODGroups.Length}");
+            
+            // 按类型分类
+            Dictionary<string, List<LODGroup>> typeGroups = new Dictionary<string, List<LODGroup>>();
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                string type = GetLODGroupType(lodGroup);
+                if (!typeGroups.ContainsKey(type))
+                {
+                    typeGroups[type] = new List<LODGroup>();
+                }
+                typeGroups[type].Add(lodGroup);
+            }
+            
+            foreach (var group in typeGroups)
+            {
+                Debug.Log($"类型 {group.Key}: {group.Value.Count} 个LOD组");
+            }
+            
+            // 按LOD级别分类
+            Dictionary<int, List<LODGroup>> levelGroups = new Dictionary<int, List<LODGroup>>();
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                int levelCount = lodGroup.GetLODs().Length;
+                if (!levelGroups.ContainsKey(levelCount))
+                {
+                    levelGroups[levelCount] = new List<LODGroup>();
+                }
+                levelGroups[levelCount].Add(lodGroup);
+            }
+            
+            foreach (var group in levelGroups)
+            {
+                Debug.Log($"LOD级别 {group.Key}: {group.Value.Count} 个LOD组");
+            }
+        }
+
+        /// <summary>
+        /// LOD统计
+        /// </summary>
+        public static void LODStatisticsExample()
+        {
+            Debug.Log("=== LOD统计 ===");
+            
+            LODGroup[] allLODGroups = FindObjectsOfType<LODGroup>();
+            
+            int totalLODGroups = allLODGroups.Length;
+            int totalLODLevels = 0;
+            int totalRenderers = 0;
+            int activeLODGroups = 0;
+            int staticLODGroups = 0;
+            
+            foreach (LODGroup lodGroup in allLODGroups)
+            {
+                if (lodGroup.enabled) activeLODGroups++;
+                if (lodGroup.gameObject.isStatic) staticLODGroups++;
+                
+                LOD[] lods = lodGroup.GetLODs();
+                totalLODLevels += lods.Length;
+                
+                foreach (LOD lod in lods)
+                {
+                    totalRenderers += lod.renderers.Length;
+                }
+            }
+            
+            Debug.Log($"=== LOD统计 ===");
+            Debug.Log($"总LOD组数: {totalLODGroups}");
+            Debug.Log($"激活LOD组数: {activeLODGroups}");
+            Debug.Log($"静态LOD组数: {staticLODGroups}");
+            Debug.Log($"总LOD级别数: {totalLODLevels}");
+            Debug.Log($"总渲染器数: {totalRenderers}");
+            Debug.Log($"平均LOD级别: {totalLODLevels / (float)totalLODGroups:F2}");
+            Debug.Log($"平均渲染器数: {totalRenderers / (float)totalLODLevels:F2}");
+        }
+
+        #endregion

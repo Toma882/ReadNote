@@ -645,5 +645,250 @@ namespace UnityEditor.Chapter9Utility.ShaderUtility
         }
 
         #endregion
-    }
-}
+
+        #region 高级着色器操作示例
+
+        /// <summary>
+        /// 着色器编译
+        /// </summary>
+        public static void ShaderCompilationExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 编译着色器
+                ShaderUtil.CompileShader(shader);
+                Debug.Log($"着色器 {shader.name} 编译完成");
+                
+                // 检查编译状态
+                int messageCount = ShaderUtil.GetShaderMessageCount(shader);
+                Debug.Log($"编译消息数量: {messageCount}");
+                
+                for (int i = 0; i < messageCount; i++)
+                {
+                    string message = ShaderUtil.GetShaderMessage(shader, i);
+                    Debug.Log($"编译消息 {i}: {message}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 着色器变体分析
+        /// </summary>
+        public static void ShaderVariantAnalysisExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 获取着色器变体
+                ShaderVariantCollection variantCollection = ShaderUtil.GetShaderVariantCollection(shader);
+                Debug.Log($"着色器变体集合: {variantCollection}");
+                
+                // 分析变体数量
+                int variantCount = ShaderUtil.GetShaderVariantCount(shader);
+                Debug.Log($"变体数量: {variantCount}");
+                
+                // 获取变体信息
+                for (int i = 0; i < Mathf.Min(variantCount, 10); i++)
+                {
+                    ShaderVariantData variantData = ShaderUtil.GetShaderVariantData(shader, i);
+                    Debug.Log($"变体 {i}: {variantData}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 着色器性能分析
+        /// </summary>
+        public static void ShaderPerformanceAnalysisExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 获取着色器性能数据
+                ShaderPerformanceData performanceData = ShaderUtil.GetShaderPerformanceData(shader);
+                Debug.Log($"着色器性能数据: {performanceData}");
+                
+                // 分析着色器复杂度
+                int instructionCount = ShaderUtil.GetShaderInstructionCount(shader);
+                Debug.Log($"指令数量: {instructionCount}");
+                
+                int textureCount = ShaderUtil.GetShaderTextureCount(shader);
+                Debug.Log($"纹理数量: {textureCount}");
+                
+                int constantCount = ShaderUtil.GetShaderConstantCount(shader);
+                Debug.Log($"常量数量: {constantCount}");
+            }
+        }
+
+        /// <summary>
+        /// 着色器优化
+        /// </summary>
+        public static void ShaderOptimizationExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 优化着色器
+                ShaderUtil.OptimizeShader(shader);
+                Debug.Log($"着色器 {shader.name} 优化完成");
+                
+                // 检查优化结果
+                int optimizedInstructionCount = ShaderUtil.GetShaderInstructionCount(shader);
+                Debug.Log($"优化后指令数量: {optimizedInstructionCount}");
+                
+                // 移除未使用的变体
+                ShaderUtil.RemoveUnusedShaderVariants(shader);
+                Debug.Log("未使用的变体已移除");
+            }
+        }
+
+        /// <summary>
+        /// 着色器调试
+        /// </summary>
+        public static void ShaderDebuggingExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 启用着色器调试
+                ShaderUtil.EnableShaderDebugging(shader, true);
+                Debug.Log($"着色器 {shader.name} 调试已启用");
+                
+                // 获取调试信息
+                string debugInfo = ShaderUtil.GetShaderDebugInfo(shader);
+                Debug.Log($"调试信息: {debugInfo}");
+                
+                // 设置调试级别
+                ShaderUtil.SetShaderDebugLevel(shader, ShaderDebugLevel.Verbose);
+                Debug.Log("调试级别已设置为详细");
+            }
+        }
+
+        #endregion
+
+        #region 着色器工具示例
+
+        /// <summary>
+        /// 着色器工具函数
+        /// </summary>
+        public static void ShaderToolsExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 获取着色器信息
+                string shaderInfo = ShaderUtil.GetShaderInfo(shader);
+                Debug.Log($"着色器信息: {shaderInfo}");
+                
+                // 检查着色器兼容性
+                bool isCompatible = ShaderUtil.IsShaderCompatible(shader);
+                Debug.Log($"着色器兼容性: {isCompatible}");
+                
+                // 获取着色器版本
+                string version = ShaderUtil.GetShaderVersion(shader);
+                Debug.Log($"着色器版本: {version}");
+                
+                // 检查着色器错误
+                bool hasErrors = ShaderUtil.HasShaderErrors(shader);
+                Debug.Log($"是否有错误: {hasErrors}");
+            }
+        }
+
+        /// <summary>
+        /// 着色器验证
+        /// </summary>
+        public static void ShaderValidationExample()
+        {
+            Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
+            if (shaders.Length > 0)
+            {
+                Shader shader = shaders[0];
+                
+                // 验证着色器
+                ShaderValidationResult result = ShaderUtil.ValidateShader(shader);
+                Debug.Log($"验证结果: {result}");
+                
+                // 检查着色器语法
+                bool isValidSyntax = ShaderUtil.IsValidShaderSyntax(shader);
+                Debug.Log($"语法是否有效: {isValidSyntax}");
+                
+                // 检查着色器语义
+                bool isValidSemantics = ShaderUtil.IsValidShaderSemantics(shader);
+                Debug.Log($"语义是否有效: {isValidSemantics}");
+            }
+        }
+
+        #endregion
+
+        #region 着色器管理示例
+
+        /// <summary>
+        /// 着色器管理
+        /// </summary>
+        public static void ShaderManagementExample()
+        {
+            // 获取所有着色器
+            Shader[] allShaders = Resources.FindObjectsOfTypeAll<Shader>();
+            Debug.Log($"总着色器数量: {allShaders.Length}");
+            
+            // 按类型分类
+            Dictionary<string, List<Shader>> shaderCategories = new Dictionary<string, List<Shader>>();
+            
+            foreach (Shader shader in allShaders)
+            {
+                string category = shader.name.Split('/')[0];
+                if (!shaderCategories.ContainsKey(category))
+                {
+                    shaderCategories[category] = new List<Shader>();
+                }
+                shaderCategories[category].Add(shader);
+            }
+            
+            foreach (var category in shaderCategories)
+            {
+                Debug.Log($"类别 {category.Key}: {category.Value.Count} 个着色器");
+            }
+        }
+
+        /// <summary>
+        /// 着色器统计
+        /// </summary>
+        public static void ShaderStatisticsExample()
+        {
+            Shader[] allShaders = Resources.FindObjectsOfTypeAll<Shader>();
+            
+            int totalProperties = 0;
+            int totalVariants = 0;
+            int totalInstructions = 0;
+            
+            foreach (Shader shader in allShaders)
+            {
+                totalProperties += ShaderUtil.GetPropertyCount(shader);
+                totalVariants += ShaderUtil.GetShaderVariantCount(shader);
+                totalInstructions += ShaderUtil.GetShaderInstructionCount(shader);
+            }
+            
+            Debug.Log($"=== 着色器统计 ===");
+            Debug.Log($"总着色器数: {allShaders.Length}");
+            Debug.Log($"总属性数: {totalProperties}");
+            Debug.Log($"总变体数: {totalVariants}");
+            Debug.Log($"总指令数: {totalInstructions}");
+            Debug.Log($"平均属性数: {totalProperties / allShaders.Length}");
+            Debug.Log($"平均变体数: {totalVariants / allShaders.Length}");
+            Debug.Log($"平均指令数: {totalInstructions / allShaders.Length}");
+        }
+
+        #endregion

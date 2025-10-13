@@ -417,5 +417,363 @@ namespace UnityEditor.Examples
         }
 
         #endregion
-    }
-}
+
+        #region 高级内存操作示例
+
+        /// <summary>
+        /// 内存对齐操作
+        /// </summary>
+        public static void MemoryAlignmentExample()
+        {
+            Debug.Log("=== 内存对齐操作 ===");
+            
+            unsafe
+            {
+                // 检查内存对齐
+                int size = 64;
+                int alignment = 16;
+                
+                void* ptr = UnsafeUtility.Malloc(size, alignment, Allocator.Temp);
+                if (ptr != null)
+                {
+                    // 检查指针是否对齐
+                    bool isAligned = UnsafeUtility.IsAligned(ptr, alignment);
+                    Debug.Log($"指针是否对齐: {isAligned}");
+                    
+                    // 获取对齐后的指针
+                    void* alignedPtr = UnsafeUtility.Align(ptr, alignment);
+                    Debug.Log($"对齐后指针: {alignedPtr}");
+                    
+                    UnsafeUtility.Free(ptr, Allocator.Temp);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 内存比较操作
+        /// </summary>
+        public static void MemoryComparisonExample()
+        {
+            Debug.Log("=== 内存比较操作 ===");
+            
+            unsafe
+            {
+                int size = 16;
+                void* ptr1 = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                void* ptr2 = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                
+                if (ptr1 != null && ptr2 != null)
+                {
+                    // 初始化内存
+                    UnsafeUtility.MemSet(ptr1, 0xAA, size);
+                    UnsafeUtility.MemSet(ptr2, 0xAA, size);
+                    
+                    // 比较内存
+                    int result = UnsafeUtility.MemCmp(ptr1, ptr2, size);
+                    Debug.Log($"内存比较结果: {result}");
+                    
+                    // 修改第二个内存块
+                    UnsafeUtility.MemSet(ptr2, 0xBB, size);
+                    
+                    // 再次比较
+                    result = UnsafeUtility.MemCmp(ptr1, ptr2, size);
+                    Debug.Log($"修改后内存比较结果: {result}");
+                    
+                    UnsafeUtility.Free(ptr1, Allocator.Temp);
+                    UnsafeUtility.Free(ptr2, Allocator.Temp);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 内存移动操作
+        /// </summary>
+        public static void MemoryMoveExample()
+        {
+            Debug.Log("=== 内存移动操作 ===");
+            
+            unsafe
+            {
+                int size = 32;
+                void* src = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                void* dst = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                
+                if (src != null && dst != null)
+                {
+                    // 初始化源内存
+                    UnsafeUtility.MemSet(src, 0xCC, size);
+                    
+                    // 移动内存
+                    UnsafeUtility.MemMove(dst, src, size);
+                    Debug.Log("内存移动完成");
+                    
+                    // 验证移动结果
+                    int result = UnsafeUtility.MemCmp(src, dst, size);
+                    Debug.Log($"移动后内存比较结果: {result}");
+                    
+                    UnsafeUtility.Free(src, Allocator.Temp);
+                    UnsafeUtility.Free(dst, Allocator.Temp);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 内存交换操作
+        /// </summary>
+        public static void MemorySwapExample()
+        {
+            Debug.Log("=== 内存交换操作 ===");
+            
+            unsafe
+            {
+                int size = 16;
+                void* ptr1 = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                void* ptr2 = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                
+                if (ptr1 != null && ptr2 != null)
+                {
+                    // 初始化内存
+                    UnsafeUtility.MemSet(ptr1, 0x11, size);
+                    UnsafeUtility.MemSet(ptr2, 0x22, size);
+                    
+                    Debug.Log("交换前:");
+                    Debug.Log($"ptr1: {((byte*)ptr1)[0]:X2}");
+                    Debug.Log($"ptr2: {((byte*)ptr2)[0]:X2}");
+                    
+                    // 交换内存
+                    UnsafeUtility.MemSwap(ptr1, ptr2, size);
+                    Debug.Log("内存交换完成");
+                    
+                    Debug.Log("交换后:");
+                    Debug.Log($"ptr1: {((byte*)ptr1)[0]:X2}");
+                    Debug.Log($"ptr2: {((byte*)ptr2)[0]:X2}");
+                    
+                    UnsafeUtility.Free(ptr1, Allocator.Temp);
+                    UnsafeUtility.Free(ptr2, Allocator.Temp);
+                }
+            }
+        }
+
+        #endregion
+
+        #region 类型操作示例
+
+        /// <summary>
+        /// 类型大小操作
+        /// </summary>
+        public static void TypeSizeExample()
+        {
+            Debug.Log("=== 类型大小操作 ===");
+            
+            // 获取基本类型大小
+            int intSize = UnsafeUtility.SizeOf<int>();
+            Debug.Log($"int 大小: {intSize} 字节");
+            
+            int floatSize = UnsafeUtility.SizeOf<float>();
+            Debug.Log($"float 大小: {floatSize} 字节");
+            
+            int vector3Size = UnsafeUtility.SizeOf<Vector3>();
+            Debug.Log($"Vector3 大小: {vector3Size} 字节");
+            
+            // 获取类型对齐
+            int intAlign = UnsafeUtility.AlignOf<int>();
+            Debug.Log($"int 对齐: {intAlign} 字节");
+            
+            int floatAlign = UnsafeUtility.AlignOf<float>();
+            Debug.Log($"float 对齐: {floatAlign} 字节");
+            
+            int vector3Align = UnsafeUtility.AlignOf<Vector3>();
+            Debug.Log($"Vector3 对齐: {vector3Align} 字节");
+        }
+
+        /// <summary>
+        /// 类型转换操作
+        /// </summary>
+        public static void TypeConversionExample()
+        {
+            Debug.Log("=== 类型转换操作 ===");
+            
+            unsafe
+            {
+                // 分配内存
+                int size = UnsafeUtility.SizeOf<Vector3>();
+                void* ptr = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<Vector3>(), Allocator.Temp);
+                
+                if (ptr != null)
+                {
+                    // 写入Vector3
+                    Vector3 original = new Vector3(1.0f, 2.0f, 3.0f);
+                    UnsafeUtility.WriteArrayElement(ptr, 0, original);
+                    
+                    // 读取Vector3
+                    Vector3 read = UnsafeUtility.ReadArrayElement<Vector3>(ptr, 0);
+                    Debug.Log($"原始值: {original}");
+                    Debug.Log($"读取值: {read}");
+                    
+                    // 类型转换
+                    float* floatPtr = (float*)ptr;
+                    Debug.Log($"转换为float指针: {floatPtr[0]}, {floatPtr[1]}, {floatPtr[2]}");
+                    
+                    UnsafeUtility.Free(ptr, Allocator.Temp);
+                }
+            }
+        }
+
+        #endregion
+
+        #region 数组操作示例
+
+        /// <summary>
+        /// 数组操作
+        /// </summary>
+        public static void ArrayOperationsExample()
+        {
+            Debug.Log("=== 数组操作 ===");
+            
+            unsafe
+            {
+                int count = 10;
+                int size = UnsafeUtility.SizeOf<int>() * count;
+                void* ptr = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<int>(), Allocator.Temp);
+                
+                if (ptr != null)
+                {
+                    // 初始化数组
+                    for (int i = 0; i < count; i++)
+                    {
+                        UnsafeUtility.WriteArrayElement(ptr, i, i * i);
+                    }
+                    
+                    // 读取数组
+                    Debug.Log("数组内容:");
+                    for (int i = 0; i < count; i++)
+                    {
+                        int value = UnsafeUtility.ReadArrayElement<int>(ptr, i);
+                        Debug.Log($"  [{i}] = {value}");
+                    }
+                    
+                    // 数组复制
+                    void* copyPtr = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<int>(), Allocator.Temp);
+                    if (copyPtr != null)
+                    {
+                        UnsafeUtility.MemCpy(copyPtr, ptr, size);
+                        Debug.Log("数组复制完成");
+                        
+                        // 验证复制
+                        bool isEqual = UnsafeUtility.MemCmp(ptr, copyPtr, size) == 0;
+                        Debug.Log($"复制验证: {isEqual}");
+                        
+                        UnsafeUtility.Free(copyPtr, Allocator.Temp);
+                    }
+                    
+                    UnsafeUtility.Free(ptr, Allocator.Temp);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 数组排序
+        /// </summary>
+        public static void ArraySortingExample()
+        {
+            Debug.Log("=== 数组排序 ===");
+            
+            unsafe
+            {
+                int count = 5;
+                int size = UnsafeUtility.SizeOf<int>() * count;
+                void* ptr = UnsafeUtility.Malloc(size, UnsafeUtility.AlignOf<int>(), Allocator.Temp);
+                
+                if (ptr != null)
+                {
+                    // 初始化数组（逆序）
+                    for (int i = 0; i < count; i++)
+                    {
+                        UnsafeUtility.WriteArrayElement(ptr, i, count - i);
+                    }
+                    
+                    Debug.Log("排序前:");
+                    for (int i = 0; i < count; i++)
+                    {
+                        int value = UnsafeUtility.ReadArrayElement<int>(ptr, i);
+                        Debug.Log($"  [{i}] = {value}");
+                    }
+                    
+                    // 简单冒泡排序
+                    for (int i = 0; i < count - 1; i++)
+                    {
+                        for (int j = 0; j < count - i - 1; j++)
+                        {
+                            int val1 = UnsafeUtility.ReadArrayElement<int>(ptr, j);
+                            int val2 = UnsafeUtility.ReadArrayElement<int>(ptr, j + 1);
+                            
+                            if (val1 > val2)
+                            {
+                                UnsafeUtility.WriteArrayElement(ptr, j, val2);
+                                UnsafeUtility.WriteArrayElement(ptr, j + 1, val1);
+                            }
+                        }
+                    }
+                    
+                    Debug.Log("排序后:");
+                    for (int i = 0; i < count; i++)
+                    {
+                        int value = UnsafeUtility.ReadArrayElement<int>(ptr, i);
+                        Debug.Log($"  [{i}] = {value}");
+                    }
+                    
+                    UnsafeUtility.Free(ptr, Allocator.Temp);
+                }
+            }
+        }
+
+        #endregion
+
+        #region 性能测试示例
+
+        /// <summary>
+        /// 性能测试
+        /// </summary>
+        public static void PerformanceTestExample()
+        {
+            Debug.Log("=== 性能测试 ===");
+            
+            unsafe
+            {
+                int size = 1024 * 1024; // 1MB
+                int iterations = 1000;
+                
+                // 分配内存
+                void* ptr1 = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                void* ptr2 = UnsafeUtility.Malloc(size, 4, Allocator.Temp);
+                
+                if (ptr1 != null && ptr2 != null)
+                {
+                    // 初始化内存
+                    UnsafeUtility.MemSet(ptr1, 0xAA, size);
+                    UnsafeUtility.MemSet(ptr2, 0xBB, size);
+                    
+                    // 测试内存复制性能
+                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    
+                    for (int i = 0; i < iterations; i++)
+                    {
+                        UnsafeUtility.MemCpy(ptr2, ptr1, size);
+                    }
+                    
+                    stopwatch.Stop();
+                    
+                    Debug.Log($"内存复制性能测试:");
+                    Debug.Log($"- 大小: {size / 1024} KB");
+                    Debug.Log($"- 迭代次数: {iterations}");
+                    Debug.Log($"- 总时间: {stopwatch.ElapsedMilliseconds} ms");
+                    Debug.Log($"- 平均时间: {stopwatch.ElapsedMilliseconds / (float)iterations} ms");
+                    Debug.Log($"- 吞吐量: {size * iterations / (stopwatch.ElapsedMilliseconds / 1000.0f) / 1024 / 1024} MB/s");
+                    
+                    UnsafeUtility.Free(ptr1, Allocator.Temp);
+                    UnsafeUtility.Free(ptr2, Allocator.Temp);
+                }
+            }
+        }
+
+        #endregion
