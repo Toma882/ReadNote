@@ -16,6 +16,8 @@
 | **资产处理器** | 自动处理资产导入和修改 | `AssetPostprocessor`、`AssetModificationProcessor` |
 | **构建工具** | 自定义Unity构建流程 | `BuildPipeline`、`IPreprocessBuild`、`IPostprocessBuild` |
 | **场景管理器** | 场景操作和管理 | `SceneManager`、`EditorSceneManager` |
+| **Unity API** | Unity核心API使用 | `UnityEngine`、`UnityEditor`、`Unity` |
+| **Utility工具** | Unity工具类使用 | `PrefabUtility`、`EditorUtility`、`JsonUtility`等 |
 
 ### 核心接口与特性
 
@@ -965,6 +967,158 @@ EditorPrefs用于在编辑器会话之间保存和加载设置，实现编辑器
 - 集成预设系统管理配置
 
 通过这些章节的学习和实践，你将能够掌握Unity编辑器扩展开发的核心技术，为你的项目创建高效的开发工具，提升开发效率和项目质量。
+
+## Chapter 9: Utility工具类
+
+### 概述
+Chapter 9 专门介绍Unity中的各种Utility工具类，这些工具类为Unity开发提供了强大的辅助功能，涵盖了预制体管理、编辑器工具、JSON序列化、几何计算、动画处理、着色器工具等多个方面。
+
+### 主要Utility类
+
+#### 1. PrefabUtility - 预制体工具
+**核心功能**: 预制体的创建、修改、应用、还原等操作
+**主要方法**:
+- `SaveAsPrefabAsset()` - 保存为预制体资源
+- `InstantiatePrefab()` - 实例化预制体
+- `ApplyPrefabInstance()` - 应用预制体修改
+- `RevertPrefabInstance()` - 还原预制体修改
+- `IsPartOfPrefabInstance()` - 检查是否为预制体实例
+
+**应用场景**:
+- 批量预制体管理
+- 预制体变体操作
+- 预制体状态检查
+- 预制体连接管理
+
+#### 2. EditorUtility - 编辑器工具
+**核心功能**: 编辑器对话框、文件操作、进度显示等
+**主要方法**:
+- `DisplayDialog()` - 显示对话框
+- `SaveFilePanel()` - 保存文件面板
+- `OpenFilePanel()` - 打开文件面板
+- `DisplayProgressBar()` - 显示进度条
+- `SetDirty()` - 标记对象为脏
+
+**应用场景**:
+- 用户交互界面
+- 文件操作
+- 进度反馈
+- 对象状态管理
+
+#### 3. JsonUtility - JSON工具
+**核心功能**: JSON序列化和反序列化
+**主要方法**:
+- `ToJson()` - 转换为JSON字符串
+- `FromJson()` - 从JSON创建对象
+- `FromJsonOverwrite()` - 从JSON覆盖对象
+
+**应用场景**:
+- 数据序列化
+- 配置文件处理
+- 网络数据传输
+- 存档系统
+
+#### 4. GeometryUtility - 几何工具
+**核心功能**: 几何计算和碰撞检测
+**主要方法**:
+- `CalculateFrustumPlanes()` - 计算视锥平面
+- `TestPlanesAABB()` - 测试平面包围盒相交
+
+**应用场景**:
+- 视锥剔除
+- 碰撞检测
+- 几何计算
+- 性能优化
+
+#### 5. AnimationUtility - 动画工具
+**核心功能**: 动画剪辑和事件管理
+**主要方法**:
+- `GetAnimationClips()` - 获取动画剪辑
+- `GetAnimationEvents()` - 获取动画事件
+- `SetAnimationEvents()` - 设置动画事件
+- `GetCurveBindings()` - 获取动画曲线绑定
+
+**应用场景**:
+- 动画剪辑管理
+- 动画事件处理
+- 动画曲线编辑
+- 动画优化
+
+#### 6. ShaderUtil - 着色器工具
+**核心功能**: 着色器分析和编译
+**主要方法**:
+- `GetPropertyCount()` - 获取属性数量
+- `GetPropertyName()` - 获取属性名称
+- `GetPropertyType()` - 获取属性类型
+- `CompileShader()` - 编译着色器
+
+**应用场景**:
+- 着色器分析
+- 材质管理
+- 着色器优化
+- 平台兼容性检查
+
+### 示例文件结构
+
+```
+Chapter 9 Utility/
+├── README.md                    # 工具类参考文档
+├── UtilityExample.cs           # 综合工具示例
+├── PrefabUtilityExample.cs     # 预制体工具详细示例
+├── JsonUtilityExample.cs       # JSON工具详细示例
+├── GeometryUtilityExample.cs   # 几何工具详细示例
+├── AnimationUtilityExample.cs  # 动画工具详细示例
+└── ShaderUtilityExample.cs     # 着色器工具详细示例
+```
+
+### 使用示例
+
+#### 预制体工具使用
+```csharp
+// 创建预制体
+GameObject prefab = PrefabUtility.SaveAsPrefabAsset(selectedObject, "Assets/MyPrefab.prefab");
+
+// 检查预制体状态
+bool isPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(selectedObject);
+PrefabInstanceStatus status = PrefabUtility.GetPrefabInstanceStatus(selectedObject);
+
+// 应用修改
+if (status == PrefabInstanceStatus.Modified)
+{
+    PrefabUtility.ApplyPrefabInstance(selectedObject, InteractionMode.UserAction);
+}
+```
+
+#### JSON工具使用
+```csharp
+// 序列化对象
+string json = JsonUtility.ToJson(myObject, true);
+
+// 反序列化对象
+MyClass obj = JsonUtility.FromJson<MyClass>(json);
+
+// 覆盖现有对象
+JsonUtility.FromJsonOverwrite(json, existingObject);
+```
+
+#### 几何工具使用
+```csharp
+// 计算视锥平面
+Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+
+// 测试包围盒相交
+bool isVisible = GeometryUtility.TestPlanesAABB(planes, renderer.bounds);
+```
+
+### 最佳实践
+
+1. **工具类选择**: 根据具体需求选择合适的工具类
+2. **性能考虑**: 避免在Update中频繁调用工具方法
+3. **错误处理**: 始终检查工具方法的返回值
+4. **资源管理**: 及时释放工具创建的资源
+5. **平台兼容**: 注意工具类在不同平台的兼容性
+
+通过这些Utility工具类的学习和实践，你将能够更高效地进行Unity开发，利用这些强大的工具类来简化复杂的操作，提升开发效率。
 
 ## 最佳实践建议
 
