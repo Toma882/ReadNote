@@ -34,10 +34,41 @@
 - 动态方法调用
 - 属性访问
 
-### 7. ComprehensiveExample (综合案例)
+### 7. Regex (正则表达式)
+- 基础正则表达式模式
+- 实用验证模式（邮箱、手机号、URL等）
+- 高级功能（捕获组、替换、分割）
+- 性能优化和错误处理
+
+### 8. Security (安全)
+- 加密算法（AES、RSA、SHA等）
+- 数字签名和证书
+- 身份验证和授权
+- 密码安全和数据保护
+
+### 9. Diagnostics (诊断)ss
+- 日志记录和跟踪
+- 性能监控和分析
+- 调试和诊断工具
+- 内存和资源监控
+
+### 10. Configuration (配置)
+- 配置文件管理（JSON、XML、INI）
+- 环境变量和命令行参数
+- 强类型配置绑定
+- 配置验证和热重载
+
+### 11. DependencyInjection (依赖注入)
+- IoC容器和服务注册
+- 服务生命周期管理
+- 构造函数注入和接口注入
+- 装饰器模式和条件注册
+
+### 12. ComprehensiveExample (综合案例)
 - **数据管理系统** - 涵盖所有.NET知识点的完整案例
 - 实现数据采集、处理、存储、分析的完整流程
 - 展示各模块间的协同工作
+
 
 ## 综合案例详解
 
@@ -89,6 +120,49 @@
 - `Type` - 类型信息
 - `PropertyInfo` - 属性反射
 - 动态属性访问和修改
+
+**Regex (正则表达式)**
+- `Regex` - 正则表达式核心类
+- `Match` - 单个匹配结果
+- `MatchCollection` - 匹配结果集合
+- `Group` - 捕获组
+- 常用验证模式（邮箱、手机号、URL、IP地址等）
+- 高级功能（命名捕获组、非捕获组、断言）
+- 性能优化（编译模式、缓存）
+
+**Security (安全)**
+- `AES` - 高级加密标准
+- `RSA` - 非对称加密算法
+- `SHA256` - 安全哈希算法
+- `X509Certificate2` - X.509证书
+- 密码哈希和盐值
+- 数字签名和验证
+- 身份验证和授权
+
+**Diagnostics (诊断)**
+- `ILogger` - 结构化日志接口
+- `Stopwatch` - 性能计时器
+- `Process` - 进程监控
+- `PerformanceCounter` - 性能计数器
+- 活动跟踪和ETW
+- 内存和资源监控
+- 调试和诊断工具
+
+**Configuration (配置)**
+- `IConfiguration` - 配置接口
+- `ConfigurationBuilder` - 配置构建器
+- `IOptions<T>` - 强类型配置选项
+- JSON/XML/INI配置文件支持
+- 环境变量和命令行参数
+- 配置验证和热重载
+
+**DependencyInjection (依赖注入)**
+- `IServiceCollection` - 服务集合
+- `IServiceProvider` - 服务提供程序
+- `ServiceLifetime` - 服务生命周期
+- 构造函数注入和接口注入
+- 装饰器模式和条件注册
+- 作用域管理和资源释放
 
 #### 🔄 工作流程
 
