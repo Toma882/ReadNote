@@ -5,6 +5,7 @@
 ## 目录
 - [List<T> 动态数组](#listt-动态数组)
 - [Dictionary<TKey, TValue> 键值对集合](#dictionarytkey-tvalue-键值对集合)
+- [ConcurrentDictionary<TKey, TValue> 线程安全字典](#concurrentdictionarytkey-tvalue-线程安全字典)
 - [HashSet<T> 无序不重复集合](#hashsett-无序不重复集合)
 - [Queue<T> 队列（先进先出）](#queuet-队列先进先出)
 - [Stack<T> 栈（后进先出）](#stackt-栈后进先出)
@@ -147,6 +148,80 @@
 | `Dictionary.Values.Max()` | 获取值的最大值 |
 | `Dictionary.Values.Min()` | 获取值的最小值 |
 | `Dictionary.OrderByDescending(x => x.Value)` | 按值排序 |
+
+---
+
+## ConcurrentDictionary<TKey, TValue> 线程安全字典
+
+### 创建和初始化
+
+| OperationFuncName | FuncDesc |
+|-------------------|----------|
+| `new ConcurrentDictionary<TKey, TValue>()` | 创建空并发字典 |
+| `new ConcurrentDictionary<TKey, TValue>(capacity)` | 创建指定初始容量的并发字典 |
+| `new ConcurrentDictionary<TKey, TValue> { [key] = value, ... }` | 创建并初始化并发字典 |
+
+### 线程安全的添加和更新操作
+
+| OperationFuncName | FuncDesc |
+|-------------------|----------|
+| `ConcurrentDictionary.TryAdd(key, value)` | 尝试添加键值对（线程安全） |
+| `ConcurrentDictionary.TryUpdate(key, newValue, comparisonValue)` | 尝试更新值（线程安全） |
+| `ConcurrentDictionary.AddOrUpdate(key, addValue, updateFactory)` | 添加或更新（线程安全） |
+| `ConcurrentDictionary.GetOrAdd(key, value)` | 获取或添加（线程安全） |
+
+### 线程安全的访问操作
+
+| OperationFuncName | FuncDesc |
+|-------------------|----------|
+| `ConcurrentDictionary.TryGetValue(key, out value)` | 尝试获取值（线程安全） |
+| `ConcurrentDictionary[key]` | 索引器访问（线程安全） |
+| `ConcurrentDictionary.ContainsKey(key)` | 检查键是否存在（线程安全） |
+
+### 线程安全的删除操作
+
+| OperationFuncName | FuncDesc |
+|-------------------|----------|
+| `ConcurrentDictionary.TryRemove(key, out value)` | 尝试删除键值对（线程安全） |
+
+### 批量操作
+
+| OperationFuncName | FuncDesc |
+|-------------------|----------|
+| `ConcurrentDictionary.ToArray()` | 转换为数组（线程安全） |
+| `ConcurrentDictionary.Keys` | 获取所有键的集合（线程安全） |
+| `ConcurrentDictionary.Values` | 获取所有值的集合（线程安全） |
+| `ConcurrentDictionary.Count` | 获取键值对数量（线程安全） |
+| `ConcurrentDictionary.IsEmpty` | 检查是否为空（线程安全） |
+
+### 高级操作
+
+| OperationFuncName | FuncDesc |
+|-------------------|----------|
+| `ConcurrentDictionary.GetEnumerator()` | 获取枚举器（线程安全） |
+| `ConcurrentDictionary.Clear()` | 清空字典（线程安全） |
+
+### 性能特点
+
+- **线程安全**: 支持多线程并发读写
+- **无锁设计**: 使用无锁算法，性能优异
+- **原子操作**: 避免竞态条件
+- **O(1)平均性能**: 查找、添加、删除操作
+
+### 使用场景
+
+- 多线程环境下的数据共享
+- 缓存系统
+- 计数器集合
+- 状态管理
+- 资源加载器
+
+### 注意事项
+
+- 比普通Dictionary稍慢
+- 某些操作不是原子性的
+- 迭代时可能看到不一致的状态
+- 适合高并发场景
 
 ---
 

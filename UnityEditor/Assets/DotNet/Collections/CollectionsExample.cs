@@ -1,21 +1,23 @@
 // CollectionsExample.cs
 // .NET集合API使用详解示例
-// 包含List、Dictionary、HashSet、Queue、Stack、LinkedList、Linq等常用集合类型
+// 包含List、Dictionary、ConcurrentDictionary、HashSet、Queue、Stack、LinkedList、Linq等常用集合类型
 // 每个方法、关键步骤、枚举值均有详细中文注释
 // 适合.NET初学者学习和查阅
 // 
 // 主要功能模块：
 // 1. List<T> - 动态数组，支持随机访问和动态扩容
 // 2. Dictionary<TKey,TValue> - 键值对集合，快速查找
-// 3. HashSet<T> - 无序不重复集合，快速查找和去重
-// 4. Queue<T> - 队列，先进先出(FIFO)
-// 5. Stack<T> - 栈，后进先出(LIFO)
-// 6. LinkedList<T> - 双向链表，高效插入删除
-// 7. LINQ - 语言集成查询，强大的数据操作
-// 8. 高级集合操作 - 性能优化和特殊用法
+// 3. ConcurrentDictionary<TKey,TValue> - 线程安全的键值对集合
+// 4. HashSet<T> - 无序不重复集合，快速查找和去重
+// 5. Queue<T> - 队列，先进先出(FIFO)
+// 6. Stack<T> - 栈，后进先出(LIFO)
+// 7. LinkedList<T> - 双向链表，高效插入删除
+// 8. LINQ - 语言集成查询，强大的数据操作
+// 9. 高级集合操作 - 性能优化和特殊用法
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using UnityEngine;
 
@@ -23,11 +25,12 @@ namespace DotNet.Collections
 {
     /// <summary>
     /// .NET集合API使用详解示例
-    /// 演示List、Dictionary、HashSet、Queue、Stack、LinkedList、Linq等常用集合类型
+    /// 演示List、Dictionary、ConcurrentDictionary、HashSet、Queue、Stack、LinkedList、Linq等常用集合类型
     /// 
     /// 重要说明：
     /// - List<T>是最常用的集合类型，适合大多数场景
     /// - Dictionary<TKey,TValue>提供O(1)的查找性能
+    /// - ConcurrentDictionary<TKey,TValue>提供线程安全的字典操作
     /// - HashSet<T>适合去重和快速成员检查
     /// - Queue和Stack适合特定算法场景
     /// - LinkedList<T>适合频繁插入删除操作
@@ -54,17 +57,18 @@ namespace DotNet.Collections
 
         /// <summary>
         /// 运行所有集合相关示例
-        /// 按顺序执行：List -> Dictionary -> HashSet -> Queue -> Stack -> LinkedList -> Linq -> 高级集合操作
+        /// 按顺序执行：List -> Dictionary -> ConcurrentDictionary -> HashSet -> Queue -> Stack -> LinkedList -> Linq -> 高级集合操作
         /// 
         /// 执行流程：
         /// 1. 基础动态数组操作
         /// 2. 键值对集合操作
-        /// 3. 无序不重复集合操作
-        /// 4. 队列操作
-        /// 5. 栈操作
-        /// 6. 链表操作
-        /// 7. LINQ查询操作
-        /// 8. 高级集合功能
+        /// 3. 线程安全字典操作
+        /// 4. 无序不重复集合操作
+        /// 5. 队列操作
+        /// 6. 栈操作
+        /// 7. 链表操作
+        /// 8. LINQ查询操作
+        /// 9. 高级集合功能
         /// </summary>
         private void RunAllExamples()
         {
@@ -74,6 +78,7 @@ namespace DotNet.Collections
             
             ListExample();      // List<T> 动态数组
             DictionaryExample(); // Dictionary<TKey, TValue> 键值对集合
+            ConcurrentDictionaryExample(); // ConcurrentDictionary<TKey, TValue> 线程安全字典
             HashSetExample();   // HashSet<T> 无序不重复集合
             QueueExample();     // Queue<T> 队列（先进先出）
             StackExample();     // Stack<T> 栈（后进先出）
@@ -558,6 +563,244 @@ namespace DotNet.Collections
             catch (Exception ex)
             {
                 Debug.LogError($"Dictionary操作出错: {ex.Message}");
+                Debug.LogError($"异常类型: {ex.GetType().Name}");
+            }
+        }
+
+        // ================= ConcurrentDictionary<TKey, TValue> 线程安全字典 =================
+        /// <summary>
+        /// ConcurrentDictionary<TKey, TValue> 线程安全字典示例
+        /// ConcurrentDictionary提供线程安全的字典操作，适合多线程环境
+        /// 
+        /// 主要特性：
+        /// - 线程安全，支持并发读写
+        /// - O(1)平均查找性能
+        /// - 原子操作，避免竞态条件
+        /// - 无锁设计，性能优异
+        /// 
+        /// 使用场景：
+        /// - 多线程环境下的数据共享
+        /// - 缓存系统
+        /// - 计数器集合
+        /// - 状态管理
+        /// 
+        /// 注意事项：
+        /// - 比普通Dictionary稍慢
+        /// - 某些操作不是原子性的
+        /// - 迭代时可能看到不一致的状态
+        /// </summary>
+        private void ConcurrentDictionaryExample()
+        {
+            Debug.Log("--- ConcurrentDictionary<TKey, TValue> 线程安全字典示例 ---");
+            
+            try
+            {
+                // ========== 创建和初始化 ==========
+                
+                // 创建空并发字典
+                // 参数说明：无
+                // 返回值：ConcurrentDictionary<TKey, TValue> - 空并发字典实例
+                var emptyConcurrentDict = new ConcurrentDictionary<string, int>();
+                Debug.Log($"空并发字典容量: {emptyConcurrentDict.Count}");
+                
+                // 创建并初始化并发字典
+                // 参数说明：collection - 初始键值对集合
+                // 返回值：ConcurrentDictionary<TKey, TValue> - 包含初始元素的并发字典
+                var concurrentScores = new ConcurrentDictionary<string, int>
+                {
+                    ["Alice"] = 95,
+                    ["Bob"] = 87,
+                    ["Charlie"] = 92,
+                    ["David"] = 78,
+                    ["Eve"] = 89
+                };
+                Debug.Log($"初始化并发字典: {concurrentScores.Count}个键值对");
+                
+                // 指定初始容量
+                // 参数说明：capacity - 初始容量
+                // 返回值：ConcurrentDictionary<TKey, TValue> - 指定容量的空并发字典
+                var capacityConcurrentDict = new ConcurrentDictionary<string, int>(100);
+                Debug.Log($"指定容量的并发字典已创建");
+                
+                // ========== 线程安全的添加和更新操作 ==========
+                
+                // TryAdd: 尝试添加键值对（线程安全）
+                // 参数说明：key - 键, value - 值
+                // 返回值：bool - 是否添加成功
+                // 时间复杂度：平均O(1)
+                bool addResult = concurrentScores.TryAdd("Frank", 85);
+                Debug.Log($"TryAdd(Frank, 85)结果: {addResult}, 当前数量: {concurrentScores.Count}");
+                
+                // TryAdd 重复键会失败
+                bool addDuplicateResult = concurrentScores.TryAdd("Alice", 100);
+                Debug.Log($"TryAdd重复键(Alice, 100)结果: {addDuplicateResult}");
+                
+                // TryUpdate: 尝试更新值（线程安全）
+                // 参数说明：key - 键, newValue - 新值, comparisonValue - 期望的旧值
+                // 返回值：bool - 是否更新成功
+                bool updateResult = concurrentScores.TryUpdate("Alice", 98, 95);
+                Debug.Log($"TryUpdate(Alice, 98, 95)结果: {updateResult}");
+                
+                // TryUpdate 期望值不匹配会失败
+                bool updateFailResult = concurrentScores.TryUpdate("Alice", 100, 90);
+                Debug.Log($"TryUpdate期望值不匹配结果: {updateFailResult}");
+                
+                // AddOrUpdate: 添加或更新（线程安全）
+                // 参数说明：key - 键, addValue - 添加时的值, updateValueFactory - 更新时的值工厂
+                // 返回值：TValue - 最终的值
+                int finalValue = concurrentScores.AddOrUpdate("Grace", 91, (key, oldValue) => oldValue + 5);
+                Debug.Log($"AddOrUpdate(Grace)结果: {finalValue}");
+                
+                // AddOrUpdate 更新现有值
+                int updatedValue = concurrentScores.AddOrUpdate("Alice", 0, (key, oldValue) => oldValue + 2);
+                Debug.Log($"AddOrUpdate(Alice)更新结果: {updatedValue}");
+                
+                // GetOrAdd: 获取或添加（线程安全）
+                // 参数说明：key - 键, value - 添加时的值
+                // 返回值：TValue - 获取或添加的值
+                int getOrAddValue = concurrentScores.GetOrAdd("Henry", 88);
+                Debug.Log($"GetOrAdd(Henry, 88)结果: {getOrAddValue}");
+                
+                // GetOrAdd 获取现有值
+                int existingValue = concurrentScores.GetOrAdd("Alice", 0);
+                Debug.Log($"GetOrAdd(Alice)获取现有值: {existingValue}");
+                
+                // ========== 线程安全的访问操作 ==========
+                
+                // TryGetValue: 尝试获取值（线程安全）
+                // 参数说明：key - 键, value - 输出参数，存储获取的值
+                // 返回值：bool - 是否获取成功
+                if (concurrentScores.TryGetValue("Bob", out int bobScore))
+                {
+                    Debug.Log($"TryGetValue(Bob)成功: {bobScore}");
+                }
+                
+                // TryGetValue 不存在的键
+                if (!concurrentScores.TryGetValue("NonExistent", out int nonExistentScore))
+                {
+                    Debug.Log($"TryGetValue(NonExistent)失败");
+                }
+                
+                // 索引器访问（线程安全）
+                // 参数说明：key - 键
+                // 返回值：TValue - 值
+                // 注意事项：如果键不存在会抛出异常
+                int aliceScore = concurrentScores["Alice"];
+                Debug.Log($"索引器访问Alice: {aliceScore}");
+                
+                // ContainsKey: 检查键是否存在（线程安全）
+                // 参数说明：key - 键
+                // 返回值：bool - 是否存在
+                bool containsAlice = concurrentScores.ContainsKey("Alice");
+                bool containsNonExistent = concurrentScores.ContainsKey("NonExistent");
+                Debug.Log($"ContainsKey(Alice): {containsAlice}, ContainsKey(NonExistent): {containsNonExistent}");
+                
+                // ========== 线程安全的删除操作 ==========
+                
+                // TryRemove: 尝试删除键值对（线程安全）
+                // 参数说明：key - 键, value - 输出参数，存储被删除的值
+                // 返回值：bool - 是否删除成功
+                if (concurrentScores.TryRemove("David", out int removedScore))
+                {
+                    Debug.Log($"TryRemove(David)成功，删除的值: {removedScore}, 剩余数量: {concurrentScores.Count}");
+                }
+                
+                // TryRemove 不存在的键
+                if (!concurrentScores.TryRemove("NonExistent", out int nonRemovedScore))
+                {
+                    Debug.Log($"TryRemove(NonExistent)失败");
+                }
+                
+                // ========== 批量操作 ==========
+                
+                // ToArray: 转换为数组（线程安全）
+                // 参数说明：无
+                // 返回值：KeyValuePair<TKey, TValue>[] - 键值对数组
+                var keyValuePairs = concurrentScores.ToArray();
+                Debug.Log($"ToArray结果: {keyValuePairs.Length}个键值对");
+                
+                // Keys: 获取所有键的集合（线程安全）
+                // 参数说明：无
+                // 返回值：ICollection<TKey> - 键的集合
+                var keys = concurrentScores.Keys;
+                Debug.Log($"Keys集合: {string.Join(", ", keys)}");
+                
+                // Values: 获取所有值的集合（线程安全）
+                // 参数说明：无
+                // 返回值：ICollection<TValue> - 值的集合
+                var values = concurrentScores.Values;
+                Debug.Log($"Values集合: {string.Join(", ", values)}");
+                
+                // Count: 获取键值对数量（线程安全）
+                // 参数说明：无
+                // 返回值：int - 键值对数量
+                int count = concurrentScores.Count;
+                Debug.Log($"当前键值对数量: {count}");
+                
+                // IsEmpty: 检查是否为空（线程安全）
+                // 参数说明：无
+                // 返回值：bool - 是否为空
+                bool isEmpty = concurrentScores.IsEmpty;
+                Debug.Log($"字典是否为空: {isEmpty}");
+                
+                // ========== 高级操作 ==========
+                
+                // GetEnumerator: 获取枚举器（线程安全）
+                // 参数说明：无
+                // 返回值：IEnumerator<KeyValuePair<TKey, TValue>> - 枚举器
+                Debug.Log("遍历并发字典:");
+                foreach (var kvp in concurrentScores)
+                {
+                    Debug.Log($"  {kvp.Key}: {kvp.Value}");
+                }
+                
+                // Clear: 清空字典（线程安全）
+                // 参数说明：无
+                // 返回值：void
+                var tempDict = new ConcurrentDictionary<string, int>(concurrentScores);
+                tempDict.Clear();
+                Debug.Log($"Clear后数量: {tempDict.Count}");
+                
+                // ========== 性能测试 ==========
+                
+                if (showPerformanceTests)
+                {
+                    Debug.Log("--- ConcurrentDictionary性能测试 ---");
+                    
+                    var perfDict = new ConcurrentDictionary<int, string>();
+                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    
+                    // 添加性能测试
+                    for (int i = 0; i < testDataSize; i++)
+                    {
+                        perfDict.TryAdd(i, $"Value_{i}");
+                    }
+                    stopwatch.Stop();
+                    Debug.Log($"添加{testDataSize}个元素耗时: {stopwatch.ElapsedMilliseconds}ms");
+                    
+                    // 查找性能测试
+                    stopwatch.Restart();
+                    for (int i = 0; i < testDataSize; i++)
+                    {
+                        perfDict.TryGetValue(i, out string value);
+                    }
+                    stopwatch.Stop();
+                    Debug.Log($"查找{testDataSize}次耗时: {stopwatch.ElapsedMilliseconds}ms");
+                    
+                    // 更新性能测试
+                    stopwatch.Restart();
+                    for (int i = 0; i < testDataSize; i++)
+                    {
+                        perfDict.TryUpdate(i, $"Updated_{i}", $"Value_{i}");
+                    }
+                    stopwatch.Stop();
+                    Debug.Log($"更新{testDataSize}次耗时: {stopwatch.ElapsedMilliseconds}ms");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"ConcurrentDictionary操作出错: {ex.Message}");
                 Debug.LogError($"异常类型: {ex.GetType().Name}");
             }
         }
