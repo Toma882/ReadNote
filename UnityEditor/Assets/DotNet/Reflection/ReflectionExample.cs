@@ -75,6 +75,7 @@ namespace DotNet.Reflection
             FieldInfoExample();
             AttributeExample();
             DynamicInvocationExample();
+            AssemblyAndAppDomainComparison();
             AssemblyExample();
             
             Debug.Log("=== .NET反射API示例结束 ===");
@@ -820,7 +821,217 @@ namespace DotNet.Reflection
         }
 
         /// <summary>
+        /// Assembly 和 AppDomain 区别说明
+        /// 详细解释 Assembly（程序集）和 AppDomain（应用程序域）的概念、区别和关系
+        /// 
+        /// 核心区别：
+        /// 1. Assembly（程序集）：
+        ///    - 是代码的物理容器，包含编译后的代码（IL代码、元数据、资源等）
+        ///    - 是 .NET 中代码部署和版本控制的基本单位
+        ///    - 一个程序集可以包含多个类型、命名空间
+        ///    - 程序集是文件（.dll 或 .exe）
+        /// 
+        /// 2. AppDomain（应用程序域）：
+        ///    - 是逻辑隔离边界，用于隔离应用程序
+        ///    - 一个 AppDomain 可以包含多个 Assembly
+        ///    - 提供代码隔离、安全边界、独立卸载等功能
+        ///    - 在 .NET Core/.NET 5+ 中，AppDomain 功能受限
+        /// 
+        /// 关系：
+        /// - AppDomain 是容器，Assembly 是内容
+        /// - 一个 AppDomain 可以加载多个 Assembly
+        /// - 一个 Assembly 可以被多个 AppDomain 加载（但实例独立）
+        /// - AppDomain.CurrentDomain.GetAssemblies() 获取当前域中所有已加载的程序集
+        /// 
+        /// 使用场景：
+        /// - Assembly: 用于反射、类型查找、动态加载代码
+        /// - AppDomain: 用于插件系统、代码隔离、热更新（在 .NET Framework 中）
+        /// </summary>
+        private void AssemblyAndAppDomainComparison()
+        {
+            Debug.Log("=== Assembly 和 AppDomain 区别说明 ===");
+            
+            try
+            {
+                // ========== 基本概念对比 ==========
+                
+                Debug.Log("--- 基本概念对比 ---");
+                Debug.Log("Assembly（程序集）:");
+                Debug.Log("  - 是代码的物理容器，包含编译后的代码");
+                Debug.Log("  - 是 .NET 中代码部署和版本控制的基本单位");
+                Debug.Log("  - 一个程序集可以包含多个类型、命名空间");
+                Debug.Log("  - 程序集是文件（.dll 或 .exe）");
+                Debug.Log("  - 包含：IL代码、元数据、资源文件等");
+                
+                Debug.Log("");
+                Debug.Log("AppDomain（应用程序域）:");
+                Debug.Log("  - 是逻辑隔离边界，用于隔离应用程序");
+                Debug.Log("  - 一个 AppDomain 可以包含多个 Assembly");
+                Debug.Log("  - 提供代码隔离、安全边界、独立卸载等功能");
+                Debug.Log("  - 在 .NET Core/.NET 5+ 中，AppDomain 功能受限");
+                Debug.Log("  - 通常一个进程只有一个 AppDomain（默认域）");
+                
+                // ========== 实际示例对比 ==========
+                
+                Debug.Log("--- 实际示例对比 ---");
+                
+                // 获取当前程序集
+                Assembly currentAssembly = Assembly.GetExecutingAssembly();
+                Debug.Log($"当前程序集: {currentAssembly.GetName().Name}");
+                Debug.Log($"程序集位置: {currentAssembly.Location}");
+                Debug.Log($"程序集版本: {currentAssembly.GetName().Version}");
+                
+                // 获取当前应用程序域
+                AppDomain currentDomain = AppDomain.CurrentDomain;
+                Debug.Log($"当前应用程序域: {currentDomain.FriendlyName}");
+                Debug.Log($"应用程序域ID: {currentDomain.Id}");
+                Debug.Log($"基础目录: {currentDomain.BaseDirectory}");
+                
+                // ========== 关系说明 ==========
+                
+                Debug.Log("--- 关系说明 ---");
+                Debug.Log("AppDomain 和 Assembly 的关系：");
+                Debug.Log("  1. AppDomain 是容器，Assembly 是内容");
+                Debug.Log("  2. 一个 AppDomain 可以加载多个 Assembly");
+                Debug.Log("  3. 一个 Assembly 可以被多个 AppDomain 加载（但实例独立）");
+                Debug.Log("  4. AppDomain.CurrentDomain.GetAssemblies() 获取当前域中所有已加载的程序集");
+                
+                // 演示：一个 AppDomain 包含多个 Assembly
+                Assembly[] assemblies = currentDomain.GetAssemblies();
+                Debug.Log($"当前 AppDomain 中包含的程序集数量: {assemblies.Length}");
+                Debug.Log($"这些程序集都属于同一个 AppDomain: {currentDomain.FriendlyName}");
+                
+                // ========== 功能对比 ==========
+                
+                Debug.Log("--- 功能对比 ---");
+                Debug.Log("Assembly 的主要功能：");
+                Debug.Log("  ✓ 包含类型定义和元数据");
+                Debug.Log("  ✓ 提供类型查找和反射功能");
+                Debug.Log("  ✓ 代码部署和版本控制");
+                Debug.Log("  ✓ 资源文件管理");
+                Debug.Log("  ✓ 程序集引用和依赖");
+                
+                Debug.Log("");
+                Debug.Log("AppDomain 的主要功能：");
+                Debug.Log("  ✓ 代码隔离（不同域中的代码互不影响）");
+                Debug.Log("  ✓ 安全边界（可以设置不同的安全策略）");
+                Debug.Log("  ✓ 独立卸载（可以卸载整个域及其中的程序集）");
+                Debug.Log("  ✓ 配置隔离（每个域可以有独立的配置文件）");
+                Debug.Log("  ⚠️ 在 .NET Core/.NET 5+ 中，大部分功能受限");
+                
+                // ========== 使用场景对比 ==========
+                
+                Debug.Log("--- 使用场景对比 ---");
+                Debug.Log("Assembly 的使用场景：");
+                Debug.Log("  • 反射操作：查找类型、方法、属性等");
+                Debug.Log("  • 动态加载：运行时加载插件或模块");
+                Debug.Log("  • 类型发现：扫描程序集中的所有类型");
+                Debug.Log("  • 元数据查询：获取类型信息、特性等");
+                Debug.Log("  • 程序集版本管理：检查程序集版本和依赖");
+                
+                Debug.Log("");
+                Debug.Log("AppDomain 的使用场景：");
+                Debug.Log("  • 插件系统：隔离插件代码，防止冲突");
+                Debug.Log("  • 热更新：卸载旧域，加载新域（.NET Framework）");
+                Debug.Log("  • 安全隔离：运行不受信任的代码");
+                Debug.Log("  • 多版本共存：在同一进程中运行不同版本的代码");
+                Debug.Log("  ⚠️ 注意：.NET Core/.NET 5+ 中，AppDomain 功能受限，通常只有一个默认域");
+                
+                // ========== 代码示例 ==========
+                
+                Debug.Log("--- 代码示例 ---");
+                
+                // 示例1: 通过 Assembly 获取类型
+                Debug.Log("示例1: 通过 Assembly 获取类型");
+                Type testClassType = currentAssembly.GetType("DotNet.Reflection.TestClass");
+                if (testClassType != null)
+                {
+                    Debug.Log($"  从程序集中找到类型: {testClassType.FullName}");
+                }
+                
+                // 示例2: 通过 AppDomain 获取所有程序集
+                Debug.Log("示例2: 通过 AppDomain 获取所有程序集");
+                Debug.Log($"  当前域中的程序集数量: {assemblies.Length}");
+                Debug.Log($"  前5个程序集:");
+                foreach (var assembly in assemblies.Take(5))
+                {
+                    Debug.Log($"    - {assembly.GetName().Name}");
+                }
+                
+                // 示例3: 查找特定程序集
+                Debug.Log("示例3: 在 AppDomain 中查找特定程序集");
+                Assembly foundAssembly = assemblies.FirstOrDefault(a => 
+                    a.GetName().Name.Contains("Reflection"));
+                if (foundAssembly != null)
+                {
+                    Debug.Log($"  找到程序集: {foundAssembly.GetName().Name}");
+                    Debug.Log($"  该程序集属于: {currentDomain.FriendlyName}");
+                }
+                
+                // ========== 重要注意事项 ==========
+                
+                Debug.LogWarning("--- 重要注意事项 ---");
+                Debug.LogWarning("1. .NET Core/.NET 5+ 中的变化：");
+                Debug.LogWarning("   - AppDomain 功能大幅受限");
+                Debug.LogWarning("   - 通常只有一个默认 AppDomain");
+                Debug.LogWarning("   - 无法创建新的 AppDomain");
+                Debug.LogWarning("   - 无法卸载 AppDomain");
+                Debug.LogWarning("   - Assembly 功能基本保持不变");
+                
+                Debug.LogWarning("");
+                Debug.LogWarning("2. Unity 中的特殊情况：");
+                Debug.LogWarning("   - Unity 使用自己的程序集加载机制");
+                Debug.LogWarning("   - 程序集加载时机可能与标准 .NET 不同");
+                Debug.LogWarning("   - AppDomain.CurrentDomain 仍然可用，但功能受限");
+                Debug.LogWarning("   - 建议主要使用 Assembly 进行反射操作");
+                
+                Debug.LogWarning("");
+                Debug.LogWarning("3. 性能考虑：");
+                Debug.LogWarning("   - AppDomain.GetAssemblies() 可能返回大量程序集");
+                Debug.LogWarning("   - 遍历所有程序集查找类型可能很耗时");
+                Debug.LogWarning("   - 建议缓存查找结果");
+                Debug.LogWarning("   - 优先使用 Type.GetType() 而不是遍历程序集");
+                
+                // ========== 总结 ==========
+                
+                Debug.Log("--- 总结 ---");
+                Debug.Log("Assembly vs AppDomain:");
+                Debug.Log("  Assembly = 代码容器（物理）");
+                Debug.Log("  AppDomain = 隔离边界（逻辑）");
+                Debug.Log("");
+                Debug.Log("关系：");
+                Debug.Log("  AppDomain 包含多个 Assembly");
+                Debug.Log("  Assembly 可以被多个 AppDomain 加载");
+                Debug.Log("");
+                Debug.Log("在反射中的使用：");
+                Debug.Log("  - 使用 Assembly 进行类型查找和反射操作");
+                Debug.Log("  - 使用 AppDomain.GetAssemblies() 获取所有已加载的程序集");
+                Debug.Log("  - 然后遍历程序集进行类型查找");
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Assembly和AppDomain对比说明出错: {ex.Message}");
+                Debug.LogError($"异常类型: {ex.GetType().Name}");
+            }
+        }
+
+        /// <summary>
         /// Assembly示例
+        /// 演示程序集操作和AppDomain.CurrentDomain的使用
+        /// 
+        /// 主要功能：
+        /// - 获取当前程序集信息
+        /// - 使用AppDomain.CurrentDomain获取所有已加载的程序集
+        /// - 遍历程序集查找类型
+        /// - 程序集信息查询和分析
+        /// - 动态加载程序集
+        /// 
+        /// 注意事项：
+        /// - AppDomain.CurrentDomain.GetAssemblies() 返回所有已加载的程序集
+        /// - 遍历所有程序集可能很耗时，建议缓存结果
+        /// - 某些程序集可能无法完全加载，需要处理异常
+        /// - 在Unity中，程序集加载时机可能与.NET标准不同
         /// </summary>
         private void AssemblyExample()
         {
@@ -828,40 +1039,278 @@ namespace DotNet.Reflection
             
             try
             {
-                // 获取当前程序集
+                // ========== 获取当前程序集 ==========
+                
+                // Assembly.GetExecutingAssembly(): 获取当前正在执行的程序集
+                // 参数说明：无
+                // 返回值：Assembly - 当前程序集对象
+                // 注意事项：返回包含当前代码的程序集
                 Assembly currentAssembly = Assembly.GetExecutingAssembly();
                 Debug.Log($"当前程序集名称: {currentAssembly.GetName().Name}");
                 Debug.Log($"当前程序集版本: {currentAssembly.GetName().Version}");
                 Debug.Log($"当前程序集位置: {currentAssembly.Location}");
+                Debug.Log($"当前程序集是否动态: {currentAssembly.IsDynamic}");
                 
                 // 获取程序集中的所有类型
+                // GetTypes(): 获取程序集中定义的所有类型
+                // 参数说明：无
+                // 返回值：Type[] - 类型数组
+                // 注意事项：可能抛出ReflectionTypeLoadException
                 Type[] types = currentAssembly.GetTypes();
                 Debug.Log($"程序集中的类型数量: {types.Length}");
                 
                 // 查找特定类型
+                // GetType(string name): 根据完整类型名查找类型
+                // 参数说明：name - 类型的完整名称（包括命名空间）
+                // 返回值：Type - 类型对象，如果不存在则为null
                 Type testClassType = currentAssembly.GetType("DotNet.Reflection.TestClass");
                 if (testClassType != null)
                 {
                     Debug.Log($"找到TestClass类型: {testClassType.FullName}");
                 }
                 
-                // 获取程序集中的所有程序集
-                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                // ========== AppDomain.CurrentDomain 使用 ==========
+                
+                // AppDomain.CurrentDomain: 获取当前应用程序域
+                // 参数说明：无
+                // 返回值：AppDomain - 当前应用程序域对象
+                // 注意事项：应用程序域是.NET中应用程序的隔离边界
+                AppDomain currentDomain = AppDomain.CurrentDomain;
+                Debug.Log($"当前应用程序域名称: {currentDomain.FriendlyName}");
+                Debug.Log($"应用程序域ID: {currentDomain.Id}");
+                Debug.Log($"基础目录: {currentDomain.BaseDirectory}");
+                
+                // GetAssemblies(): 获取当前应用程序域中所有已加载的程序集
+                // 参数说明：无
+                // 返回值：Assembly[] - 程序集数组
+                // 注意事项：
+                // - 这是反射操作中最常用的方法之一
+                // - 返回所有已加载的程序集，数量可能很大
+                // - 遍历所有程序集可能很耗时，建议缓存结果
+                // - 用于查找类型、方法等反射操作
+                Assembly[] assemblies = currentDomain.GetAssemblies();
                 Debug.Log($"当前域中的程序集数量: {assemblies.Length}");
                 
-                // 查找包含特定类型的程序集
-                foreach (Assembly assembly in assemblies)
+                // ========== 程序集信息查询 ==========
+                
+                if (showDetailedInfo)
                 {
-                    if (assembly.GetTypes().Any(t => t.Name == "String"))
+                    // 显示前10个程序集详细信息
+                    Debug.Log("--- 前10个程序集详细信息 ---");
+                    for (int i = 0; i < Math.Min(10, assemblies.Length); i++)
                     {
-                        Debug.Log($"包含String类型的程序集: {assembly.GetName().Name}");
-                        break;
+                        Assembly assembly = assemblies[i];
+                        AssemblyName assemblyName = assembly.GetName();
+                        Debug.Log($"程序集 {i + 1}: {assemblyName.Name}");
+                        Debug.Log($"  完整名称: {assembly.FullName}");
+                        Debug.Log($"  版本: {assemblyName.Version}");
+                        Debug.Log($"  位置: {assembly.Location}");
+                        Debug.Log($"  是否动态: {assembly.IsDynamic}");
                     }
                 }
                 
-                // 动态加载程序集
+                // ========== 按名称查找程序集 ==========
+                
+                // 查找Unity相关程序集
+                Assembly[] unityAssemblies = assemblies.Where(a => 
+                    a.GetName().Name.Contains("UnityEngine") || 
+                    a.GetName().Name.Contains("Unity")).ToArray();
+                Debug.Log($"Unity相关程序集数量: {unityAssemblies.Length}");
+                
+                foreach (var unityAssembly in unityAssemblies.Take(5))
+                {
+                    Debug.Log($"  - {unityAssembly.GetName().Name}");
+                }
+                
+                // ========== 从所有程序集中查找类型 ==========
+                
+                Debug.Log("--- 从所有程序集中查找类型 ---");
+                
+                // 方法1: 遍历所有程序集查找类型
+                string targetTypeName = "System.String";
+                Type foundType = null;
+                
+                foreach (Assembly assembly in assemblies)
+                {
+                    try
+                    {
+                        foundType = assembly.GetType(targetTypeName);
+                        if (foundType != null)
+                        {
+                            Debug.Log($"找到类型 {targetTypeName} 在程序集: {assembly.GetName().Name}");
+                            break;
+                        }
+                    }
+                    catch (ReflectionTypeLoadException ex)
+                    {
+                        // 某些程序集可能无法完全加载，只检查已加载的类型
+                        if (ex.Types != null)
+                        {
+                            foreach (var type in ex.Types)
+                            {
+                                if (type != null && type.FullName == targetTypeName)
+                                {
+                                    foundType = type;
+                                    Debug.Log($"找到类型 {targetTypeName} 在程序集: {assembly.GetName().Name} (部分加载)");
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // 忽略其他错误
+                    }
+                }
+                
+                // 方法2: 使用 Type.GetType (更高效)
+                Type stringType = Type.GetType(targetTypeName);
+                if (stringType != null)
+                {
+                    Debug.Log($"Type.GetType 找到类型: {stringType.Name}");
+                }
+                
+                // ========== 查找命名空间下的所有类型 ==========
+                
+                Debug.Log("--- 查找命名空间下的类型 ---");
+                string targetNamespace = "UnityEngine";
+                int typeCount = 0;
+                
+                foreach (Assembly assembly in assemblies)
+                {
+                    try
+                    {
+                        Type[] assemblyTypes = assembly.GetTypes();
+                        var namespaceTypes = assemblyTypes.Where(t => 
+                            t != null &&
+                            t.Namespace == targetNamespace && 
+                            t.IsPublic && 
+                            !t.IsAbstract).Take(10);
+                        
+                        foreach (var type in namespaceTypes)
+                        {
+                            Debug.Log($"  {targetNamespace}.{type.Name}");
+                            typeCount++;
+                        }
+                    }
+                    catch (ReflectionTypeLoadException ex)
+                    {
+                        // 某些程序集可能无法完全加载，只加载可用的类型
+                        if (ex.Types != null)
+                        {
+                            foreach (var type in ex.Types.Where(t => t != null && t.Namespace == targetNamespace).Take(10))
+                            {
+                                Debug.Log($"  {targetNamespace}.{type.Name}");
+                                typeCount++;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // 忽略其他错误
+                    }
+                }
+                Debug.Log($"找到 {targetNamespace} 命名空间下的类型数量: {typeCount}");
+                
+                // ========== 查找实现特定接口或继承特定基类的类型 ==========
+                
+                Debug.Log("--- 查找继承特定基类的类型 ---");
+                Type componentBaseType = typeof(Component);
+                int componentTypeCount = 0;
+                
+                foreach (Assembly assembly in assemblies)
+                {
+                    try
+                    {
+                        Type[] assemblyTypes = assembly.GetTypes();
+                        var componentTypes = assemblyTypes.Where(t => 
+                            t != null &&
+                            componentBaseType.IsAssignableFrom(t) && 
+                            !t.IsAbstract && 
+                            t.IsClass).Take(5);
+                        
+                        foreach (var type in componentTypes)
+                        {
+                            Debug.Log($"  继承Component的类型: {type.Name}");
+                            componentTypeCount++;
+                        }
+                    }
+                    catch (ReflectionTypeLoadException)
+                    {
+                        // 忽略部分加载的程序集
+                    }
+                    catch
+                    {
+                        // 忽略其他错误
+                    }
+                }
+                Debug.Log($"找到继承Component的类型总数: {componentTypeCount}");
+                
+                // ========== 程序集依赖关系 ==========
+                
+                Debug.Log("--- 程序集引用关系 ---");
+                AssemblyName[] referencedAssemblies = currentAssembly.GetReferencedAssemblies();
+                Debug.Log($"当前程序集引用的程序集数量: {referencedAssemblies.Length}");
+                
+                foreach (var refAssembly in referencedAssemblies.Take(5))
+                {
+                    Debug.Log($"  引用: {refAssembly.Name} v{refAssembly.Version}");
+                }
+                
+                // ========== 查找包含特定类型的程序集 ==========
+                
+                Debug.Log("--- 查找包含特定类型的程序集 ---");
+                string searchTypeName = "String";
+                
+                foreach (Assembly assembly in assemblies)
+                {
+                    try
+                    {
+                        Type[] assemblyTypes = assembly.GetTypes();
+                        if (assemblyTypes.Any(t => t != null && t.Name == searchTypeName))
+                        {
+                            Debug.Log($"包含{searchTypeName}类型的程序集: {assembly.GetName().Name}");
+                            break;
+                        }
+                    }
+                    catch (ReflectionTypeLoadException ex)
+                    {
+                        // 检查部分加载的类型
+                        if (ex.Types != null && ex.Types.Any(t => t != null && t.Name == searchTypeName))
+                        {
+                            Debug.Log($"包含{searchTypeName}类型的程序集: {assembly.GetName().Name} (部分加载)");
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        // 忽略错误
+                    }
+                }
+                
+                // ========== 程序集特性查询 ==========
+                
+                Debug.Log("--- 程序集特性查询 ---");
+                object[] attributes = currentAssembly.GetCustomAttributes(false);
+                Debug.Log($"当前程序集的自定义特性数量: {attributes.Length}");
+                
+                foreach (var attr in attributes.Take(5))
+                {
+                    Debug.Log($"  特性: {attr.GetType().Name}");
+                }
+                
+                // ========== 动态加载程序集 ==========
+                
+                Debug.Log("--- 动态加载程序集 ---");
+                // 注意：在Unity中，程序集加载时机可能与.NET标准不同
+                // Unity通常会自动加载所有程序集，所以很少需要手动加载
+                
                 try
                 {
+                    // Assembly.Load(string assemblyString): 根据程序集名称加载
+                    // 参数说明：assemblyString - 程序集的显示名称
+                    // 返回值：Assembly - 加载的程序集
+                    // 注意事项：如果程序集已加载，返回已加载的实例
                     Assembly loadedAssembly = Assembly.Load("System.Core");
                     Debug.Log($"动态加载的程序集: {loadedAssembly.GetName().Name}");
                 }
@@ -870,10 +1319,60 @@ namespace DotNet.Reflection
                     Debug.Log($"动态加载程序集失败: {ex.Message}");
                 }
                 
+                // ========== 实用示例：查找所有MonoBehaviour子类 ==========
+                
+                if (showDetailedInfo)
+                {
+                    Debug.Log("--- 实用示例：查找MonoBehaviour子类 ---");
+                    Type monoBehaviourType = typeof(MonoBehaviour);
+                    List<string> monoBehaviourTypes = new List<string>();
+                    
+                    foreach (Assembly assembly in assemblies)
+                    {
+                        try
+                        {
+                            Type[] assemblyTypes = assembly.GetTypes();
+                            var mbTypes = assemblyTypes.Where(t => 
+                                t != null &&
+                                monoBehaviourType.IsAssignableFrom(t) && 
+                                t.IsClass && 
+                                !t.IsAbstract &&
+                                t != monoBehaviourType);
+                            
+                            foreach (var type in mbTypes.Take(5))
+                            {
+                                monoBehaviourTypes.Add($"{type.Namespace}.{type.Name}");
+                            }
+                        }
+                        catch
+                        {
+                            // 忽略错误
+                        }
+                    }
+                    
+                    Debug.Log($"找到MonoBehaviour子类数量: {monoBehaviourTypes.Count}");
+                    foreach (var typeName in monoBehaviourTypes.Take(10))
+                    {
+                        Debug.Log($"  - {typeName}");
+                    }
+                }
+                
+                // ========== 性能考虑和最佳实践 ==========
+                
+                Debug.LogWarning("⚠️ AppDomain.CurrentDomain.GetAssemblies() 使用注意事项：");
+                Debug.LogWarning("1. GetAssemblies() 返回所有已加载的程序集，数量可能很大");
+                Debug.LogWarning("2. 遍历所有程序集和类型可能很耗时，建议缓存结果");
+                Debug.LogWarning("3. 某些程序集可能无法完全加载，需要处理 ReflectionTypeLoadException");
+                Debug.LogWarning("4. 在Unity中，程序集加载时机可能与.NET标准不同");
+                Debug.LogWarning("5. 使用 Type.GetType() 通常比遍历程序集更高效");
+                Debug.LogWarning("6. 考虑使用字典缓存类型查找结果以提高性能");
+                
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Assembly操作出错: {ex.Message}");
+                Debug.LogError($"异常类型: {ex.GetType().Name}");
+                Debug.LogError($"堆栈跟踪: {ex.StackTrace}");
             }
         }
     }
