@@ -5,5 +5,21 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/uMMORPG/Scenes/World.unity
+    path: Assets/Samples/Sequences/1.0.4/Scene Management/SceneManagementSample.unity
+    guid: 8748de3b55ebcc74e85fcadf2c91f33a
+  - enabled: 1
+    path: Assets/Samples/Sequences/1.0.4/Scene Management/set01.unity
+    guid: b8c5e193cf2266a4ab411033c44f483a
+  - enabled: 1
+    path: Assets/Samples/Sequences/1.0.4/Scene Management/shot_10_lights.unity
+    guid: 6ea94aeacbf85a742889e5076dd54276
+  - enabled: 1
+    path: Assets/Samples/Sequences/1.0.4/Scene Management/shot_20_lights.unity
+    guid: 085232b8ac1593c4db4fd4b10a81a10d
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 09f6368a4be2d9348a9a50c349769d2b,
+      type: 2}
