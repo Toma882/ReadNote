@@ -44,6 +44,9 @@ OdinSamples/
 │   └── Editor/
 │       └── CustomOdinEditorSampleEditor.cs
 │
+├── 12_Serialization/      # Odin序列化系统演示 (SerializedMonoBehaviour, OdinSerialize)
+│   └── SerializationSample.cs
+│
 ├── 11_CompleteProject/     # ⭐ 完整项目示例 - 游戏数据管理器
 │   ├── README.md           # 详细项目说明
 │   ├── Data/               # 示例数据资源
@@ -104,6 +107,7 @@ OdinSamples/
 | **08_Advanced** | 高级特性组合 | → `Custom Drawers/` 所有案例 | 自定义绘制、底层 API |
 | **09_EditorWindows** | 编辑器窗口 | → `Editor Windows/` 所有案例 | 高级窗口特性、性能优化 |
 | **10_CustomEditors** | 自定义编辑器 | → `RPG Editor/ItemDrawer.cs` | 完全自定义绘制器 |
+| **12_Serialization** | Odin序列化系统 | → `Serialization/` 所有案例 | Dictionary序列化、接口序列化、多态序列化 |
 | **⭐ 11_CompleteProject** | 完整项目架构 | → `Sample - RPG Editor/` 整个项目 | 生产级架构、拖放、撤销 |
 
 ---
@@ -231,19 +235,21 @@ OdinSamples/
 
 #### 学习步骤：
 ```
-09_EditorWindows → 10_CustomEditors → ⭐ 11_CompleteProject
+09_EditorWindows → 10_CustomEditors → 12_Serialization → ⭐ 11_CompleteProject
 ```
 
 #### 知识点：
 - ✅ OdinEditorWindow 基础窗口
 - ✅ OdinMenuEditorWindow 带菜单的窗口
 - ✅ OdinEditor 自定义 Inspector
+- ✅ Odin 序列化系统（Dictionary、接口、抽象类）
 - ✅ 完整的数据管理工作流程
 
 #### 完成标志：
 - [ ] 能创建简单的编辑器窗口
 - [ ] 会构建菜单树结构
 - [ ] 能自定义对象的 Inspector
+- [ ] 理解 Odin 序列化系统（Dictionary、接口、抽象类）
 - [ ] 理解完整项目的架构设计
 
 #### 💡 深化方向 A：编辑器窗口深化
@@ -275,7 +281,37 @@ OdinSamples/
    ✓ 动态更新菜单树
    ```
 
-#### 💡 深化方向 B：完整项目深化
+#### 💡 深化方向 B：序列化系统深化
+
+**重点研究：** `Assets/Plugins/Sirenix/Demos/` 中所有使用 `SerializedMonoBehaviour` 或 `SerializedScriptableObject` 的示例
+
+**学习要点：**
+1. **Dictionary 序列化**
+   - Unity 原生不支持 Dictionary，Odin 完全支持
+   - 使用 `[OdinSerialize]` 标记 Dictionary 字段
+   - 在 Inspector 中可以像普通字段一样编辑
+
+2. **接口和抽象类序列化**
+   - Unity 原生不支持接口和抽象类序列化
+   - Odin 支持多态序列化
+   - 可以序列化接口引用和抽象类引用
+
+3. **序列化策略**
+   - `SerializationPolicies.Unity`：兼容 Unity 原生规则
+   - `SerializationPolicies.Everything`：序列化所有字段
+   - `SerializationPolicies.Strict`：严格模式
+
+4. **实际应用场景**
+   - 游戏数据配置（如我们的 `ProtrudingPointDictData`）
+   - 复杂数据结构存储
+   - 需要 Dictionary 的场景
+
+**对比学习：**
+- 查看我们的 `12_Serialization/SerializationSample.cs`
+- 对比 Unity 原生序列化的限制
+- 理解何时使用 Odin 序列化
+
+#### 💡 深化方向 C：完整项目深化
 
 **重点研究：** `Assets/Plugins/Sirenix/Demos/Sample - RPG Editor/`
 

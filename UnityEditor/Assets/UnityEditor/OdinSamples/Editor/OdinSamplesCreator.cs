@@ -24,6 +24,7 @@ namespace OdinSamples.Editor
             CreateValueDropdownsSample();
             CreateAdvancedSample();
             CreateCustomEditorSample();
+            CreateSerializationSample();
             
             Debug.Log("✅ 已创建所有 Odin Inspector 示例对象（不包括编辑器窗口）");
         }
@@ -74,6 +75,12 @@ namespace OdinSamples.Editor
         private static void CreateAdvancedSample()
         {
             CreateSample<Advanced.AdvancedSample>("08_高级特性示例");
+        }
+        
+        [MenuItem(MENU_ROOT + "12 - 序列化示例", false, 12)]
+        private static void CreateSerializationSample()
+        {
+            CreateSample<Serialization.SerializationSample>("12_序列化示例");
         }
         
         [MenuItem(MENU_ROOT + "10 - 自定义编辑器示例", false, 10)]
