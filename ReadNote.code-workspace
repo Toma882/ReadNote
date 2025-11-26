@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../Project_Unity/TBBattle/TBBattle/Plan"
+		}
+	],
+	"settings": {
+		"dotrush.roslyn.projectOrSolutionFiles": [
+			"d:\\Project_Git@SVN\\ReadNote\\UnityEditor\\UnityEditor.sln"
+		],
+		"dotnet.defaultSolution": "disable"
+	}
+}
