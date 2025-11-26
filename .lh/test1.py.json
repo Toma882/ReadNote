@@ -1,0 +1,26 @@
+{
+    "sourceFile": "test1.py",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1764155964317,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1764155969370,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,4 @@\n-﻿\r\n+\r\n r = int(input(\"输入人数\"))\r\n f = 50* 0.88 * r\r\n print(\"f=\",f)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1764156015743,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,4 @@\n-﻿\r\n+\r\n r = int(input(\"输入人数/n\"))\r\n f = 50* 0.88 * r\r\n print(\"费用\",f)\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1764155964317,
+            "name": "Commit-0",
+            "content": "\r\nr = int(input(\"输入人数\"))\r\nf = 50* 0.88 * r\r\nprint(f)"
+        }
+    ]
+}
