@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../../Project_Unity/TBBattle/TBBattle/Plan"
+		},
+		{
+			"path": "../../Project_Unity/TBBattle/TBBattle/LocalFile/Lua/Game/gamecore/ui/Unit"
 		}
 	],
 	"settings": {
