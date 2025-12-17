@@ -1,7 +1,7 @@
 {
 	"$schema": "https://joplinapp.org/schema/settings.json",
 	"altInstanceId": "",
-	"editor.codeView": false,
+	"editor.codeView": true,
 	"sync.target": 3,
 	"richTextBannerDismissed": true,
 	"editor.pluginCompatibilityBannerDismissedFor": [
@@ -88,5 +88,7 @@
 	],
 	"api.token": "83d740e1cfd25fd3a6f10e68df7eefbba37eee37d5101881ca9d6e1e15264dd7c4a789e684f80f973f35d1e3ce62330b2e1fde8c85f13153beac0dfe69c9b40a",
 	"spellChecker.enabled": true,
-	"spellChecker.languages": []
+	"spellChecker.languages": [
+		"en-US"
+	]
 }
