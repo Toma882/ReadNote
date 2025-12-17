@@ -1,0 +1,18 @@
+{
+    "sourceFile": "游戏编程精粹/3/1.AI核心观点及思路.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1765967212460,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1765967212460,
+            "name": "Commit-0",
+            "content": "# AI核心观点及思路\r\n\r\n## 一、AI技术学习策略\r\n\r\n### 1. 理解引擎原理（主要价值）\r\n- ✅ 理解Unity NavMesh背后的寻径原理\r\n- ✅ 知道引擎内部是如何实现的\r\n- ✅ 遇到问题时知道如何调试和优化\r\n\r\n### 2. 特殊情况处理（次要价值）\r\n- ✅ 遇到引擎没有封装的功能时知道如何实现\r\n- ✅ 特殊场景的性能优化\r\n- ✅ 自定义AI算法需求\r\n\r\n### 3. 实际开发建议\r\n- ⚠️ **90%的情况**：直接使用Unity NavMesh和项目已有系统（A*、FSM、TriggerKit）\r\n- ⚠️ **10%的情况**：需要自己实现时，知道原理和算法\r\n- ✅ **学习重点**：理解原理，优化现有系统\r\n\r\n## 二、Unity封装情况说明\r\n\r\n### Unity已完全封装的功能\r\n- **导航网格**：Unity NavMesh系统（NavMeshAgent、NavMeshSurface等）\r\n- **寻径算法**：Unity NavMesh自动处理A*寻径\r\n- **路径跟随**：NavMeshAgent自动跟随路径\r\n- **动态障碍**：NavMeshObstacle支持动态障碍物\r\n\r\n### 项目已实现的功能\r\n- **A*寻路算法**：Lua实现的A*算法（AStar.lua）\r\n- **有限状态机**：完整的FSM系统（FSMKit、FSM_PDAKit、ParallelFSMKit、HierarchicalFSMKit）\r\n- **触发器系统**：TriggerKit触发器系统\r\n- **行为树/决策树**：GameAI模块包含行为树和决策树实现\r\n\r\n### Unity工具支持的功能\r\n- **AI行为**：Unity ML-Agents（机器学习）\r\n- **行为树**：第三方插件如Behavior Designer\r\n- **寻径优化**：A* Pathfinding Project等插件\r\n\r\n### Unity未封装的功能\r\n- **战术式寻径**：需要考虑威胁、暴露时间等战术因素\r\n- **游览网格**：Portal系统需要自己实现\r\n- **地形分析**：RTS游戏的地形分析需要自己实现\r\n- **触发器系统扩展**：复杂条件组合需要自己设计\r\n\r\n## 三、统一学习建议\r\n\r\n**所有AI技术的学习策略**：\r\n1. **了解原理**：知道算法原理和实现思路\r\n2. **理解应用**：知道在什么场景下使用\r\n3. **使用工具**：实际开发使用Unity NavMesh或项目已有系统\r\n4. **特殊情况**：遇到工具无法满足的需求时，知道如何实现\r\n\r\n## 四、核心观点\r\n\r\n### 1. 不要重复造轮子\r\n- Unity NavMesh已经实现了大部分寻径功能\r\n- 项目已有A*、FSM、TriggerKit等系统\r\n- 使用现有系统比自己实现更高效、更稳定\r\n- 只有在特殊需求时才考虑自己实现\r\n\r\n### 2. 理解原理很重要\r\n- 知道Unity NavMesh背后的寻径原理\r\n- 知道项目已有系统的实现思路\r\n- 遇到问题时知道如何调试和优化\r\n- 能够判断何时需要自己实现\r\n\r\n### 3. 工具优先原则\r\n- 优先使用Unity NavMesh和项目已有系统\r\n- 工具比自己实现更可靠、更高效\r\n- 只有在工具无法满足时才自己实现\r\n\r\n### 4. 性能优化思路\r\n- Unity NavMesh已优化的功能不需要自己优化\r\n- 特殊场景的性能优化需要理解原理\r\n- 性能优化要基于实际测试，不要过早优化\r\n\r\n## 五、学习优先级\r\n\r\n### 高优先级（必须掌握）\r\n- A*寻路算法（项目已有Lua实现）\r\n- 有限状态机（项目已有完整FSM系统）\r\n- Unity NavMesh导航系统\r\n- 触发器系统（项目已有TriggerKit）\r\n\r\n### 中优先级（建议掌握）\r\n- 战术式寻径（A*扩展）\r\n- 游览网格（Portal系统）\r\n- 地形分析（RTS场景）\r\n- 触发器系统扩展\r\n\r\n### 低优先级（按需学习）\r\n- 区域游览（寻径模式扩展）\r\n- 寻径与碰撞的关系处理\r\n- GoCap优化机器学习\r\n\r\n### 了解即可\r\n- 基于函数指针的内嵌式有限状态机（C++特定实现）\r\n- 特定场景的优化技术\r\n\r\n"
+        }
+    ]
+}
