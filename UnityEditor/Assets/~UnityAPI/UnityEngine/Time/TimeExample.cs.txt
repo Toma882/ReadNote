@@ -1,0 +1,487 @@
+using UnityEngine;
+
+/// <summary>
+/// Unity Time 系统完整 API 示例
+/// Time 类提供时间相关的属性和方法，是游戏开发中最重要的系统之一
+/// </summary>
+public class TimeExample : MonoBehaviour
+{
+    [Header("时间设置")]
+    [SerializeField] private float timeScale = 1.0f;
+    [SerializeField] private bool useUnscaledTime = false;
+    
+    [Header("时间显示")]
+    [SerializeField] private bool showTimeInfo = true;
+    
+    private float lastFrameTime = 0f;
+    private int frameCount = 0;
+    
+    private void Start()
+    {
+        Debug.Log("=== Unity Time 系统完整 API 示例 ===");
+        
+        TestAllTimeFeatures();
+    }
+    
+    private void Update()
+    {
+        if (showTimeInfo)
+        {
+            DisplayTimeInfo();
+        }
+    }
+    
+    #region 1. 基础时间属性
+    
+    /// <summary>
+    /// 测试所有 Time 功能
+    /// </summary>
+    private void TestAllTimeFeatures()
+    {
+        Debug.Log("\n--- 1. 基础时间属性 ---");
+        
+        // 1.1 Time.time
+        TestTime();
+        
+        // 1.2 Time.deltaTime
+        TestDeltaTime();
+        
+        // 1.3 Time.fixedDeltaTime
+        TestFixedDeltaTime();
+        
+        Debug.Log("\n--- 2. 时间缩放 ---");
+        
+        // 2.1 Time.timeScale
+        TestTimeScale();
+        
+        // 2.2 Time.unscaledTime
+        TestUnscaledTime();
+        
+        Debug.Log("\n--- 3. 帧相关时间 ---");
+        
+        // 3.1 Time.frameCount
+        TestFrameCount();
+        
+        // 3.2 Time.smoothDeltaTime
+        TestSmoothDeltaTime();
+        
+        Debug.Log("\n--- 4. 固定时间步长 ---");
+        
+        // 4.1 Time.fixedTime
+        TestFixedTime();
+        
+        // 4.2 Time.maximumDeltaTime
+        TestMaximumDeltaTime();
+        
+        Debug.Log("\n--- 5. 实时时间 ---");
+        
+        // 5.1 Time.realtimeSinceStartup
+        TestRealtimeSinceStartup();
+    }
+    
+    /// <summary>
+    /// 1.1 Time.time - 游戏运行时间
+    /// 从游戏开始到现在的总时间（秒），受 timeScale 影响
+    /// </summary>
+    private void TestTime()
+    {
+        Debug.Log("1.1 Time.time - 游戏运行时间");
+        
+        float currentTime = Time.time;
+        Debug.Log($"当前游戏时间: {currentTime} 秒");
+        Debug.Log($"游戏运行了 {currentTime / 60:F2} 分钟");
+        
+        // Time.time 在游戏暂停时会停止增加
+        // 受 Time.timeScale 影响
+    }
+    
+    /// <summary>
+    /// 1.2 Time.deltaTime - 上一帧到当前帧的时间
+    /// 最常用的时间属性，用于实现帧率无关的移动和动画
+    /// </summary>
+    private void TestDeltaTime()
+    {
+        Debug.Log("1.2 Time.deltaTime - 帧间隔时间");
+        
+        float delta = Time.deltaTime;
+        Debug.Log($"上一帧到当前帧的时间: {delta} 秒");
+        Debug.Log($"当前帧率: {1.0f / delta:F2} FPS");
+        
+        // deltaTime 用于实现帧率无关的移动
+        // 示例：每秒移动 5 个单位
+        // transform.position += Vector3.forward * 5.0f * Time.deltaTime;
+        
+        // deltaTime 受 timeScale 影响
+        // 如果 timeScale = 0.5，deltaTime 也会减半
+    }
+    
+    /// <summary>
+    /// 1.3 Time.fixedDeltaTime - 固定时间步长
+    /// FixedUpdate 的固定时间间隔，默认 0.02 秒（50 FPS）
+    /// </summary>
+    private void TestFixedDeltaTime()
+    {
+        Debug.Log("1.3 Time.fixedDeltaTime - 固定时间步长");
+        
+        float fixedDelta = Time.fixedDeltaTime;
+        Debug.Log($"固定时间步长: {fixedDelta} 秒");
+        Debug.Log($"固定更新频率: {1.0f / fixedDelta:F2} Hz");
+        
+        // fixedDeltaTime 用于 FixedUpdate 中的物理计算
+        // 在 Project Settings > Time > Fixed Timestep 中设置
+    }
+    
+    #endregion
+    
+    #region 2. 时间缩放
+    
+    /// <summary>
+    /// 2.1 Time.timeScale - 时间缩放
+    /// 控制游戏时间的流逝速度
+    /// 1.0 = 正常速度，0.5 = 慢动作，0 = 暂停，2.0 = 快进
+    /// </summary>
+    private void TestTimeScale()
+    {
+        Debug.Log("2.1 Time.timeScale - 时间缩放");
+        
+        float currentScale = Time.timeScale;
+        Debug.Log($"当前时间缩放: {currentScale}");
+        
+        // 设置时间缩放
+        Time.timeScale = timeScale;
+        Debug.Log($"设置时间缩放为: {timeScale}");
+        
+        // 常见用途：
+        // - 暂停游戏：Time.timeScale = 0
+        // - 慢动作效果：Time.timeScale = 0.5
+        // - 快进效果：Time.timeScale = 2.0
+        
+        // 注意：timeScale 影响：
+        // - Time.time
+        // - Time.deltaTime
+        // - 动画播放速度
+        // - 协程中的 WaitForSeconds
+        // 但不影响：
+        // - Time.unscaledTime
+        // - Time.realtimeSinceStartup
+        // - WaitForSecondsRealtime
+    }
+    
+    /// <summary>
+    /// 2.2 Time.unscaledTime - 不受缩放影响的时间
+    /// 从游戏开始到现在的总时间，不受 timeScale 影响
+    /// </summary>
+    private void TestUnscaledTime()
+    {
+        Debug.Log("2.2 Time.unscaledTime - 不受缩放影响的时间");
+        
+        float unscaled = Time.unscaledTime;
+        Debug.Log($"不受缩放影响的时间: {unscaled} 秒");
+        
+        // unscaledTime 用于：
+        // - UI 动画（即使游戏暂停也要继续）
+        // - 计时器（不受慢动作影响）
+        // - 暂停菜单的显示
+        
+        // 对比 Time.time 和 Time.unscaledTime
+        Debug.Log($"Time.time: {Time.time}, Time.unscaledTime: {Time.unscaledTime}");
+        if (Time.timeScale != 1.0f)
+        {
+            Debug.Log($"时间缩放影响: Time.time 受缩放影响，Time.unscaledTime 不受影响");
+        }
+    }
+    
+    /// <summary>
+    /// 2.3 Time.unscaledDeltaTime - 不受缩放影响的帧间隔
+    /// </summary>
+    private void TestUnscaledDeltaTime()
+    {
+        Debug.Log("2.3 Time.unscaledDeltaTime - 不受缩放影响的帧间隔");
+        
+        float unscaledDelta = Time.unscaledDeltaTime;
+        Debug.Log($"不受缩放影响的帧间隔: {unscaledDelta} 秒");
+        
+        // 用于 UI 动画等不受游戏暂停影响的操作
+        // transform.position += Vector3.forward * 5.0f * Time.unscaledDeltaTime;
+    }
+    
+    #endregion
+    
+    #region 3. 帧相关时间
+    
+    /// <summary>
+    /// 3.1 Time.frameCount - 帧计数
+    /// 从游戏开始到现在渲染的总帧数
+    /// </summary>
+    private void TestFrameCount()
+    {
+        Debug.Log("3.1 Time.frameCount - 帧计数");
+        
+        int frames = Time.frameCount;
+        Debug.Log($"当前帧数: {frames}");
+        Debug.Log($"游戏运行了 {frames / 60} 秒（假设 60 FPS）");
+        
+        // 用于：
+        // - 每 N 帧执行一次操作
+        // if (Time.frameCount % 60 == 0) { /* 每秒执行一次 */ }
+        
+        // - 性能测试
+        // 记录开始和结束的帧数来计算性能
+    }
+    
+    /// <summary>
+    /// 3.2 Time.smoothDeltaTime - 平滑帧间隔
+    /// 最近几帧的平均 deltaTime，用于减少帧率波动的影响
+    /// </summary>
+    private void TestSmoothDeltaTime()
+    {
+        Debug.Log("3.2 Time.smoothDeltaTime - 平滑帧间隔");
+        
+        float smoothDelta = Time.smoothDeltaTime;
+        Debug.Log($"平滑帧间隔: {smoothDelta} 秒");
+        Debug.Log($"平滑帧率: {1.0f / smoothDelta:F2} FPS");
+        
+        // smoothDeltaTime 是最近几帧的平均值
+        // 用于减少帧率波动对动画的影响
+        // 比 deltaTime 更稳定，但响应稍慢
+    }
+    
+    #endregion
+    
+    #region 4. 固定时间步长
+    
+    /// <summary>
+    /// 4.1 Time.fixedTime - 固定更新时间
+    /// FixedUpdate 的累计时间，受 timeScale 影响
+    /// </summary>
+    private void TestFixedTime()
+    {
+        Debug.Log("4.1 Time.fixedTime - 固定更新时间");
+        
+        float fixedTime = Time.fixedTime;
+        Debug.Log($"固定更新时间: {fixedTime} 秒");
+        
+        // fixedTime 是 FixedUpdate 的累计时间
+        // 每次 FixedUpdate 增加 fixedDeltaTime
+    }
+    
+    /// <summary>
+    /// 4.2 Time.maximumDeltaTime - 最大帧间隔
+    /// 限制单帧的最大 deltaTime，防止卡顿导致的时间跳跃
+    /// </summary>
+    private void TestMaximumDeltaTime()
+    {
+        Debug.Log("4.2 Time.maximumDeltaTime - 最大帧间隔");
+        
+        float maxDelta = Time.maximumDeltaTime;
+        Debug.Log($"最大帧间隔: {maxDelta} 秒");
+        
+        // maximumDeltaTime 用于防止卡顿
+        // 如果一帧耗时过长（如加载资源），deltaTime 会被限制
+        // 默认 0.3333333 秒（相当于最低 3 FPS）
+        
+        // 在 Project Settings > Time > Maximum Allowed Timestep 中设置
+    }
+    
+    /// <summary>
+    /// 4.3 Time.fixedUnscaledTime - 不受缩放影响的固定时间
+    /// </summary>
+    private void TestFixedUnscaledTime()
+    {
+        Debug.Log("4.3 Time.fixedUnscaledTime - 不受缩放影响的固定时间");
+        
+        float fixedUnscaled = Time.fixedUnscaledTime;
+        Debug.Log($"不受缩放影响的固定时间: {fixedUnscaled} 秒");
+    }
+    
+    #endregion
+    
+    #region 5. 实时时间
+    
+    /// <summary>
+    /// 5.1 Time.realtimeSinceStartup - 实时启动时间
+    /// 从应用启动到现在的真实时间，不受 timeScale 影响，暂停时也继续增加
+    /// </summary>
+    private void TestRealtimeSinceStartup()
+    {
+        Debug.Log("5.1 Time.realtimeSinceStartup - 实时启动时间");
+        
+        float realtime = Time.realtimeSinceStartup;
+        Debug.Log($"应用启动后的真实时间: {realtime} 秒");
+        Debug.Log($"应用运行了 {realtime / 60:F2} 分钟");
+        
+        // realtimeSinceStartup 用于：
+        // - 测量真实时间（不受游戏暂停影响）
+        // - 网络超时检测
+        // - 性能分析
+        // - 广告冷却时间
+        
+        // 注意：在编辑器中被暂停时会停止，但在构建版本中会继续
+    }
+    
+    #endregion
+    
+    #region 6. 时间应用场景
+    
+    /// <summary>
+    /// 6.1 帧率无关的移动
+    /// </summary>
+    private void FrameRateIndependentMovement()
+    {
+        // 使用 deltaTime 实现帧率无关的移动
+        float speed = 5.0f; // 每秒移动 5 个单位
+        transform.position += Vector3.forward * speed * Time.deltaTime;
+        
+        // 无论帧率是 30 FPS 还是 60 FPS，移动速度都是一样的
+    }
+    
+    /// <summary>
+    /// 6.2 计时器
+    /// </summary>
+    private float timer = 0f;
+    private float timerDuration = 5.0f;
+    
+    private void TimerExample()
+    {
+        // 使用 unscaledTime 实现不受暂停影响的计时器
+        timer += Time.unscaledDeltaTime;
+        
+        if (timer >= timerDuration)
+        {
+            Debug.Log("计时器到期");
+            timer = 0f;
+        }
+    }
+    
+    /// <summary>
+    /// 6.3 每 N 秒执行一次
+    /// </summary>
+    private float lastExecuteTime = 0f;
+    private float executeInterval = 2.0f;
+    
+    private void ExecuteEveryNSeconds()
+    {
+        if (Time.time - lastExecuteTime >= executeInterval)
+        {
+            Debug.Log("每 2 秒执行一次");
+            lastExecuteTime = Time.time;
+        }
+    }
+    
+    /// <summary>
+    /// 6.4 暂停游戏
+    /// </summary>
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        Debug.Log("游戏已暂停");
+    }
+    
+    public void ResumeGame()
+    {
+        Time.timeScale = 1.0f;
+        Debug.Log("游戏已恢复");
+    }
+    
+    /// <summary>
+    /// 6.5 慢动作效果
+    /// </summary>
+    public void SlowMotion(float duration, float scale)
+    {
+        StartCoroutine(SlowMotionCoroutine(duration, scale));
+    }
+    
+    private System.Collections.IEnumerator SlowMotionCoroutine(float duration, float scale)
+    {
+        Time.timeScale = scale;
+        yield return new WaitForSecondsRealtime(duration); // 使用 Realtime 不受缩放影响
+        Time.timeScale = 1.0f;
+    }
+    
+    #endregion
+    
+    #region 7. 时间信息显示
+    
+    /// <summary>
+    /// 显示时间信息
+    /// </summary>
+    private void DisplayTimeInfo()
+    {
+        frameCount++;
+        
+        // 每秒显示一次
+        if (Time.time - lastFrameTime >= 1.0f)
+        {
+            Debug.Log($"=== 时间信息 ===");
+            Debug.Log($"Time.time: {Time.time:F2}s");
+            Debug.Log($"Time.deltaTime: {Time.deltaTime * 1000:F2}ms");
+            Debug.Log($"Time.fixedDeltaTime: {Time.fixedDeltaTime * 1000:F2}ms");
+            Debug.Log($"Time.timeScale: {Time.timeScale}");
+            Debug.Log($"Time.unscaledTime: {Time.unscaledTime:F2}s");
+            Debug.Log($"Time.frameCount: {Time.frameCount}");
+            Debug.Log($"FPS: {1.0f / Time.deltaTime:F2}");
+            Debug.Log($"Time.realtimeSinceStartup: {Time.realtimeSinceStartup:F2}s");
+            
+            lastFrameTime = Time.time;
+        }
+    }
+    
+    #endregion
+}
+
+#region 最佳实践总结
+
+/*
+ * Unity Time 系统最佳实践：
+ * 
+ * 1. 时间属性选择：
+ *    - Time.time: 游戏运行时间（受 timeScale 影响）
+ *    - Time.deltaTime: 帧间隔（最常用，用于移动和动画）
+ *    - Time.fixedDeltaTime: 固定时间步长（用于物理计算）
+ *    - Time.unscaledTime: 不受缩放影响的时间（用于 UI、计时器）
+ *    - Time.realtimeSinceStartup: 真实时间（用于网络、性能分析）
+ * 
+ * 2. 帧率无关的实现：
+ *    - 使用 Time.deltaTime 实现移动和动画
+ *    - transform.position += direction * speed * Time.deltaTime;
+ *    - 无论帧率如何，移动速度都保持一致
+ * 
+ * 3. 时间缩放：
+ *    - Time.timeScale = 0: 暂停游戏
+ *    - Time.timeScale = 0.5: 慢动作
+ *    - Time.timeScale = 2.0: 快进
+ *    - 注意：影响 Time.time、deltaTime、动画、协程（WaitForSeconds）
+ *    - 不影响：unscaledTime、realtimeSinceStartup、WaitForSecondsRealtime
+ * 
+ * 4. UI 和计时器：
+ *    - 使用 Time.unscaledTime 或 Time.unscaledDeltaTime
+ *    - 确保 UI 动画和计时器不受游戏暂停影响
+ * 
+ * 5. 物理计算：
+ *    - 使用 Time.fixedDeltaTime 在 FixedUpdate 中
+ *    - 固定时间步长确保物理模拟稳定
+ * 
+ * 6. 性能优化：
+ *    - 缓存 Time.deltaTime（虽然开销很小）
+ *    - 使用 Time.smoothDeltaTime 减少帧率波动影响
+ *    - 设置合理的 Time.maximumDeltaTime 防止卡顿
+ * 
+ * 7. 常见错误：
+ *    - ❌ 在 Update 中使用 Time.fixedDeltaTime
+ *    - ❌ 在 FixedUpdate 中使用 Time.deltaTime
+ *    - ❌ UI 动画使用 Time.deltaTime（应该用 unscaledDeltaTime）
+ *    - ❌ 计时器使用 Time.time（应该用 unscaledTime）
+ * 
+ * 8. 时间属性对比：
+ *    | 属性 | 受 timeScale 影响 | 暂停时停止 | 用途 |
+ *    |------|------------------|-----------|------|
+ *    | time | ✅ | ✅ | 游戏时间 |
+ *    | deltaTime | ✅ | ✅ | 帧间隔（移动、动画） |
+ *    | unscaledTime | ❌ | ✅ | UI、计时器 |
+ *    | unscaledDeltaTime | ❌ | ✅ | UI 动画 |
+ *    | realtimeSinceStartup | ❌ | ❌ | 真实时间 |
+ */
+
+#endregion
+
+

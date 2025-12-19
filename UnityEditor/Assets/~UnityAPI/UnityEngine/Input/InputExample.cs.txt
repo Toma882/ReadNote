@@ -1,0 +1,503 @@
+using UnityEngine;
+
+/// <summary>
+/// Unity Input 系统完整 API 示例
+/// Input 类提供键盘、鼠标、触摸等输入设备的访问
+/// 注意：Unity 推荐使用新的 Input System Package，但旧的 Input 类仍然可用
+/// </summary>
+public class InputExample : MonoBehaviour
+{
+    [Header("键盘输入")]
+    [SerializeField] private KeyCode testKey = KeyCode.Space;
+    
+    [Header("鼠标输入")]
+    [SerializeField] private float mouseSensitivity = 2.0f;
+    
+    [Header("输入轴")]
+    [SerializeField] private string horizontalAxis = "Horizontal";
+    [SerializeField] private string verticalAxis = "Vertical";
+    
+    [Header("触摸输入")]
+    [SerializeField] private bool enableTouch = true;
+    
+    private Vector3 lastMousePosition;
+    
+    private void Start()
+    {
+        Debug.Log("=== Unity Input 系统完整 API 示例 ===");
+        
+        TestAllInputFeatures();
+    }
+    
+    private void Update()
+    {
+        TestKeyboardInput();
+        TestMouseInput();
+        TestAxisInput();
+        TestTouchInput();
+    }
+    
+    #region 1. 键盘输入
+    
+    /// <summary>
+    /// 测试所有 Input 功能
+    /// </summary>
+    private void TestAllInputFeatures()
+    {
+        Debug.Log("\n--- 1. 键盘输入 ---");
+        Debug.Log("在 Update 中测试键盘输入");
+        
+        Debug.Log("\n--- 2. 鼠标输入 ---");
+        Debug.Log("在 Update 中测试鼠标输入");
+        
+        Debug.Log("\n--- 3. 输入轴 ---");
+        Debug.Log("在 Update 中测试输入轴");
+        
+        Debug.Log("\n--- 4. 触摸输入 ---");
+        Debug.Log("在 Update 中测试触摸输入");
+    }
+    
+    /// <summary>
+    /// 1.1 Input.GetKey - 检测按键是否按下
+    /// 持续返回 true，直到按键释放
+    /// </summary>
+    private void TestKeyboardInput()
+    {
+        // GetKey - 按键是否按下（持续）
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Debug.Log("空格键被按下（持续）");
+        }
+        
+        // GetKeyDown - 按键刚按下（只触发一次）
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("空格键刚按下（触发一次）");
+        }
+        
+        // GetKeyUp - 按键刚释放（只触发一次）
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Debug.Log("空格键刚释放（触发一次）");
+        }
+        
+        // 使用字符串（不推荐，性能较差）
+        if (Input.GetKey("space"))
+        {
+            // 使用字符串查找按键
+        }
+        
+        // 常用按键检测
+        if (Input.GetKey(KeyCode.W))
+        {
+            // 向前移动
+            transform.position += Vector3.forward * Time.deltaTime;
+        }
+        
+        if (Input.GetKey(KeyCode.S))
+        {
+            // 向后移动
+            transform.position += Vector3.back * Time.deltaTime;
+        }
+        
+        if (Input.GetKey(KeyCode.A))
+        {
+            // 向左移动
+            transform.position += Vector3.left * Time.deltaTime;
+        }
+        
+        if (Input.GetKey(KeyCode.D))
+        {
+            // 向右移动
+            transform.position += Vector3.right * Time.deltaTime;
+        }
+        
+        // 组合键检测
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W))
+        {
+            Debug.Log("按住 Shift + W（加速）");
+        }
+    }
+    
+    #endregion
+    
+    #region 2. 鼠标输入
+    
+    /// <summary>
+    /// 2.1 Input.GetMouseButton - 检测鼠标按键
+    /// </summary>
+    private void TestMouseInput()
+    {
+        // GetMouseButton - 鼠标按键是否按下（持续）
+        // 0 = 左键，1 = 右键，2 = 中键
+        if (Input.GetMouseButton(0))
+        {
+            Debug.Log("鼠标左键被按下（持续）");
+        }
+        
+        // GetMouseButtonDown - 鼠标按键刚按下
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("鼠标左键刚按下");
+            lastMousePosition = Input.mousePosition;
+        }
+        
+        // GetMouseButtonUp - 鼠标按键刚释放
+        if (Input.GetMouseButtonUp(0))
+        {
+            Debug.Log("鼠标左键刚释放");
+        }
+        
+        // 右键
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("鼠标右键按下");
+        }
+        
+        // 中键
+        if (Input.GetMouseButtonDown(2))
+        {
+            Debug.Log("鼠标中键按下");
+        }
+        
+        // mousePosition - 鼠标屏幕坐标
+        Vector3 mousePos = Input.mousePosition;
+        // Debug.Log($"鼠标位置: {mousePos}");
+        
+        // 鼠标移动距离
+        Vector3 mouseDelta = Input.mousePosition - lastMousePosition;
+        if (mouseDelta.magnitude > 0.1f)
+        {
+            // 使用鼠标移动旋转相机
+            float rotationX = -mouseDelta.y * mouseSensitivity;
+            float rotationY = mouseDelta.x * mouseSensitivity;
+            // transform.Rotate(rotationX, rotationY, 0);
+        }
+        lastMousePosition = Input.mousePosition;
+        
+        // mouseScrollDelta - 鼠标滚轮
+        Vector2 scrollDelta = Input.mouseScrollDelta;
+        if (scrollDelta.y != 0)
+        {
+            Debug.Log($"鼠标滚轮: {scrollDelta.y}");
+            // 缩放操作
+            // transform.localScale += Vector3.one * scrollDelta.y * 0.1f;
+        }
+    }
+    
+    #endregion
+    
+    #region 3. 输入轴
+    
+    /// <summary>
+    /// 3.1 Input.GetAxis - 获取输入轴值
+    /// 返回 -1 到 1 之间的平滑值（有重力效果）
+    /// </summary>
+    private void TestAxisInput()
+    {
+        // GetAxis - 平滑输入（有重力效果）
+        float horizontal = Input.GetAxis(horizontalAxis);
+        float vertical = Input.GetAxis(verticalAxis);
+        
+        if (Mathf.Abs(horizontal) > 0.1f || Mathf.Abs(vertical) > 0.1f)
+        {
+            // 使用输入轴移动
+            Vector3 movement = new Vector3(horizontal, 0, vertical);
+            transform.position += movement * Time.deltaTime * 5.0f;
+        }
+        
+        // GetAxisRaw - 原始输入（无重力效果，立即响应）
+        float horizontalRaw = Input.GetAxisRaw(horizontalAxis);
+        float verticalRaw = Input.GetAxisRaw(verticalAxis);
+        
+        // GetAxisRaw 用于需要立即响应的操作
+        if (Mathf.Abs(horizontalRaw) > 0.1f)
+        {
+            // 立即响应，无延迟
+        }
+        
+        // 常用输入轴：
+        // - "Horizontal": A/D 或 左/右箭头
+        // - "Vertical": W/S 或 上/下箭头
+        // - "Fire1": 左 Ctrl 或 鼠标左键
+        // - "Fire2": 左 Alt 或 鼠标右键
+        // - "Fire3": 左 Shift 或 鼠标中键
+        // - "Jump": 空格键
+        // - "Mouse X": 鼠标水平移动
+        // - "Mouse Y": 鼠标垂直移动
+        // - "Mouse ScrollWheel": 鼠标滚轮
+        
+        // 鼠标输入轴
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+        
+        if (Mathf.Abs(mouseX) > 0.1f || Mathf.Abs(mouseY) > 0.1f)
+        {
+            // 使用鼠标输入轴旋转
+            transform.Rotate(-mouseY * mouseSensitivity, mouseX * mouseSensitivity, 0);
+        }
+    }
+    
+    #endregion
+    
+    #region 4. 触摸输入
+    
+    /// <summary>
+    /// 4.1 Input.touchCount / Input.GetTouch - 触摸输入
+    /// </summary>
+    private void TestTouchInput()
+    {
+        if (!enableTouch) return;
+        
+        // touchCount - 触摸点数量
+        int touchCount = Input.touchCount;
+        
+        if (touchCount > 0)
+        {
+            Debug.Log($"触摸点数量: {touchCount}");
+            
+            // 遍历所有触摸点
+            for (int i = 0; i < touchCount; i++)
+            {
+                Touch touch = Input.GetTouch(i);
+                
+                // 触摸阶段
+                switch (touch.phase)
+                {
+                    case TouchPhase.Began:
+                        Debug.Log($"触摸 {i} 开始: {touch.position}");
+                        break;
+                    
+                    case TouchPhase.Moved:
+                        Debug.Log($"触摸 {i} 移动: {touch.deltaPosition}");
+                        // 使用触摸移动
+                        // transform.position += new Vector3(touch.deltaPosition.x, 0, touch.deltaPosition.y) * Time.deltaTime;
+                        break;
+                    
+                    case TouchPhase.Stationary:
+                        Debug.Log($"触摸 {i} 静止");
+                        break;
+                    
+                    case TouchPhase.Ended:
+                        Debug.Log($"触摸 {i} 结束");
+                        break;
+                    
+                    case TouchPhase.Canceled:
+                        Debug.Log($"触摸 {i} 取消");
+                        break;
+                }
+                
+                // 触摸位置（屏幕坐标）
+                Vector2 touchPosition = touch.position;
+                
+                // 触摸增量（移动距离）
+                Vector2 touchDelta = touch.deltaPosition;
+                
+                // 触摸压力（某些设备支持）
+                float pressure = touch.pressure;
+                
+                // 触摸半径
+                float radius = touch.radius;
+            }
+        }
+        
+        // 模拟鼠标输入（编辑器中使用）
+        #if UNITY_EDITOR
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("编辑器中使用鼠标模拟触摸");
+        }
+        #endif
+    }
+    
+    #endregion
+    
+    #region 5. 输入设备检测
+    
+    /// <summary>
+    /// 5.1 检测输入设备
+    /// </summary>
+    private void TestInputDevices()
+    {
+        // 检测是否有鼠标
+        if (Input.mousePresent)
+        {
+            Debug.Log("检测到鼠标设备");
+        }
+        
+        // 检测是否有触摸屏
+        if (Input.touchSupported)
+        {
+            Debug.Log("设备支持触摸输入");
+        }
+        
+        // 检测是否有多个触摸点
+        if (Input.multiTouchEnabled)
+        {
+            Debug.Log("启用多点触摸");
+        }
+        else
+        {
+            Debug.Log("单点触摸模式");
+        }
+        
+        // 设置多点触摸
+        Input.multiTouchEnabled = true;
+    }
+    
+    #endregion
+    
+    #region 6. 输入重置
+    
+    /// <summary>
+    /// 6.1 Input.ResetInputAxes - 重置输入轴
+    /// </summary>
+    private void TestResetInput()
+    {
+        // 重置所有输入轴
+        Input.ResetInputAxes();
+        Debug.Log("重置所有输入轴");
+        
+        // 用于：
+        // - 场景切换时清除输入状态
+        // - 暂停游戏时清除输入
+        // - 防止输入残留
+    }
+    
+    #endregion
+    
+    #region 7. 新 Input System（Input System Package）
+    
+    /// <summary>
+    /// 7.1 新 Input System 简介
+    /// Unity 推荐使用新的 Input System Package
+    /// 需要安装：Window > Package Manager > Input System
+    /// </summary>
+    private void TestNewInputSystem()
+    {
+        // 新 Input System 的使用需要：
+        // 1. 安装 Input System Package
+        // 2. 创建 Input Actions Asset
+        // 3. 使用 PlayerInput 组件或 C# 代码
+        
+        // 示例代码（需要安装 Input System Package）：
+        /*
+        using UnityEngine.InputSystem;
+        
+        private void OnMove(InputValue value)
+        {
+            Vector2 move = value.Get<Vector2>();
+            // 处理移动输入
+        }
+        
+        private void OnFire(InputValue value)
+        {
+            // 处理开火输入
+        }
+        */
+        
+        Debug.Log("新 Input System 需要安装 Input System Package");
+        Debug.Log("优点：更灵活、支持更多设备、更好的性能");
+    }
+    
+    #endregion
+    
+    #region 8. 输入应用场景
+    
+    /// <summary>
+    /// 8.1 角色移动
+    /// </summary>
+    private void CharacterMovement()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        
+        Vector3 movement = new Vector3(horizontal, 0, vertical).normalized;
+        transform.position += movement * Time.deltaTime * 5.0f;
+    }
+    
+    /// <summary>
+    /// 8.2 相机旋转
+    /// </summary>
+    private void CameraRotation()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+        
+        transform.Rotate(-mouseY * mouseSensitivity, mouseX * mouseSensitivity, 0);
+    }
+    
+    /// <summary>
+    /// 8.3 点击检测
+    /// </summary>
+    private void ClickDetection()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log($"点击了: {hit.collider.name}");
+            }
+        }
+    }
+    
+    #endregion
+}
+
+#region 最佳实践总结
+
+/*
+ * Unity Input 系统最佳实践：
+ * 
+ * 1. 键盘输入：
+ *    - GetKey: 持续检测（用于移动）
+ *    - GetKeyDown: 按下瞬间（用于跳跃、开火）
+ *    - GetKeyUp: 释放瞬间（用于释放技能）
+ * 
+ * 2. 鼠标输入：
+ *    - GetMouseButton: 持续检测
+ *    - GetMouseButtonDown: 按下瞬间
+ *    - GetMouseButtonUp: 释放瞬间
+ *    - mousePosition: 屏幕坐标
+ *    - mouseScrollDelta: 滚轮增量
+ * 
+ * 3. 输入轴：
+ *    - GetAxis: 平滑输入（有重力效果，适合移动）
+ *    - GetAxisRaw: 原始输入（立即响应，适合菜单导航）
+ *    - 常用轴：Horizontal, Vertical, Mouse X, Mouse Y
+ * 
+ * 4. 触摸输入：
+ *    - touchCount: 触摸点数量
+ *    - GetTouch: 获取触摸信息
+ *    - TouchPhase: 触摸阶段（Began, Moved, Stationary, Ended, Canceled）
+ * 
+ * 5. 性能优化：
+ *    - 避免在 Update 中频繁调用 Input 方法
+ *    - 缓存常用的输入值
+ *    - 使用 GetAxisRaw 代替 GetAxis（如果不需要平滑）
+ * 
+ * 6. 新 Input System：
+ *    - Unity 推荐使用新的 Input System Package
+ *    - 更灵活、支持更多设备、更好的性能
+ *    - 需要安装 Input System Package
+ *    - 创建 Input Actions Asset 配置输入
+ * 
+ * 7. 平台兼容性：
+ *    - 桌面：键盘 + 鼠标
+ *    - 移动：触摸输入
+ *    - 手柄：通过输入轴支持
+ *    - 使用 Input.mousePresent 和 Input.touchSupported 检测设备
+ * 
+ * 8. 常见错误：
+ *    - ❌ 在 FixedUpdate 中使用 Input（应该在 Update 中）
+ *    - ❌ 使用字符串查找按键（性能差）
+ *    - ❌ 不处理触摸输入（移动平台）
+ *    - ❌ 忽略输入重置（场景切换时）
+ */
+
+#endregion
+
+

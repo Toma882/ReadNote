@@ -1,0 +1,505 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+/// <summary>
+/// Unity AssetBundle 资源管理完整 API 示例
+/// AssetBundle 是 Unity 的资源打包和加载系统，用于资源热更新和内存管理
+/// </summary>
+public class AssetBundleExample : MonoBehaviour
+{
+    [Header("AssetBundle 设置")]
+    [SerializeField] private string bundleName = "mybundle";
+    [SerializeField] private string assetName = "MyPrefab";
+    [SerializeField] private string bundlePath = "Assets/AssetBundles/";
+    
+    [Header("加载设置")]
+    [SerializeField] private bool loadAsync = true;
+    [SerializeField] private bool unloadOnLoad = false;
+    
+    private Dictionary<string, AssetBundle> loadedBundles = new Dictionary<string, AssetBundle>();
+    private AssetBundleManifest manifest;
+    
+    private void Start()
+    {
+        Debug.Log("=== Unity AssetBundle 资源管理完整 API 示例 ===");
+        
+        // 注意：AssetBundle 需要先打包才能加载
+        // 使用 AssetBundle Browser 或代码打包资源
+        TestAllAssetBundleFeatures();
+    }
+    
+    #region 1. AssetBundle 加载
+    
+    /// <summary>
+    /// 测试所有 AssetBundle 功能
+    /// </summary>
+    private void TestAllAssetBundleFeatures()
+    {
+        Debug.Log("\n--- 1. AssetBundle 加载 ---");
+        
+        // 1.1 LoadFromFile
+        // TestLoadFromFile();
+        
+        // 1.2 LoadFromMemory
+        // TestLoadFromMemory();
+        
+        // 1.3 LoadFromMemoryAsync
+        // TestLoadFromMemoryAsync();
+        
+        Debug.Log("\n--- 2. 资源加载 ---");
+        
+        // 2.1 LoadAsset
+        // TestLoadAsset();
+        
+        // 2.2 LoadAllAssets
+        // TestLoadAllAssets();
+        
+        Debug.Log("\n--- 3. 依赖管理 ---");
+        
+        // 3.1 AssetBundleManifest
+        // TestAssetBundleManifest();
+        
+        Debug.Log("\n--- 4. 内存管理 ---");
+        
+        // 4.1 Unload
+        // TestUnload();
+        
+        Debug.Log("注意：AssetBundle 需要先打包才能使用");
+        Debug.Log("使用 AssetBundle Browser 工具或代码打包资源");
+    }
+    
+    /// <summary>
+    /// 1.1 AssetBundle.LoadFromFile - 从文件加载
+    /// 最常用的加载方式，性能最好
+    /// </summary>
+    private void TestLoadFromFile()
+    {
+        Debug.Log("1.1 AssetBundle.LoadFromFile - 从文件加载");
+        
+        string path = Application.streamingAssetsPath + "/" + bundleName;
+        
+        // 同步加载
+        AssetBundle bundle = AssetBundle.LoadFromFile(path);
+        
+        if (bundle != null)
+        {
+            Debug.Log($"成功加载 AssetBundle: {bundle.name}");
+            loadedBundles[bundleName] = bundle;
+        }
+        else
+        {
+            Debug.LogError($"加载 AssetBundle 失败: {path}");
+        }
+        
+        // 异步加载（推荐）
+        StartCoroutine(LoadFromFileAsync(path));
+    }
+    
+    /// <summary>
+    /// 异步从文件加载 AssetBundle
+    /// </summary>
+    private IEnumerator LoadFromFileAsync(string path)
+    {
+        AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(path);
+        
+        yield return request;
+        
+        AssetBundle bundle = request.assetBundle;
+        if (bundle != null)
+        {
+            Debug.Log($"异步加载 AssetBundle 成功: {bundle.name}");
+            loadedBundles[bundleName] = bundle;
+        }
+    }
+    
+    /// <summary>
+    /// 1.2 AssetBundle.LoadFromMemory - 从内存加载
+    /// 需要先读取文件到内存
+    /// </summary>
+    private void TestLoadFromMemory()
+    {
+        Debug.Log("1.2 AssetBundle.LoadFromMemory - 从内存加载");
+        
+        string path = Application.streamingAssetsPath + "/" + bundleName;
+        byte[] data = System.IO.File.ReadAllBytes(path);
+        
+        AssetBundle bundle = AssetBundle.LoadFromMemory(data);
+        
+        if (bundle != null)
+        {
+            Debug.Log($"从内存加载 AssetBundle 成功: {bundle.name}");
+            loadedBundles[bundleName] = bundle;
+        }
+    }
+    
+    /// <summary>
+    /// 1.3 AssetBundle.LoadFromMemoryAsync - 异步从内存加载
+    /// </summary>
+    private IEnumerator LoadFromMemoryAsync(byte[] data)
+    {
+        AssetBundleCreateRequest request = AssetBundle.LoadFromMemoryAsync(data);
+        
+        yield return request;
+        
+        AssetBundle bundle = request.assetBundle;
+        if (bundle != null)
+        {
+            Debug.Log($"异步从内存加载 AssetBundle 成功: {bundle.name}");
+            loadedBundles[bundleName] = bundle;
+        }
+    }
+    
+    #endregion
+    
+    #region 2. 资源加载
+    
+    /// <summary>
+    /// 2.1 AssetBundle.LoadAsset<T> - 加载指定资源
+    /// </summary>
+    private void TestLoadAsset()
+    {
+        Debug.Log("2.1 AssetBundle.LoadAsset<T> - 加载指定资源");
+        
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            AssetBundle bundle = loadedBundles[bundleName];
+            
+            // 加载 GameObject
+            GameObject prefab = bundle.LoadAsset<GameObject>(assetName);
+            if (prefab != null)
+            {
+                Debug.Log($"加载资源成功: {prefab.name}");
+                Instantiate(prefab);
+            }
+            
+            // 加载其他类型
+            Texture2D texture = bundle.LoadAsset<Texture2D>("MyTexture");
+            AudioClip audio = bundle.LoadAsset<AudioClip>("MyAudio");
+            
+            // 使用字符串名称加载
+            Object asset = bundle.LoadAsset(assetName);
+            if (asset != null)
+            {
+                Debug.Log($"加载资源: {asset.name}, 类型: {asset.GetType()}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 2.2 AssetBundle.LoadAllAssets - 加载所有资源
+    /// </summary>
+    private void TestLoadAllAssets()
+    {
+        Debug.Log("2.2 AssetBundle.LoadAllAssets - 加载所有资源");
+        
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            AssetBundle bundle = loadedBundles[bundleName];
+            
+            // 加载所有资源
+            Object[] allAssets = bundle.LoadAllAssets();
+            Debug.Log($"加载了 {allAssets.Length} 个资源");
+            
+            foreach (Object asset in allAssets)
+            {
+                Debug.Log($"  - {asset.name}, 类型: {asset.GetType()}");
+            }
+            
+            // 加载指定类型的所有资源
+            GameObject[] allPrefabs = bundle.LoadAllAssets<GameObject>();
+            Debug.Log($"加载了 {allPrefabs.Length} 个 GameObject");
+        }
+    }
+    
+    /// <summary>
+    /// 2.3 AssetBundle.LoadAssetAsync - 异步加载资源
+    /// </summary>
+    private IEnumerator LoadAssetAsync()
+    {
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            AssetBundle bundle = loadedBundles[bundleName];
+            
+            AssetBundleRequest request = bundle.LoadAssetAsync<GameObject>(assetName);
+            
+            yield return request;
+            
+            GameObject prefab = request.asset as GameObject;
+            if (prefab != null)
+            {
+                Debug.Log($"异步加载资源成功: {prefab.name}");
+                Instantiate(prefab);
+            }
+        }
+    }
+    
+    #endregion
+    
+    #region 3. 依赖管理
+    
+    /// <summary>
+    /// 3.1 AssetBundleManifest - 依赖管理
+    /// 处理 AssetBundle 之间的依赖关系
+    /// </summary>
+    private void TestAssetBundleManifest()
+    {
+        Debug.Log("3.1 AssetBundleManifest - 依赖管理");
+        
+        // 加载 Manifest
+        string manifestPath = Application.streamingAssetsPath + "/StreamingAssets";
+        AssetBundle manifestBundle = AssetBundle.LoadFromFile(manifestPath);
+        
+        if (manifestBundle != null)
+        {
+            manifest = manifestBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            
+            if (manifest != null)
+            {
+                // 获取所有 AssetBundle 名称
+                string[] allBundles = manifest.GetAllAssetBundles();
+                Debug.Log($"所有 AssetBundle 数量: {allBundles.Length}");
+                
+                // 获取依赖
+                string[] dependencies = manifest.GetAllDependencies(bundleName);
+                Debug.Log($"'{bundleName}' 的依赖数量: {dependencies.Length}");
+                
+                foreach (string dep in dependencies)
+                {
+                    Debug.Log($"  - 依赖: {dep}");
+                    // 先加载依赖
+                    LoadDependency(dep);
+                }
+                
+                // 获取直接依赖
+                string[] directDeps = manifest.GetDirectDependencies(bundleName);
+                Debug.Log($"'{bundleName}' 的直接依赖数量: {directDeps.Length}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 加载依赖 AssetBundle
+    /// </summary>
+    private void LoadDependency(string dependencyName)
+    {
+        if (!loadedBundles.ContainsKey(dependencyName))
+        {
+            string path = Application.streamingAssetsPath + "/" + dependencyName;
+            AssetBundle bundle = AssetBundle.LoadFromFile(path);
+            
+            if (bundle != null)
+            {
+                loadedBundles[dependencyName] = bundle;
+                Debug.Log($"加载依赖成功: {dependencyName}");
+            }
+        }
+    }
+    
+    #endregion
+    
+    #region 4. 内存管理
+    
+    /// <summary>
+    /// 4.1 AssetBundle.Unload - 卸载 AssetBundle
+    /// </summary>
+    private void TestUnload()
+    {
+        Debug.Log("4.1 AssetBundle.Unload - 卸载 AssetBundle");
+        
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            AssetBundle bundle = loadedBundles[bundleName];
+            
+            // Unload(false) - 只卸载 AssetBundle，保留已加载的资源
+            // 已实例化的对象仍然可用，但不能再从 AssetBundle 加载资源
+            bundle.Unload(false);
+            Debug.Log("卸载 AssetBundle（保留资源）");
+            
+            // Unload(true) - 卸载 AssetBundle 和所有资源
+            // 已实例化的对象会丢失引用，需要重新加载
+            // bundle.Unload(true);
+            // Debug.Log("卸载 AssetBundle 和所有资源");
+            
+            loadedBundles.Remove(bundleName);
+        }
+    }
+    
+    /// <summary>
+    /// 4.2 AssetBundle.UnloadAllAssetBundles - 卸载所有 AssetBundle
+    /// </summary>
+    private void UnloadAllBundles()
+    {
+        Debug.Log("4.2 卸载所有 AssetBundle");
+        
+        // 卸载所有已加载的 AssetBundle
+        foreach (var bundle in loadedBundles.Values)
+        {
+            bundle.Unload(false);
+        }
+        
+        loadedBundles.Clear();
+        
+        // 或使用 Unity API
+        AssetBundle.UnloadAllAssetBundles(false);
+    }
+    
+    #endregion
+    
+    #region 5. AssetBundle 信息
+    
+    /// <summary>
+    /// 5.1 获取 AssetBundle 信息
+    /// </summary>
+    private void TestAssetBundleInfo()
+    {
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            AssetBundle bundle = loadedBundles[bundleName];
+            
+            // 获取 AssetBundle 名称
+            string name = bundle.name;
+            Debug.Log($"AssetBundle 名称: {name}");
+            
+            // 检查是否包含资源
+            bool contains = bundle.Contains(assetName);
+            Debug.Log($"是否包含 '{assetName}': {contains}");
+            
+            // 获取所有资源名称
+            string[] assetNames = bundle.GetAllAssetNames();
+            Debug.Log($"资源数量: {assetNames.Length}");
+            
+            foreach (string assetName in assetNames)
+            {
+                Debug.Log($"  - {assetName}");
+            }
+        }
+    }
+    
+    #endregion
+    
+    #region 6. 实际应用场景
+    
+    /// <summary>
+    /// 6.1 完整的资源加载流程
+    /// </summary>
+    private IEnumerator LoadResourceComplete(string bundleName, string assetName)
+    {
+        // 1. 加载依赖
+        if (manifest != null)
+        {
+            string[] dependencies = manifest.GetAllDependencies(bundleName);
+            foreach (string dep in dependencies)
+            {
+                if (!loadedBundles.ContainsKey(dep))
+                {
+                    yield return StartCoroutine(LoadBundleAsync(dep));
+                }
+            }
+        }
+        
+        // 2. 加载 AssetBundle
+        yield return StartCoroutine(LoadBundleAsync(bundleName));
+        
+        // 3. 加载资源
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            AssetBundle bundle = loadedBundles[bundleName];
+            AssetBundleRequest request = bundle.LoadAssetAsync<GameObject>(assetName);
+            yield return request;
+            
+            GameObject prefab = request.asset as GameObject;
+            if (prefab != null)
+            {
+                Instantiate(prefab);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// 异步加载 AssetBundle
+    /// </summary>
+    private IEnumerator LoadBundleAsync(string bundleName)
+    {
+        if (loadedBundles.ContainsKey(bundleName))
+        {
+            yield break; // 已加载
+        }
+        
+        string path = Application.streamingAssetsPath + "/" + bundleName;
+        AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(path);
+        
+        yield return request;
+        
+        AssetBundle bundle = request.assetBundle;
+        if (bundle != null)
+        {
+            loadedBundles[bundleName] = bundle;
+            Debug.Log($"加载 AssetBundle 成功: {bundleName}");
+        }
+    }
+    
+    #endregion
+    
+    private void OnDestroy()
+    {
+        // 清理所有 AssetBundle
+        UnloadAllBundles();
+    }
+}
+
+#region 最佳实践总结
+
+/*
+ * Unity AssetBundle 最佳实践：
+ * 
+ * 1. 加载方式选择：
+ *    - LoadFromFile: 最常用，性能最好（推荐）
+ *    - LoadFromMemory: 需要先读取文件，性能较差
+ *    - LoadFromFileAsync: 异步加载，不阻塞主线程（推荐）
+ * 
+ * 2. 资源加载：
+ *    - LoadAsset<T>: 加载指定资源
+ *    - LoadAllAssets: 加载所有资源（谨慎使用，内存占用大）
+ *    - LoadAssetAsync: 异步加载资源（推荐）
+ * 
+ * 3. 依赖管理：
+ *    - 使用 AssetBundleManifest 管理依赖
+ *    - 先加载依赖，再加载主 AssetBundle
+ *    - 避免重复加载依赖
+ * 
+ * 4. 内存管理：
+ *    - Unload(false): 卸载 AssetBundle，保留资源（推荐）
+ *    - Unload(true): 卸载 AssetBundle 和资源（谨慎使用）
+ *    - 及时卸载不需要的 AssetBundle
+ *    - 使用 Resources.UnloadUnusedAssets() 清理未使用的资源
+ * 
+ * 5. 打包策略：
+ *    - 按功能模块打包
+ *    - 公共资源单独打包
+ *    - 避免单个 AssetBundle 过大
+ *    - 合理拆分资源，平衡包数量和大小
+ * 
+ * 6. 性能优化：
+ *    - 使用异步加载避免卡顿
+ *    - 预加载常用资源
+ *    - 使用对象池减少 Instantiate
+ *    - 监控内存使用
+ * 
+ * 7. 错误处理：
+ *    - 检查 AssetBundle 是否为 null
+ *    - 处理加载失败的情况
+ *    - 验证资源是否存在
+ *    - 处理依赖缺失的情况
+ * 
+ * 8. 注意事项：
+ *    - AssetBundle 路径区分平台
+ *    - 注意资源引用关系
+ *    - 避免循环依赖
+ *    - 测试不同平台的兼容性
+ *    - 考虑资源版本管理
+ */
+
+#endregion
+
+

@@ -1,0 +1,610 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+/// <summary>
+/// Unity Coroutine（协程）完整 API 示例
+/// 协程是Unity中实现异步操作和延迟执行的核心机制
+/// 协程不是多线程，而是在主线程上按帧执行的协同程序
+/// </summary>
+public class CoroutineExample : MonoBehaviour
+{
+    [Header("协程设置")]
+    [SerializeField] private bool autoStart = true;
+    [SerializeField] private float waitTime = 2.0f;
+    [SerializeField] private int repeatCount = 5;
+    
+    [Header("协程状态")]
+    [SerializeField] private bool isRunning = false;
+    [SerializeField] private int activeCoroutines = 0;
+    [SerializeField] private string currentCoroutineName = "";
+    
+    // 协程句柄
+    private Coroutine currentCoroutine;
+    private List<Coroutine> activeCoroutinesList = new List<Coroutine>();
+    
+    private void Start()
+    {
+        Debug.Log("=== Unity Coroutine（协程）完整 API 示例 ===");
+        
+        if (autoStart)
+        {
+            TestAllCoroutineFeatures();
+        }
+    }
+    
+    #region 1. 基础协程操作
+    
+    /// <summary>
+    /// 测试所有协程功能
+    /// </summary>
+    private void TestAllCoroutineFeatures()
+    {
+        Debug.Log("\n--- 1. 基础协程操作 ---");
+        
+        // 1.1 启动协程
+        TestStartCoroutine();
+        
+        // 1.2 停止协程
+        StartCoroutine(TestStopCoroutine());
+        
+        // 1.3 协程生命周期
+        StartCoroutine(TestCoroutineLifecycle());
+        
+        Debug.Log("\n--- 2. yield 等待类型 ---");
+        
+        // 2.1 yield return null
+        StartCoroutine(TestYieldNull());
+        
+        // 2.2 WaitForSeconds
+        StartCoroutine(TestWaitForSeconds());
+        
+        // 2.3 WaitForEndOfFrame
+        StartCoroutine(TestWaitForEndOfFrame());
+        
+        // 2.4 WaitForFixedUpdate
+        StartCoroutine(TestWaitForFixedUpdate());
+        
+        // 2.5 WaitUntil / WaitWhile
+        StartCoroutine(TestWaitUntilWhile());
+        
+        Debug.Log("\n--- 3. 协程参数传递 ---");
+        
+        // 3.1 带参数的协程
+        StartCoroutine(TestCoroutineWithParameters("参数1", 100));
+        
+        Debug.Log("\n--- 4. 协程嵌套 ---");
+        
+        // 4.1 嵌套协程
+        StartCoroutine(TestNestedCoroutines());
+        
+        Debug.Log("\n--- 5. 协程与线程的区别 ---");
+        
+        // 5.1 协程在主线程执行
+        StartCoroutine(TestCoroutineMainThread());
+    }
+    
+    /// <summary>
+    /// 1.1 启动协程
+    /// StartCoroutine 可以接受 IEnumerator 方法或字符串方法名
+    /// </summary>
+    private void TestStartCoroutine()
+    {
+        Debug.Log("1.1 启动协程");
+        
+        // 方式1：直接传入方法（推荐）
+        currentCoroutine = StartCoroutine(SimpleCoroutine());
+        
+        // 方式2：传入字符串方法名（不推荐，性能较差，且无法传参）
+        // StartCoroutine("SimpleCoroutine");
+        
+        // 方式3：传入 IEnumerator 对象
+        IEnumerator enumerator = SimpleCoroutine();
+        StartCoroutine(enumerator);
+        
+        isRunning = true;
+        activeCoroutines++;
+    }
+    
+    /// <summary>
+    /// 简单的协程示例
+    /// </summary>
+    private IEnumerator SimpleCoroutine()
+    {
+        Debug.Log("协程开始执行");
+        yield return new WaitForSeconds(1.0f);
+        Debug.Log("协程执行完成");
+    }
+    
+    /// <summary>
+    /// 1.2 停止协程
+    /// StopCoroutine 可以停止正在运行的协程
+    /// </summary>
+    private IEnumerator TestStopCoroutine()
+    {
+        Debug.Log("1.2 停止协程");
+        
+        Coroutine coroutine = StartCoroutine(LongRunningCoroutine());
+        
+        // 等待一段时间后停止协程
+        yield return new WaitForSeconds(2.0f);
+        
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            Debug.Log("协程已停止");
+        }
+        
+        // 停止所有协程
+        // StopAllCoroutines();
+    }
+    
+    /// <summary>
+    /// 长时间运行的协程
+    /// </summary>
+    private IEnumerator LongRunningCoroutine()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            Debug.Log($"协程运行中: {i}");
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+    
+    /// <summary>
+    /// 1.3 协程生命周期
+    /// 协程在 GameObject 或 Component 被禁用/销毁时会自动停止
+    /// </summary>
+    private IEnumerator TestCoroutineLifecycle()
+    {
+        Debug.Log("1.3 协程生命周期");
+        
+        Debug.Log("协程开始，GameObject 激活状态: " + gameObject.activeSelf);
+        
+        yield return new WaitForSeconds(1.0f);
+        
+        // 如果 GameObject 被禁用，协程会暂停
+        // gameObject.SetActive(false);
+        
+        yield return new WaitForSeconds(1.0f);
+        
+        // 如果 GameObject 被销毁，协程会停止
+        // Destroy(gameObject);
+        
+        Debug.Log("协程生命周期测试完成");
+    }
+    
+    #endregion
+    
+    #region 2. yield 等待类型
+    
+    /// <summary>
+    /// 2.1 yield return null
+    /// 等待一帧，在下一帧继续执行
+    /// </summary>
+    private IEnumerator TestYieldNull()
+    {
+        Debug.Log("2.1 yield return null - 等待一帧");
+        
+        for (int i = 0; i < 5; i++)
+        {
+            Debug.Log($"帧 {i}: Time.frameCount = {Time.frameCount}");
+            yield return null; // 等待下一帧
+        }
+        
+        Debug.Log("yield return null 测试完成");
+    }
+    
+    /// <summary>
+    /// 2.2 WaitForSeconds
+    /// 等待指定的秒数（受 Time.timeScale 影响）
+    /// </summary>
+    private IEnumerator TestWaitForSeconds()
+    {
+        Debug.Log("2.2 WaitForSeconds - 等待指定时间");
+        
+        Debug.Log($"开始时间: {Time.time}");
+        yield return new WaitForSeconds(waitTime);
+        Debug.Log($"结束时间: {Time.time}，等待了 {waitTime} 秒");
+        
+        // WaitForSecondsRealtime - 不受 Time.timeScale 影响
+        Debug.Log("使用 WaitForSecondsRealtime（不受 timeScale 影响）");
+        yield return new WaitForSecondsRealtime(1.0f);
+        Debug.Log("WaitForSecondsRealtime 完成");
+    }
+    
+    /// <summary>
+    /// 2.3 WaitForEndOfFrame
+    /// 等待当前帧的所有渲染完成
+    /// 常用于截图、UI更新等操作
+    /// </summary>
+    private IEnumerator TestWaitForEndOfFrame()
+    {
+        Debug.Log("2.3 WaitForEndOfFrame - 等待帧结束");
+        
+        Debug.Log("帧开始，准备等待帧结束");
+        yield return new WaitForEndOfFrame();
+        Debug.Log("帧结束，可以执行截图等操作");
+        
+        // 示例：截图操作
+        // ScreenCapture.CaptureScreenshot("screenshot.png");
+    }
+    
+    /// <summary>
+    /// 2.4 WaitForFixedUpdate
+    /// 等待下一次 FixedUpdate 调用
+    /// 常用于物理相关的延迟操作
+    /// </summary>
+    private IEnumerator TestWaitForFixedUpdate()
+    {
+        Debug.Log("2.4 WaitForFixedUpdate - 等待物理更新");
+        
+        Debug.Log("等待 FixedUpdate");
+        yield return new WaitForFixedUpdate();
+        Debug.Log("FixedUpdate 完成");
+    }
+    
+    /// <summary>
+    /// 2.5 WaitUntil / WaitWhile
+    /// WaitUntil: 等待条件为 true
+    /// WaitWhile: 等待条件为 false
+    /// </summary>
+    private IEnumerator TestWaitUntilWhile()
+    {
+        Debug.Log("2.5 WaitUntil / WaitWhile - 条件等待");
+        
+        bool condition = false;
+        
+        // WaitUntil - 等待 condition 变为 true
+        Debug.Log("等待 condition 变为 true");
+        yield return new WaitUntil(() => condition);
+        Debug.Log("condition 已变为 true");
+        
+        // 模拟条件变化
+        StartCoroutine(ChangeConditionAfterDelay(() => condition = true, 2.0f));
+        yield return new WaitUntil(() => condition);
+        Debug.Log("WaitUntil 完成");
+        
+        // WaitWhile - 等待 condition 变为 false
+        condition = true;
+        Debug.Log("等待 condition 变为 false");
+        StartCoroutine(ChangeConditionAfterDelay(() => condition = false, 2.0f));
+        yield return new WaitWhile(() => condition);
+        Debug.Log("WaitWhile 完成");
+    }
+    
+    /// <summary>
+    /// 延迟改变条件的辅助协程
+    /// </summary>
+    private IEnumerator ChangeConditionAfterDelay(System.Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
+    }
+    
+    #endregion
+    
+    #region 3. 协程参数传递
+    
+    /// <summary>
+    /// 3.1 带参数的协程
+    /// 协程方法可以接受参数，通过闭包或类成员变量传递
+    /// </summary>
+    private IEnumerator TestCoroutineWithParameters(string message, int count)
+    {
+        Debug.Log("3.1 带参数的协程");
+        
+        for (int i = 0; i < count; i++)
+        {
+            Debug.Log($"{message}: {i}");
+            yield return new WaitForSeconds(0.1f);
+        }
+        
+        Debug.Log("带参数协程执行完成");
+    }
+    
+    /// <summary>
+    /// 使用闭包传递参数
+    /// </summary>
+    private void StartCoroutineWithClosure()
+    {
+        string message = "闭包参数";
+        int value = 42;
+        
+        StartCoroutine(CoroutineWithClosure(message, value));
+    }
+    
+    private IEnumerator CoroutineWithClosure(string msg, int val)
+    {
+        Debug.Log($"使用闭包: {msg}, {val}");
+        yield return null;
+    }
+    
+    #endregion
+    
+    #region 4. 协程嵌套
+    
+    /// <summary>
+    /// 4.1 嵌套协程
+    /// 协程中可以启动其他协程，实现复杂的异步流程
+    /// </summary>
+    private IEnumerator TestNestedCoroutines()
+    {
+        Debug.Log("4.1 嵌套协程");
+        
+        Debug.Log("外层协程开始");
+        
+        // 启动内层协程并等待其完成
+        yield return StartCoroutine(InnerCoroutine());
+        
+        Debug.Log("外层协程继续执行");
+        yield return new WaitForSeconds(1.0f);
+        
+        Debug.Log("外层协程完成");
+    }
+    
+    /// <summary>
+    /// 内层协程
+    /// </summary>
+    private IEnumerator InnerCoroutine()
+    {
+        Debug.Log("内层协程开始");
+        
+        for (int i = 0; i < 3; i++)
+        {
+            Debug.Log($"内层协程: {i}");
+            yield return new WaitForSeconds(0.5f);
+        }
+        
+        Debug.Log("内层协程完成");
+    }
+    
+    #endregion
+    
+    #region 5. 协程与线程的区别
+    
+    /// <summary>
+    /// 5.1 协程在主线程执行
+    /// 协程不是多线程，所有操作都在主线程执行
+    /// 可以安全访问 Unity API
+    /// </summary>
+    private IEnumerator TestCoroutineMainThread()
+    {
+        Debug.Log("5.1 协程在主线程执行");
+        
+        // 协程中可以安全访问 Unity API
+        Debug.Log($"当前帧数: {Time.frameCount}");
+        Debug.Log($"当前时间: {Time.time}");
+        
+        // 可以访问 GameObject 和 Component
+        Transform transform = GetComponent<Transform>();
+        if (transform != null)
+        {
+            Debug.Log($"GameObject 名称: {transform.name}");
+        }
+        
+        yield return new WaitForSeconds(1.0f);
+        
+        Debug.Log("协程与线程区别：协程在主线程，可以访问 Unity API");
+    }
+    
+    #endregion
+    
+    #region 6. 协程性能优化
+    
+    /// <summary>
+    /// 6.1 协程性能优化建议
+    /// </summary>
+    private void TestCoroutinePerformance()
+    {
+        Debug.Log("6.1 协程性能优化");
+        
+        // 优化1：避免频繁创建 WaitForSeconds
+        // ❌ 不好：每次都创建新对象
+        // yield return new WaitForSeconds(1.0f);
+        
+        // ✅ 好：缓存 WaitForSeconds 对象
+        WaitForSeconds waitOneSecond = new WaitForSeconds(1.0f);
+        StartCoroutine(OptimizedCoroutine(waitOneSecond));
+        
+        // 优化2：使用 yield return null 代替 WaitForSeconds(0)
+        // ❌ 不好：yield return new WaitForSeconds(0);
+        // ✅ 好：yield return null;
+        
+        // 优化3：避免在 Update 中频繁启动协程
+        // ❌ 不好：在 Update 中 StartCoroutine
+        // ✅ 好：使用标志位控制，只启动一次
+    }
+    
+    /// <summary>
+    /// 优化的协程示例
+    /// </summary>
+    private IEnumerator OptimizedCoroutine(WaitForSeconds waitTime)
+    {
+        for (int i = 0; i < repeatCount; i++)
+        {
+            Debug.Log($"优化协程: {i}");
+            yield return waitTime; // 复用 WaitForSeconds 对象
+        }
+    }
+    
+    #endregion
+    
+    #region 7. 协程实际应用场景
+    
+    /// <summary>
+    /// 7.1 延迟执行
+    /// </summary>
+    public void DelayedAction(System.Action action, float delay)
+    {
+        StartCoroutine(DelayedActionCoroutine(action, delay));
+    }
+    
+    private IEnumerator DelayedActionCoroutine(System.Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
+    }
+    
+    /// <summary>
+    /// 7.2 定时重复执行
+    /// </summary>
+    public void StartRepeatingAction(System.Action action, float interval, int times)
+    {
+        StartCoroutine(RepeatingActionCoroutine(action, interval, times));
+    }
+    
+    private IEnumerator RepeatingActionCoroutine(System.Action action, float interval, int times)
+    {
+        WaitForSeconds waitInterval = new WaitForSeconds(interval);
+        
+        for (int i = 0; i < times; i++)
+        {
+            action?.Invoke();
+            yield return waitInterval;
+        }
+    }
+    
+    /// <summary>
+    /// 7.3 异步加载资源
+    /// </summary>
+    public void LoadResourceAsync<T>(string path, System.Action<T> onComplete) where T : Object
+    {
+        StartCoroutine(LoadResourceAsyncCoroutine<T>(path, onComplete));
+    }
+    
+    private IEnumerator LoadResourceAsyncCoroutine<T>(string path, System.Action<T> onComplete) where T : Object
+    {
+        ResourceRequest request = Resources.LoadAsync<T>(path);
+        
+        while (!request.isDone)
+        {
+            Debug.Log($"加载进度: {request.progress * 100}%");
+            yield return null;
+        }
+        
+        T resource = request.asset as T;
+        onComplete?.Invoke(resource);
+    }
+    
+    /// <summary>
+    /// 7.4 渐变动画
+    /// </summary>
+    public void FadeInOut(SpriteRenderer spriteRenderer, float duration)
+    {
+        StartCoroutine(FadeInOutCoroutine(spriteRenderer, duration));
+    }
+    
+    private IEnumerator FadeInOutCoroutine(SpriteRenderer spriteRenderer, float duration)
+    {
+        Color color = spriteRenderer.color;
+        float halfDuration = duration / 2.0f;
+        float elapsed = 0.0f;
+        
+        // 淡入
+        while (elapsed < halfDuration)
+        {
+            elapsed += Time.deltaTime;
+            color.a = Mathf.Lerp(0, 1, elapsed / halfDuration);
+            spriteRenderer.color = color;
+            yield return null;
+        }
+        
+        elapsed = 0.0f;
+        
+        // 淡出
+        while (elapsed < halfDuration)
+        {
+            elapsed += Time.deltaTime;
+            color.a = Mathf.Lerp(1, 0, elapsed / halfDuration);
+            spriteRenderer.color = color;
+            yield return null;
+        }
+    }
+    
+    #endregion
+    
+    #region 8. 协程管理
+    
+    /// <summary>
+    /// 8.1 停止所有协程
+    /// </summary>
+    public void StopAllRunningCoroutines()
+    {
+        StopAllCoroutines();
+        activeCoroutines = 0;
+        activeCoroutinesList.Clear();
+        isRunning = false;
+        Debug.Log("所有协程已停止");
+    }
+    
+    /// <summary>
+    /// 8.2 检查协程是否运行
+    /// </summary>
+    public bool IsCoroutineRunning(Coroutine coroutine)
+    {
+        return coroutine != null;
+    }
+    
+    private void OnDestroy()
+    {
+        // 清理所有协程
+        StopAllCoroutines();
+    }
+    
+    #endregion
+}
+
+#region 最佳实践总结
+
+/*
+ * Unity Coroutine（协程）最佳实践：
+ * 
+ * 1. 协程特点：
+ *    - 协程不是多线程，在主线程执行
+ *    - 可以安全访问 Unity API
+ *    - 通过 yield 实现延迟和异步操作
+ *    - 协程在 GameObject 禁用/销毁时会自动停止
+ * 
+ * 2. yield 类型选择：
+ *    - yield return null: 等待一帧（最常用）
+ *    - WaitForSeconds: 等待指定时间（受 timeScale 影响）
+ *    - WaitForSecondsRealtime: 等待指定时间（不受 timeScale 影响）
+ *    - WaitForEndOfFrame: 等待帧结束（截图、UI更新）
+ *    - WaitForFixedUpdate: 等待物理更新
+ *    - WaitUntil / WaitWhile: 条件等待
+ * 
+ * 3. 性能优化：
+ *    - 缓存 WaitForSeconds 对象，避免频繁创建
+ *    - 使用 yield return null 代替 WaitForSeconds(0)
+ *    - 避免在 Update 中频繁启动协程
+ *    - 及时停止不需要的协程
+ * 
+ * 4. 协程管理：
+ *    - 保存 Coroutine 句柄以便停止
+ *    - 在 OnDestroy 中清理协程
+ *    - 使用 StopAllCoroutines() 停止所有协程
+ * 
+ * 5. 适用场景：
+ *    ✅ 延迟执行
+ *    ✅ 定时重复执行
+ *    ✅ 异步加载资源
+ *    ✅ 渐变动画
+ *    ✅ 分帧处理
+ *    ✅ 等待条件满足
+ *    ❌ CPU 密集型计算（应使用 JobSystem）
+ *    ❌ 需要真正多线程的操作
+ * 
+ * 6. 与线程的区别：
+ *    - 协程：主线程，可以访问 Unity API，按帧执行
+ *    - 线程：独立线程，不能访问 Unity API，并行执行
+ * 
+ * 7. 注意事项：
+ *    - GameObject 禁用时协程会暂停
+ *    - GameObject 销毁时协程会停止
+ *    - 协程中的异常不会自动捕获
+ *    - 协程不能返回值（可以使用回调）
+ */
+
+#endregion
+

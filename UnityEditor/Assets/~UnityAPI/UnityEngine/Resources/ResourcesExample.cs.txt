@@ -1,0 +1,317 @@
+using UnityEngine;
+using System.Collections;
+
+/// <summary>
+/// Unity Resources 资源加载完整 API 示例
+/// Resources 系统用于从 Resources 文件夹加载资源，简单但有限制
+/// 注意：Resources 系统不推荐用于生产环境，建议使用 AssetBundle
+/// </summary>
+public class ResourcesExample : MonoBehaviour
+{
+    [Header("资源路径")]
+    [SerializeField] private string resourcePath = "MyPrefab";
+    [SerializeField] private string resourceFolder = "Prefabs";
+    
+    [Header("加载设置")]
+    [SerializeField] private bool loadAsync = true;
+    
+    private void Start()
+    {
+        Debug.Log("=== Unity Resources 资源加载完整 API 示例 ===");
+        
+        TestAllResourcesFeatures();
+    }
+    
+    #region 1. 资源加载
+    
+    /// <summary>
+    /// 测试所有 Resources 功能
+    /// </summary>
+    private void TestAllResourcesFeatures()
+    {
+        Debug.Log("\n--- 1. 资源加载 ---");
+        
+        // 1.1 Resources.Load
+        TestResourcesLoad();
+        
+        // 1.2 Resources.LoadAll
+        TestResourcesLoadAll();
+        
+        // 1.3 Resources.LoadAsync
+        if (loadAsync)
+        {
+            StartCoroutine(TestResourcesLoadAsync());
+        }
+        
+        Debug.Log("\n--- 2. 资源卸载 ---");
+        
+        // 2.1 Resources.UnloadAsset
+        TestResourcesUnloadAsset();
+        
+        // 2.2 Resources.UnloadUnusedAssets
+        TestResourcesUnloadUnusedAssets();
+        
+        Debug.Log("\n--- 3. Resources 使用规范 ---");
+        
+        // 3.1 Resources 文件夹结构
+        TestResourcesFolderStructure();
+    }
+    
+    /// <summary>
+    /// 1.1 Resources.Load<T> - 加载资源
+    /// 从 Resources 文件夹同步加载资源
+    /// </summary>
+    private void TestResourcesLoad()
+    {
+        Debug.Log("1.1 Resources.Load<T> - 加载资源");
+        
+        // 加载 GameObject
+        GameObject prefab = Resources.Load<GameObject>(resourcePath);
+        if (prefab != null)
+        {
+            Debug.Log($"加载资源成功: {prefab.name}");
+            Instantiate(prefab);
+        }
+        else
+        {
+            Debug.LogWarning($"资源不存在: {resourcePath}");
+        }
+        
+        // 加载其他类型
+        Texture2D texture = Resources.Load<Texture2D>("Textures/MyTexture");
+        AudioClip audio = Resources.Load<AudioClip>("Audio/MyAudio");
+        Material material = Resources.Load<Material>("Materials/MyMaterial");
+        
+        // 使用完整路径（相对于 Resources 文件夹）
+        string fullPath = resourceFolder + "/" + resourcePath;
+        GameObject prefab2 = Resources.Load<GameObject>(fullPath);
+        
+        // 使用 Object 类型（需要类型转换）
+        Object obj = Resources.Load(resourcePath);
+        if (obj != null)
+        {
+            Debug.Log($"加载 Object: {obj.name}, 类型: {obj.GetType()}");
+        }
+    }
+    
+    /// <summary>
+    /// 1.2 Resources.LoadAll<T> - 加载文件夹所有资源
+    /// </summary>
+    private void TestResourcesLoadAll()
+    {
+        Debug.Log("1.2 Resources.LoadAll<T> - 加载文件夹所有资源");
+        
+        // 加载文件夹中所有指定类型的资源
+        GameObject[] prefabs = Resources.LoadAll<GameObject>(resourceFolder);
+        Debug.Log($"加载了 {prefabs.Length} 个 GameObject");
+        
+        foreach (GameObject prefab in prefabs)
+        {
+            Debug.Log($"  - {prefab.name}");
+        }
+        
+        // 加载所有资源（不指定类型）
+        Object[] allResources = Resources.LoadAll(resourceFolder);
+        Debug.Log($"加载了 {allResources.Length} 个资源");
+        
+        // 加载所有资源（指定类型）
+        Texture2D[] textures = Resources.LoadAll<Texture2D>("Textures");
+        Debug.Log($"加载了 {textures.Length} 个纹理");
+    }
+    
+    /// <summary>
+    /// 1.3 Resources.LoadAsync<T> - 异步加载资源
+    /// </summary>
+    private IEnumerator TestResourcesLoadAsync()
+    {
+        Debug.Log("1.3 Resources.LoadAsync<T> - 异步加载资源");
+        
+        ResourceRequest request = Resources.LoadAsync<GameObject>(resourcePath);
+        
+        // 等待加载完成
+        yield return request;
+        
+        GameObject prefab = request.asset as GameObject;
+        if (prefab != null)
+        {
+            Debug.Log($"异步加载资源成功: {prefab.name}");
+            Debug.Log($"加载进度: {request.progress * 100}%");
+            Instantiate(prefab);
+        }
+        
+        // 在加载过程中可以显示进度
+        while (!request.isDone)
+        {
+            Debug.Log($"加载进度: {request.progress * 100:F1}%");
+            yield return null;
+        }
+        
+        Debug.Log("资源加载完成");
+    }
+    
+    #endregion
+    
+    #region 2. 资源卸载
+    
+    /// <summary>
+    /// 2.1 Resources.UnloadAsset - 卸载指定资源
+    /// </summary>
+    private void TestResourcesUnloadAsset()
+    {
+        Debug.Log("2.1 Resources.UnloadAsset - 卸载指定资源");
+        
+        Object asset = Resources.Load(resourcePath);
+        if (asset != null)
+        {
+            // 卸载资源
+            Resources.UnloadAsset(asset);
+            Debug.Log($"卸载资源: {asset.name}");
+            
+            // 注意：只能卸载非场景对象（Prefab、Texture 等）
+            // 不能卸载场景中的 GameObject
+        }
+    }
+    
+    /// <summary>
+    /// 2.2 Resources.UnloadUnusedAssets - 卸载未使用的资源
+    /// </summary>
+    private void TestResourcesUnloadUnusedAssets()
+    {
+        Debug.Log("2.2 Resources.UnloadUnusedAssets - 卸载未使用的资源");
+        
+        // 异步卸载未使用的资源（推荐）
+        StartCoroutine(UnloadUnusedAssetsAsync());
+        
+        // 同步卸载（会卡顿，不推荐）
+        // Resources.UnloadUnusedAssets();
+    }
+    
+    /// <summary>
+    /// 异步卸载未使用的资源
+    /// </summary>
+    private IEnumerator UnloadUnusedAssetsAsync()
+    {
+        AsyncOperation operation = Resources.UnloadUnusedAssets();
+        
+        while (!operation.isDone)
+        {
+            Debug.Log($"卸载进度: {operation.progress * 100:F1}%");
+            yield return null;
+        }
+        
+        Debug.Log("未使用的资源已卸载");
+        
+        // 强制垃圾回收
+        System.GC.Collect();
+    }
+    
+    #endregion
+    
+    #region 3. Resources 使用规范
+    
+    /// <summary>
+    /// 3.1 Resources 文件夹结构
+    /// </summary>
+    private void TestResourcesFolderStructure()
+    {
+        Debug.Log("3.1 Resources 文件夹结构");
+        
+        // Resources 文件夹结构：
+        // Assets/
+        //   Resources/
+        //     Prefabs/
+        //       MyPrefab.prefab
+        //     Textures/
+        //       MyTexture.png
+        //     Audio/
+        //       MyAudio.wav
+        
+        // 加载路径（相对于 Resources 文件夹）：
+        // "Prefabs/MyPrefab" 或 "Prefabs/MyPrefab"
+        // "Textures/MyTexture"
+        // "Audio/MyAudio"
+        
+        // 注意：
+        // - 路径不包含文件扩展名
+        // - 路径不区分大小写（Windows）
+        // - 可以有多个 Resources 文件夹
+        // - 所有 Resources 文件夹中的资源都会被打包
+    }
+    
+    #endregion
+    
+    #region 4. Resources 限制和注意事项
+    
+    /// <summary>
+    /// 4.1 Resources 系统的限制
+    /// </summary>
+    private void TestResourcesLimitations()
+    {
+        Debug.Log("4.1 Resources 系统的限制");
+        
+        // 限制：
+        // 1. 所有 Resources 文件夹中的资源都会被打包，增加包体大小
+        // 2. 无法热更新
+        // 3. 加载所有资源到内存，无法按需加载
+        // 4. 路径硬编码，不灵活
+        // 5. 性能较差（需要查找资源）
+        
+        // 推荐使用 AssetBundle 代替 Resources
+        // Resources 仅适用于：
+        // - 编辑器工具
+        // - 原型开发
+        // - 小型项目
+        // - 必须随包体一起的资源
+    }
+    
+    #endregion
+}
+
+#region 最佳实践总结
+
+/*
+ * Unity Resources 最佳实践：
+ * 
+ * 1. 资源加载：
+ *    - Resources.Load<T>: 同步加载（简单但会卡顿）
+ *    - Resources.LoadAsync<T>: 异步加载（推荐，不卡顿）
+ *    - Resources.LoadAll<T>: 加载文件夹所有资源（谨慎使用）
+ * 
+ * 2. 资源卸载：
+ *    - Resources.UnloadAsset: 卸载指定资源
+ *    - Resources.UnloadUnusedAssets: 卸载未使用的资源（异步推荐）
+ *    - 配合 GC.Collect() 强制垃圾回收
+ * 
+ * 3. Resources 文件夹：
+ *    - 可以有多个 Resources 文件夹
+ *    - 路径相对于 Resources 文件夹
+ *    - 不包含文件扩展名
+ *    - 所有资源都会被打包
+ * 
+ * 4. 使用限制：
+ *    - 不推荐用于生产环境
+ *    - 无法热更新
+ *    - 增加包体大小
+ *    - 性能较差
+ * 
+ * 5. 适用场景：
+ *    - 编辑器工具
+ *    - 原型开发
+ *    - 小型项目
+ *    - 必须随包体的资源
+ * 
+ * 6. 替代方案：
+ *    - AssetBundle: 生产环境推荐
+ *    - Addressables: Unity 推荐的新资源系统
+ *    - ScriptableObject: 配置数据
+ * 
+ * 7. 注意事项：
+ *    - 路径硬编码，不灵活
+ *    - 资源查找需要遍历，性能差
+ *    - 所有资源都会被打包，无法按需加载
+ *    - 无法实现资源热更新
+ */
+
+#endregion
+
+
