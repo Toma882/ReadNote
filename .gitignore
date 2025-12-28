@@ -140,3 +140,5 @@
 /UnityEditor/*.user
 /UnityEditor/UserSettings/*.settings
 /UnityEditor/obj/Debug/*.cache
+/UnityEditor/Assets/SmallScaleInt
+/UnityEditor/Assets/Opsive
