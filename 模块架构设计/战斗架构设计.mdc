@@ -1,0 +1,387 @@
+# 战斗系统架构设计
+
+## 设计目标
+
+设计一套完整的回合制战斗系统架构，支持DND规则、回合管理、状态机控制、AI决策，实现战斗流程管理、伤害计算、效果应用，提供数据驱动的配置化战斗系统。
+
+---
+
+## 核心设计理念
+
+### 1. 多层循环架构为核心
+
+**本质**：战斗系统的核心是四层循环的维护和管理
+- **战斗循环**：管理整个战斗的生命周期
+- **回合循环**：管理回合的循环和切换
+- **阵营循环**：管理阵营内单位的行动顺序
+- **单位循环**：管理单个单位的行动流程
+- **循环驱动**：所有战斗逻辑都在循环框架内执行
+- **状态维护**：每层循环维护自己的状态，驱动下层循环
+
+### 2. 数据驱动架构
+
+**本质**：战斗特性通过配置数据实现，无需修改代码
+- 战斗规则、伤害计算、效果应用 → 通过配置数据定义
+- 回合流程、状态转换 → 通过配置数据调整
+- 新增战斗机制 → 扩展配置数据即可
+- 战斗平衡 → 调整配置数值即可
+
+### 3. 分层架构（循环内的功能组织）
+
+**本质**：分层架构是循环内的功能组织方式，不是主要架构
+- 功能组织：输入层、决策层、执行层、表现层、管理层
+- 执行位置：所有分层功能都在单位循环内执行
+- 解耦设计：层间通过Context和CommunicationBus通信
+
+---
+
+## 整体架构设计
+
+### 多层循环架构（主要架构）
+
+**核心观点**：整个回合制战斗系统的核心是维护四层循环，所有战斗逻辑都在循环框架内执行。
+
+#### 循环层次关系
+
+```mermaid
+graph TB
+    subgraph BattleLoop["战斗循环<br/>BattleLoop"]
+        BattleStart[战斗开始] --> BattleCheck{战斗是否结束?}
+        BattleCheck -->|否| TurnLoop[回合循环]
+        BattleCheck -->|是| BattleEnd[战斗结束]
+        TurnLoop --> BattleCheck
+    end
+    
+    subgraph TurnLoop["回合循环<br/>TurnLoop"]
+        TurnStart[回合开始] --> TeamLoop[阵营循环]
+        TeamLoop --> TurnEnd[回合结束]
+        TurnEnd --> TurnCheck{是否还有回合?}
+        TurnCheck -->|是| TurnStart
+        TurnCheck -->|否| TurnLoopEnd[回合循环结束]
+    end
+    
+    subgraph TeamLoop["阵营循环<br/>TeamLoop"]
+        TeamStart[阵营开始] --> UnitLoop[单位循环]
+        UnitLoop --> TeamEnd[阵营结束]
+        TeamEnd --> TeamCheck{是否还有阵营?}
+        TeamCheck -->|是| TeamStart
+        TeamCheck -->|否| TeamLoopEnd[阵营循环结束]
+    end
+    
+    subgraph UnitLoop["单位循环<br/>UnitLoop"]
+        UnitStart[单位开始] --> UnitAction[单位行动]
+        UnitAction --> UnitEnd[单位结束]
+        UnitEnd --> UnitCheck{是否还有单位?}
+        UnitCheck -->|是| UnitStart
+        UnitCheck -->|否| UnitLoopEnd[单位循环结束]
+    end
+    
+    BattleLoop --> TurnLoop
+    TurnLoop --> TeamLoop
+    TeamLoop --> UnitLoop
+    
+    style BattleLoop fill:#ffebee
+    style TurnLoop fill:#fff4e1
+    style TeamLoop fill:#c8e6c9
+    style UnitLoop fill:#e1f5ff
+```
+
+### 循环管理器设计
+
+```mermaid
+graph TB
+    subgraph LoopManager["循环管理器<br/>LoopManager"]
+        BattleLoopManager["战斗循环管理器<br/>BattleLoopManager"]
+        TurnLoopManager["回合循环管理器<br/>TurnLoopManager"]
+        TeamLoopManager["阵营循环管理器<br/>TeamLoopManager"]
+        UnitLoopManager["单位循环管理器<br/>UnitLoopManager"]
+    end
+    
+    subgraph BattleContext["战斗上下文<br/>BattleContext"]
+        BattleState["战斗状态<br/>battleState"]
+        TurnState["回合状态<br/>turnState"]
+        TeamState["阵营状态<br/>teamState"]
+        UnitState["单位状态<br/>unitState"]
+    end
+    
+    BattleLoopManager -->|维护| BattleState
+    TurnLoopManager -->|维护| TurnState
+    TeamLoopManager -->|维护| TeamState
+    UnitLoopManager -->|维护| UnitState
+    
+    BattleLoopManager -->|驱动| TurnLoopManager
+    TurnLoopManager -->|驱动| TeamLoopManager
+    TeamLoopManager -->|驱动| UnitLoopManager
+    
+    style LoopManager fill:#f3e5f5
+    style BattleContext fill:#e8f5e9
+```
+
+### 循环职责说明
+
+#### 1. 战斗循环（BattleLoop）
+- **职责**：管理整个战斗的生命周期
+- **状态**：BattleState（未开始/进行中/已结束）
+- **触发**：战斗开始/结束条件检查
+- **维护**：BattleLoopManager
+
+#### 2. 回合循环（TurnLoop）
+- **职责**：管理回合的循环和切换
+- **状态**：TurnState（回合编号/当前回合/回合数）
+- **触发**：回合开始/结束条件检查
+- **维护**：TurnLoopManager
+
+#### 3. 阵营循环（TeamLoop）
+- **职责**：管理阵营内单位的行动顺序
+- **状态**：TeamState（当前阵营/阵营列表/行动顺序）
+- **触发**：阵营切换/单位行动完成
+- **维护**：TeamLoopManager
+
+#### 4. 单位循环（UnitLoop）
+- **职责**：管理单个单位的行动流程
+- **状态**：UnitState（当前单位/行动状态/行动完成）
+- **触发**：单位行动开始/结束
+- **维护**：UnitLoopManager
+
+---
+
+## 多层循环架构模式
+
+### 层次状态机（Hierarchical State Machine）
+
+**核心观点**：多层循环架构最适合使用**层次状态机（Hierarchical State Machine）**模式。
+
+#### 为什么是层次状态机？
+
+**原因**：
+- **循环嵌套 = 状态嵌套**：每层循环都是一个状态机，可以包含子状态机
+- **状态层次结构**：战斗状态机 → 回合状态机 → 阵营状态机 → 单位状态机
+- **状态自动管理**：父状态机进入时自动重置子状态机，父状态机更新时自动更新子状态机
+- **状态隔离**：每层循环的状态独立管理，互不干扰
+
+**适用场景**：
+- 战斗状态机包含回合状态机（战斗进行中状态）
+- 回合状态机包含阵营状态机（回合行动状态）
+- 阵营状态机包含单位状态机（阵营行动状态）
+- 单位状态机管理单位行动流程
+
+#### 层次状态机设计
+
+```mermaid
+graph TB
+    subgraph BattleFSM["战斗状态机<br/>BattleFSM<br/>HierarchicalFSM"]
+        BattleState1[准备中]
+        BattleState2[进行中]
+        BattleState3[暂停]
+        BattleState4[结束]
+        
+        BattleState2 -->|包含| TurnFSM[回合状态机<br/>TurnFSM]
+        BattleState4 -->|包含| ResultFSM[结果状态机<br/>ResultFSM]
+    end
+    
+    subgraph TurnFSM["回合状态机<br/>TurnFSM<br/>HierarchicalFSM"]
+        TurnState1[回合开始]
+        TurnState2[回合行动]
+        TurnState3[回合结束]
+        
+        TurnState2 -->|包含| TeamFSM[阵营状态机<br/>TeamFSM]
+    end
+    
+    subgraph TeamFSM["阵营状态机<br/>TeamFSM<br/>HierarchicalFSM"]
+        TeamState1[阵营开始]
+        TeamState2[阵营行动]
+        TeamState3[阵营结束]
+        
+        TeamState2 -->|包含| UnitFSM[单位状态机<br/>UnitFSM]
+    end
+    
+    subgraph UnitFSM["单位状态机<br/>UnitFSM<br/>FSMBase"]
+        UnitState1[单位开始]
+        UnitState2[单位行动]
+        UnitState3[单位结束]
+    end
+    
+    style BattleFSM fill:#ffebee
+    style TurnFSM fill:#fff4e1
+    style TeamFSM fill:#c8e6c9
+    style UnitFSM fill:#e1f5ff
+```
+
+#### 层次状态机特点
+
+1. **状态嵌套**：
+   - 父状态机可以包含子状态机
+   - 子状态机在父状态机进入时自动重置
+   - 子状态机在父状态机更新时自动更新
+
+2. **状态隔离**：
+   - 每层状态机独立管理自己的状态
+   - 状态转换只在当前状态机内进行
+   - 父状态机状态变化不影响子状态机状态
+
+3. **自动管理**：
+   - 父状态机进入时，自动重置子状态机
+   - 父状态机更新时，自动更新子状态机
+   - 父状态机退出时，自动清理子状态机
+
+4. **循环驱动**：
+   - 每层状态机的状态转换驱动循环推进
+   - 状态机状态决定循环是否继续
+   - 状态机状态决定循环行为
+
+#### 实现要点
+
+1. **层次状态机接口**：
+   - `AddSubFSM(stateId, subFSM)`：为某个状态添加子状态机
+   - `EnterCurrentState()`：进入当前状态时，自动重置子状态机
+   - `UpdateCurrentState()`：更新当前状态时，自动更新子状态机
+
+2. **状态机层次结构**：
+   - 战斗状态机（HierarchicalFSM）：包含回合状态机和结果状态机
+   - 回合状态机（HierarchicalFSM）：包含阵营状态机
+   - 阵营状态机（HierarchicalFSM）：包含单位状态机
+   - 单位状态机（FSMBase）：最底层状态机，不包含子状态机
+
+3. **循环管理器 = 层次状态机**：
+   - BattleLoopManager = 战斗状态机
+   - TurnLoopManager = 回合状态机
+   - TeamLoopManager = 阵营状态机
+   - UnitLoopManager = 单位状态机
+
+```mermaid
+sequenceDiagram
+    participant Main as 主状态机
+    participant Round as 回合状态机
+    participant Team as 阵营状态机
+    participant Unit as 单位状态机
+    
+    Note over Main: 战斗开始
+    Main->>Main: PREPARING → IN_PROGRESS
+    Main->>Round: 进入IN_PROGRESS，激活回合状态机
+    
+    Note over Round: 第1回合开始
+    Round->>Round: ROUND_START
+    Round->>Round: CheckRoundActionCondition() → ROUND_ACTION
+    Round->>Team: 进入ROUND_ACTION，激活阵营状态机
+    
+    Note over Team: 玩家阵营开始
+    Team->>Team: TEAM_START
+    Team->>Team: CheckTeamActionCondition() → TEAM_ACTION
+    Team->>Unit: 进入TEAM_ACTION，激活单位状态机
+    
+    Note over Unit: 单位1行动
+    Unit->>Unit: UNIT_START
+    Unit->>Unit: CheckUnitActionCondition() → UNIT_ACTION
+    Unit->>Unit: 执行行动
+    Unit->>Unit: CheckUnitEndCondition() → UNIT_END
+    Unit->>Unit: CheckNextUnitCondition() → UNIT_START (还有单位2)
+    
+    Note over Unit: 单位2行动
+    Unit->>Unit: UNIT_START
+    Unit->>Unit: UNIT_ACTION
+    Unit->>Unit: UNIT_END
+    Unit->>Unit: CheckNextUnitCondition() → false (没有更多单位)
+    
+    Note over Team: 玩家阵营结束
+    Team->>Team: CheckTeamEndCondition() → TEAM_END
+    Team->>Team: CheckNextTeamCondition() → TEAM_START (还有敌人阵营)
+    
+    Note over Team: 敌人阵营开始
+    Team->>Team: TEAM_START
+    Team->>Team: TEAM_ACTION
+    Team->>Unit: 激活单位状态机（敌人单位1）
+    Unit->>Unit: UNIT_START → UNIT_ACTION → UNIT_END
+    Unit->>Unit: CheckNextUnitCondition() → UNIT_START (还有单位2)
+    Unit->>Unit: UNIT_START → UNIT_ACTION → UNIT_END
+    Unit->>Unit: CheckNextUnitCondition() → false
+    Team->>Team: TEAM_END
+    Team->>Team: CheckNextTeamCondition() → false (没有更多阵营)
+    
+    Note over Round: 第1回合结束
+    Round->>Round: CheckRoundEndCondition() → ROUND_END
+    Round->>Round: CheckNextRoundCondition() → ROUND_START (还有第2回合)
+    
+    Note over Round: 第2回合开始
+    Round->>Round: ROUND_START → ROUND_ACTION
+    Round->>Team: 激活阵营状态机
+    Team->>Team: TEAM_START → TEAM_ACTION → TEAM_END
+    Team->>Team: CheckNextTeamCondition() → TEAM_START (循环)
+    Team->>Team: TEAM_START → TEAM_ACTION → TEAM_END
+    Team->>Team: CheckNextTeamCondition() → false
+    Round->>Round: ROUND_END
+    Round->>Round: CheckNextRoundCondition() → false (战斗结束)
+    
+    Note over Main: 战斗结束
+    Main->>Main: CheckBattleEndCondition() → ENDED
+    Main->>Main: 激活结果状态机
+```
+---
+
+### 分层架构（循环内的功能组织）
+
+**说明**：分层架构不是主要架构，而是循环内的功能组织方式。所有分层功能都在**单位循环**内执行。
+
+#### 单位循环内的分层功能
+
+```mermaid
+graph TB
+    subgraph UnitLoop["单位循环<br/>UnitLoop"]
+        UnitStart[单位开始] --> InputLayer[输入层<br/>接收输入]
+        InputLayer --> DecisionLayer[决策层<br/>选择行动/目标]
+        DecisionLayer --> ExecutionLayer[执行层<br/>执行行动/计算伤害]
+        ExecutionLayer --> PresentationLayer[表现层<br/>播放表现]
+        PresentationLayer --> ManagementLayer[管理层<br/>更新状态]
+        ManagementLayer --> UnitEnd[单位结束]
+    end
+    
+    DataLayer[数据层<br/>配置数据] -.数据查询.-> DecisionLayer
+    DataLayer -.数据查询.-> ExecutionLayer
+    
+    style UnitLoop fill:#e1f5ff
+    style InputLayer fill:#ffebee
+    style DecisionLayer fill:#fff4e1
+    style ExecutionLayer fill:#c8e6c9
+    style PresentationLayer fill:#e1f5ff
+    style ManagementLayer fill:#f3e5f5
+    style DataLayer fill:#e8f5e9
+```
+
+#### 分层职责说明
+
+**重要**：以下所有分层功能都在**单位循环**内执行，不是独立的架构层次。
+
+##### 输入层（InputLayer）
+- **执行位置**：单位循环内
+- **职责**：接收玩家输入和AI输入
+- **核心组件**：PlayerInput、AIInput、InputValidator
+- **输出**：BattleContext + inputData
+
+##### 决策层（DecisionLayer）
+- **执行位置**：单位循环内
+- **职责**：行动选择、目标选择
+- **核心组件**：ActionSelector、TargetSelector
+- **输出**：BattleContext + decisionData
+
+##### 执行层（ExecutionLayer）
+- **执行位置**：单位循环内
+- **职责**：行动执行、伤害计算、效果应用
+- **核心组件**：ActionExecutor、DamageCalculator、EffectApplier
+- **输出**：BattleContext + executionData
+
+##### 表现层（PresentationLayer）
+- **执行位置**：单位循环内
+- **职责**：视觉表现、音频播放、UI更新
+- **核心组件**：VisualPlayer、AudioPlayer、UIManager
+- **输出**：BattleContext + presentationData
+
+##### 管理层（ManagementLayer）
+- **执行位置**：单位循环内（状态更新）、循环间（循环管理）
+- **职责**：战斗状态管理、参与者管理、Context管理、循环管理
+- **核心组件**：BattleStateManager、ParticipantManager、BattleContext、LoopManager
+- **输出**：状态更新、数据持久化、循环驱动
+
+##### 数据层（DataLayer）
+- **执行位置**：所有循环和分层功能中
+- **职责**：战斗配置、回合数据、战斗数据
+- **核心组件**：BattleConfig、TurnData、BattleData
+- **输出**：配置数据查询
