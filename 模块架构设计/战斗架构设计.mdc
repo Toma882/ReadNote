@@ -138,23 +138,6 @@ graph TB
 - 子Domain完成业务后主动返回父Domain
 - 每个Domain独立管理自己的业务逻辑和循环
 
-### 循环职责说明
-
-#### 1. 战斗循环（BattleLoop）
-- **职责**：管理整个战斗的生命周期
-- **状态**：PREPARING → IN_PROGRESS → ENDED
-- **维护**：BattleLoopManager
-
-#### 2. 回合循环（RoundLoop）
-- **职责**：管理回合的循环和切换
-- **状态**：START → ACTION → END
-- **维护**：RoundLoopManager
-
-#### 3. 单位循环（UnitLoop）
-- **职责**：管理单个单位的行动流程
-- **状态**：START → ACTION → END
-- **维护**：UnitLoopManager
-
 ---
 
 ## 战斗领域
