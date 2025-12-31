@@ -75,10 +75,10 @@ graph TB
 ### 状态切换数据流
 
 ```mermaid
-graph LR
+graph TD
     Start[状态切换请求<br/>ChangeState] -->|1. 退出当前状态| Exit[当前状态退出<br/>Exit]
     Exit -->|2. 触发事件| Event[事件通知<br/>OnStateChanged]
-    Event -->|3. 查找新状态| Find[查找新状态<br/>stateDict[stateId]]
+    Event -->|3. 查找新状态| Find[查找新状态<br/>stateDict]
     Find -->|4. 进入新状态| Enter[新状态进入<br/>Enter]
     Enter -->|5. 更新当前状态| Update[更新当前状态<br/>currentState]
     Update -->|6. 持续更新| Loop[状态更新循环<br/>Update]
@@ -139,7 +139,7 @@ flowchart TD
     
     ChangeState --> CheckCurrent{当前状态<br/>是否存在?}
     CheckCurrent -->|是| ExitCurrent[退出当前状态<br/>Exit]
-    CheckCurrent -->|否| FindNew[查找新状态<br/>stateDict[stateId]]
+    CheckCurrent -->|否| FindNew[查找新状态<br/>stateDict]
     
     ExitCurrent --> TriggerEvent1[触发事件<br/>OnStateChanged]
     TriggerEvent1 --> FindNew
@@ -197,7 +197,7 @@ graph TB
 ```mermaid
 flowchart TD
     Start[推入状态请求<br/>PushState] --> PauseCurrent[暂停当前状态<br/>Pause]
-    PauseCurrent --> PushToStack[推入栈<br/>stateStack.push(currentState)]
+    PauseCurrent --> PushToStack[推入栈<br/>stateStack.push]
     PushToStack --> ChangeToNew[切换到新状态<br/>ChangeState]
     
     PopRequest[弹出状态请求<br/>PopState] --> ExitCurrent[退出当前状态<br/>Exit]
@@ -308,7 +308,7 @@ flowchart TD
     Start[切换父状态<br/>ChangeState] --> ExitOld[退出旧父状态<br/>Exit]
     ExitOld --> DeactivateOld[停用旧子FSM<br/>Reset]
     DeactivateOld --> EnterNew[进入新父状态<br/>Enter]
-    EnterNew --> CheckSubFSM{是否有子FSM?<br/>subFSMMap[stateId]}
+    EnterNew --> CheckSubFSM{是否有子FSM?<br/>subFSMMap}
     CheckSubFSM -->|是| ActivateSubFSM[激活子FSM<br/>Reset + ChangeState]
     CheckSubFSM -->|否| Continue[继续执行]
     ActivateSubFSM --> Continue

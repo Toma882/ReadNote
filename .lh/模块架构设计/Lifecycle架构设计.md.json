@@ -3,11 +3,31 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 5,
             "patches": [
                 {
                     "date": 1767203764102,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1767205170556,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,9 +39,9 @@\n ### 三层架构 + 桥接模式\r\n \r\n ```mermaid\r\n graph TB\r\n-    subgraph UnityLayer[\"Unity层<br/>MonoBehaviour生命周期\"]\r\n+    subgraph UnityLayer[\"MonoBehaviour生命周期<br/>\"]\r\n         AwakeEvent[\"Awake事件\"]\r\n         StartEvent[\"Start事件\"]\r\n         OnEnableEvent[\"OnEnable事件\"]\r\n         OnDestroyEvent[\"OnDestroy事件\"]\r\n"
+                },
+                {
+                    "date": 1767205208320,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,9 +73,9 @@\n ```mermaid\r\n graph LR\r\n     Start[Unity生命周期事件<br/>Start/OnDestroy等] -->|1. 触发| Bridge[桥接层<br/>MonoLifecycle]\r\n     Bridge -->|2. 获取映射名称| Mapping[mappingName<br/>Unit/Item/Custom]\r\n-    Mapping -->|3. 构建函数名| FunctionName[函数名<br/>{MappingName}_{MethodName}]\r\n+    Mapping -->|3. 构建函数名| FunctionName[函数名<br/>MappingName_MethodName]\r\n     FunctionName -->|4. 调用Lua函数| Lua[Lua层<br/>Unit_Start/Item_OnDestroy]\r\n     Lua -->|5. 执行Lua逻辑| End[完成]\r\n     \r\n     style Bridge fill:#fff4e1\r\n"
+                },
+                {
+                    "date": 1767205234205,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -133,9 +133,9 @@\n ```mermaid\r\n flowchart TD\r\n     Start[Unity生命周期事件<br/>Start/OnDestroy] --> Override[重写生命周期方法<br/>protected override]\r\n     Override --> GetMapping[获取映射名称<br/>mappingName]\r\n-    GetMapping --> BuildFunctionName[构建函数名<br/>{MappingName}_{MethodName}]\r\n+    GetMapping --> BuildFunctionName[构建函数名<br/>MappingName_MethodName]\r\n     BuildFunctionName --> CallLua[调用Lua函数<br/>CallLuaFunction]\r\n     CallLua --> CheckLua{Lua函数<br/>是否存在?}\r\n     CheckLua -->|是| ExecuteLua[执行Lua逻辑]\r\n     CheckLua -->|否| LogError[记录错误日志]\r\n"
+                },
+                {
+                    "date": 1767205251368,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -70,9 +70,9 @@\n \r\n ### 生命周期桥接数据流\r\n \r\n ```mermaid\r\n-graph LR\r\n+graph TD\r\n     Start[Unity生命周期事件<br/>Start/OnDestroy等] -->|1. 触发| Bridge[桥接层<br/>MonoLifecycle]\r\n     Bridge -->|2. 获取映射名称| Mapping[mappingName<br/>Unit/Item/Custom]\r\n     Mapping -->|3. 构建函数名| FunctionName[函数名<br/>MappingName_MethodName]\r\n     FunctionName -->|4. 调用Lua函数| Lua[Lua层<br/>Unit_Start/Item_OnDestroy]\r\n@@ -142,9 +142,9 @@\n     ExecuteLua --> Complete[完成]\r\n     LogError --> Complete\r\n     \r\n     Generate[编辑器生成Lua函数] --> ReadConfig[读取配置<br/>mappingConfigs]\r\n-    ReadConfig --> GenerateCode[生成代码<br/>function Unit_Start(...) end]\r\n+    ReadConfig --> GenerateCode[生成代码<br/>Unit_Start(...)]\r\n     GenerateCode --> WriteFile[写入文件<br/>MonoLifecycleGlobal.lua]\r\n     \r\n     style CheckLua fill:#fff4e1,stroke:#333,stroke-width:2px\r\n     style CallLua fill:#c8e6c9\r\n"
+                },
+                {
+                    "date": 1767205279631,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -142,9 +142,9 @@\n     ExecuteLua --> Complete[完成]\r\n     LogError --> Complete\r\n     \r\n     Generate[编辑器生成Lua函数] --> ReadConfig[读取配置<br/>mappingConfigs]\r\n-    ReadConfig --> GenerateCode[生成代码<br/>Unit_Start(...)]\r\n+    ReadConfig --> GenerateCode[生成代码<br/>Unit_Start]\r\n     GenerateCode --> WriteFile[写入文件<br/>MonoLifecycleGlobal.lua]\r\n     \r\n     style CheckLua fill:#fff4e1,stroke:#333,stroke-width:2px\r\n     style CallLua fill:#c8e6c9\r\n@@ -195,9 +195,9 @@\n     Start[用户点击生成按钮] --> ReadConfig[读取配置<br/>mappingConfigs + lifecycleMethods]\r\n     ReadConfig --> Loop[遍历映射配置]\r\n     Loop --> ForEachMapping[对每个映射配置]\r\n     ForEachMapping --> ForEachMethod[对每个生命周期方法]\r\n-    ForEachMethod --> GenerateFunction[生成函数代码<br/>function {MappingName}_{MethodName}(...) end]\r\n+    ForEachMethod --> GenerateFunction[生成函数代码<br/>MappingName_MethodName(...)]\r\n     GenerateFunction --> AddToCode[添加到代码字符串]\r\n     AddToCode --> CheckMore{还有方法?}\r\n     CheckMore -->|是| ForEachMethod\r\n     CheckMore -->|否| CheckMoreMapping{还有映射?}\r\n"
                 }
             ],
             "date": 1767203764102,

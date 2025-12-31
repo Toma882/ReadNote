@@ -40,7 +40,7 @@
 
 ```mermaid
 graph TB
-    subgraph UnityLayer["Unity层<br/>MonoBehaviour生命周期"]
+    subgraph UnityLayer["MonoBehaviour生命周期<br/>"]
         AwakeEvent["Awake事件"]
         StartEvent["Start事件"]
         OnEnableEvent["OnEnable事件"]
@@ -71,10 +71,10 @@ graph TB
 ### 生命周期桥接数据流
 
 ```mermaid
-graph LR
+graph TD
     Start[Unity生命周期事件<br/>Start/OnDestroy等] -->|1. 触发| Bridge[桥接层<br/>MonoLifecycle]
     Bridge -->|2. 获取映射名称| Mapping[mappingName<br/>Unit/Item/Custom]
-    Mapping -->|3. 构建函数名| FunctionName[函数名<br/>{MappingName}_{MethodName}]
+    Mapping -->|3. 构建函数名| FunctionName[函数名<br/>MappingName_MethodName]
     FunctionName -->|4. 调用Lua函数| Lua[Lua层<br/>Unit_Start/Item_OnDestroy]
     Lua -->|5. 执行Lua逻辑| End[完成]
     
@@ -134,7 +134,7 @@ graph TB
 flowchart TD
     Start[Unity生命周期事件<br/>Start/OnDestroy] --> Override[重写生命周期方法<br/>protected override]
     Override --> GetMapping[获取映射名称<br/>mappingName]
-    GetMapping --> BuildFunctionName[构建函数名<br/>{MappingName}_{MethodName}]
+    GetMapping --> BuildFunctionName[构建函数名<br/>MappingName_MethodName]
     BuildFunctionName --> CallLua[调用Lua函数<br/>CallLuaFunction]
     CallLua --> CheckLua{Lua函数<br/>是否存在?}
     CheckLua -->|是| ExecuteLua[执行Lua逻辑]
@@ -143,7 +143,7 @@ flowchart TD
     LogError --> Complete
     
     Generate[编辑器生成Lua函数] --> ReadConfig[读取配置<br/>mappingConfigs]
-    ReadConfig --> GenerateCode[生成代码<br/>function Unit_Start(...) end]
+    ReadConfig --> GenerateCode[生成代码<br/>Unit_Start]
     GenerateCode --> WriteFile[写入文件<br/>MonoLifecycleGlobal.lua]
     
     style CheckLua fill:#fff4e1,stroke:#333,stroke-width:2px
@@ -196,7 +196,7 @@ flowchart TD
     ReadConfig --> Loop[遍历映射配置]
     Loop --> ForEachMapping[对每个映射配置]
     ForEachMapping --> ForEachMethod[对每个生命周期方法]
-    ForEachMethod --> GenerateFunction[生成函数代码<br/>function {MappingName}_{MethodName}(...) end]
+    ForEachMethod --> GenerateFunction[生成函数代码<br/>MappingName_MethodName]
     GenerateFunction --> AddToCode[添加到代码字符串]
     AddToCode --> CheckMore{还有方法?}
     CheckMore -->|是| ForEachMethod
