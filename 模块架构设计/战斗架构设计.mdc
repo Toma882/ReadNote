@@ -1,287 +1,1029 @@
-# 战斗系统架构设计
+# 战斗系统架构设计文档
 
-## 设计目标
+## 目录
+
+1. [概述](#概述)
+2. [整体架构](#整体架构)
+3. [战斗领域](#战斗领域)
+4. [回合领域](#回合领域)
+5. [单位领域](#单位领域)
+6. [核心机制](#核心机制)
+7. [数据结构](#数据结构)
+8. [外部系统集成](#外部系统集成)
+9. [实现指南](#实现指南)
+
+---
+
+## 概述
+
+### 设计目标
 
 设计一套完整的回合制战斗系统架构，支持DND规则、回合管理、状态机控制、AI决策，实现战斗流程管理、伤害计算、效果应用，提供数据驱动的配置化战斗系统。
 
+### 核心设计理念
+
+#### 1. 多层循环架构为核心
+
+**本质**：战斗系统的核心是多层循环的维护和管理（当前实现为三层）
+
+- **战斗循环**：管理整个战斗的生命周期
+- **回合循环**：管理回合的循环和切换
+- **单位循环**：管理单个单位的行动流程
+- **循环驱动**：所有战斗逻辑都在循环框架内执行
+- **状态维护**：每层循环维护自己的状态，驱动下层循环
+
+#### 2. 数据驱动架构
+
+**本质**：战斗特性通过配置数据实现，无需修改代码
+
+- 战斗规则、伤害计算、效果应用 → 通过配置数据定义
+- 回合流程、状态转换 → 通过配置数据调整
+- 新增战斗机制 → 扩展配置数据即可
+- 战斗平衡 → 调整配置数值即可
+
+#### 3. 分层架构（循环内的功能组织）
+
+**本质**：分层架构是循环内的功能组织方式，不是主要架构
+
+- 功能组织：输入层、决策层、执行层、表现层、管理层
+- 执行位置：所有分层功能都在单位循环内执行
+- 解耦设计：层间通过Context和CommunicationBus通信
+
+#### 4. Domain controls Loop
+
+**核心原则**：Domain控制循环，循环是Domain的工具
+
+- Domain是领域核心，拥有循环机制来推进业务流程
+- Domain管理通过协调器控制循环状态转换
+- 协调器执行完业务后，主动推动循环进入下一个状态
+
 ---
 
-## 整体架构设计
+## 整体架构
 
-### Clean架构模式（主要架构）
+### 多层循环架构
 
-**核心观点**：战斗系统采用Clean架构模式，将系统组织成四个同心圆层，业务规则在中心，框架和技术在外围。
+**核心观点**：整个回合制战斗系统的核心是维护多层循环，所有战斗逻辑都在循环框架内执行。
 
-### 战斗系统整体架构图
+#### Domain与循环的关系
 
-```mermaid
-graph TB
-    subgraph "框架层（Frameworks & Drivers）- 技术实现"
-        Unity[Unity引擎<br/>渲染/物理/动画]
-        Lua[Lua脚本引擎<br/>业务逻辑]
-        Database[(数据库<br/>数据持久化)]
-        FSM[状态机框架<br/>FSM Framework]
-        CommunicationBus[通信总线<br/>CommunicationBus]
-        DataHandleQueue[数据队列<br/>DataHandleQueue]
-        Formula[公式引擎<br/>Formula Parser]
-        Pool[对象池<br/>Object Pool]
-        Config[配置数据<br/>Excel/JSON/Lua]
-    end
-    
-    subgraph "服务层（Services）- 功能服务"
-        InputService[输入服务<br/>Input Service<br/>玩家输入/AI输入]
-        ActionService[行动服务<br/>Action Service<br/>行动执行/伤害计算]
-        VisualService[视觉服务<br/>Visual Service<br/>动画/特效/UI]
-        DataService[数据服务<br/>Data Service<br/>数据访问/配置读取]
-        CommunicationService[通信服务<br/>Communication Service<br/>事件/消息/查询]
-    end
-    
-    subgraph "用例层（Use Cases）- 应用业务规则"
-        ExecuteBattleUC[执行战斗用例<br/>ExecuteBattle]
-        ExecuteRoundUC[执行回合用例<br/>ExecuteRound]
-        ExecuteTeamUC[执行阵营用例<br/>ExecuteTeam]
-        ExecuteUnitUC[执行单位用例<br/>ExecuteUnit]
-        CalculateDamageUC[计算伤害用例<br/>CalculateDamage]
-        ApplyEffectUC[应用效果用例<br/>ApplyEffect]
-    end
-    
-    subgraph "实体层（Entities）- 核心业务规则"
-        BattleEntity[战斗实体<br/>Battle Entity<br/>战斗循环]
-        RoundEntity[回合实体<br/>Round Entity<br/>回合循环]
-        TeamEntity[阵营实体<br/>Team Entity<br/>阵营循环]
-        UnitEntity[单位实体<br/>Unit Entity<br/>单位循环]
-        SkillEntity[技能实体<br/>Skill Entity]
-        EffectEntity[效果实体<br/>Effect Entity]
-    end
-    
-    Unity --> VisualService
-    Lua --> ActionService
-    Database --> DataService
-    FSM --> ExecuteBattleUC
-    CommunicationBus --> CommunicationService
-    DataHandleQueue --> DataService
-    Formula --> ActionService
-    Pool --> VisualService
-    Config --> DataService
-    
-    InputService --> ExecuteUnitUC
-    ActionService --> ExecuteUnitUC
-    VisualService --> ExecuteUnitUC
-    DataService --> ExecuteUnitUC
-    CommunicationService --> ExecuteUnitUC
-    
-    ExecuteBattleUC --> BattleEntity
-    ExecuteRoundUC --> RoundEntity
-    ExecuteTeamUC --> TeamEntity
-    ExecuteUnitUC --> UnitEntity
-    CalculateDamageUC --> SkillEntity
-    ApplyEffectUC --> EffectEntity
-    
-    BattleEntity --> RoundEntity
-    RoundEntity --> TeamEntity
-    TeamEntity --> UnitEntity
-    
-    style BattleEntity fill:#ffebee
-    style ExecuteBattleUC fill:#fff4e1
-    style InputService fill:#e8f5e9
-    style Unity fill:#e1f5ff
-```
-
-**依赖规则**：
-- ✅ **允许**：外层依赖内层
-- ❌ **禁止**：内层依赖外层
-- ✅ **允许**：通过接口定义依赖
-- ❌ **禁止**：直接依赖具体实现
-
-### 战斗流程在Clean架构中的执行
-
-```mermaid
-sequenceDiagram
-    participant Framework as 框架层
-    participant Service as 服务层
-    participant UseCase as 用例层
-    participant Entity as 实体层
-    
-    Note over Framework,Entity: 战斗开始流程
-    
-    Framework->>Service: Unity触发战斗开始
-    Service->>UseCase: 输入服务转换输入
-    UseCase->>Entity: 执行战斗用例调用战斗实体
-    Entity->>Entity: 战斗实体启动战斗循环
-    
-    Note over Entity: 战斗循环开始
-    
-    Entity->>UseCase: 战斗实体调用执行回合用例
-    UseCase->>Entity: 执行回合用例调用回合实体
-    Entity->>Entity: 回合实体启动回合循环
-    
-    Note over Entity: 回合循环开始
-    
-    Entity->>UseCase: 回合实体调用执行阵营用例
-    UseCase->>Entity: 执行阵营用例调用阵营实体
-    Entity->>Entity: 阵营实体启动阵营循环
-    
-    Note over Entity: 阵营循环开始
-    
-    Entity->>UseCase: 阵营实体调用执行单位用例
-    UseCase->>Service: 执行单位用例调用输入服务
-    Service->>Framework: 输入服务获取玩家输入/AI输入
-    Framework->>Service: 返回输入数据
-    Service->>UseCase: 转换输入数据
-    
-    UseCase->>Service: 执行单位用例调用行动服务
-    Service->>Framework: 行动服务调用Lua脚本
-    Framework->>Service: 返回行动结果
-    Service->>UseCase: 转换行动结果
-    
-    UseCase->>Service: 执行单位用例调用视觉服务
-    Service->>Framework: 视觉服务调用Unity引擎
-    Framework->>Service: 播放动画/特效
-    Service->>UseCase: 视觉播放完成
-    
-    UseCase->>Service: 执行单位用例调用数据服务
-    Service->>Framework: 数据服务更新数据
-    Framework->>Service: 数据更新完成
-    Service->>UseCase: 数据更新结果
-    
-    UseCase->>Entity: 执行单位用例完成，更新单位实体
-    Entity->>Entity: 单位循环继续/结束
-    
-    Note over Entity: 单位循环结束，返回上层循环
-```
-
-
-## 实体层详细设计（Entities Layer）
-
-### 四层循环实体模型
-
-**核心观点**：战斗系统的核心是四层循环的维护和管理，这些循环在实体层中定义。
-
-### 层次状态机实现（框架层）
-
-**说明**：层次状态机是框架层的实现，用于管理实体层的状态转换。
-
-#### 层次状态机设计
+**术语说明**：使用"Domain"而非"Entity"，避免与项目中的"Unit"概念混淆。
 
 ```mermaid
 graph TB
-    subgraph "框架层 - 层次状态机"
-        BattleFSM[战斗状态机<br/>BattleFSM<br/>HierarchicalFSM]
-        RoundFSM[回合状态机<br/>RoundFSM<br/>HierarchicalFSM]
-        TeamFSM[阵营状态机<br/>TeamFSM<br/>HierarchicalFSM]
-        UnitFSM[单位状态机<br/>UnitFSM<br/>FSMBase]
+    subgraph BattleDomain["战斗Domain<br/>Battle Domain"]
+        BattleManagement[战斗管理<br/>结算奖励/同步任务]
+        BattleLoop["战斗循环<br/>BattleLoop"]
+        BattleManagement -->|控制| BattleLoop
+        BattleLoop -->|推进| BattleManagement
         
-        BattleFSM -->|包含| RoundFSM
-        RoundFSM -->|包含| TeamFSM
-        TeamFSM -->|包含| UnitFSM
+        subgraph RoundDomain["回合Domain<br/>Round Domain"]
+            RoundManagement[回合管理<br/>行动值排序/单位行动顺序]
+            RoundLoop["回合循环<br/>RoundLoop"]
+            RoundManagement -->|控制| RoundLoop
+            RoundLoop -->|推进| RoundManagement
+            
+            subgraph UnitDomain["单位Domain<br/>Unit Domain"]
+                UnitManagement[单位管理<br/>移动/施法/选择技能对象]
+                UnitLoop["单位循环<br/>UnitLoop"]
+                UnitManagement -->|控制| UnitLoop
+                UnitLoop -->|推进| UnitManagement
+            end
+        end
     end
     
-    subgraph "实体层 - 业务实体"
-        BattleEntity[战斗实体<br/>Battle Entity]
-        RoundEntity[回合实体<br/>Round Entity]
-        TeamEntity[阵营实体<br/>Team Entity]
-        UnitEntity[单位实体<br/>Unit Entity]
-    end
-    
-    BattleFSM -.管理.-> BattleEntity
-    RoundFSM -.管理.-> RoundEntity
-    TeamFSM -.管理.-> TeamEntity
-    UnitFSM -.管理.-> UnitEntity
-    
-    style BattleFSM fill:#e1f5ff
-    style BattleEntity fill:#ffebee
+    style BattleDomain fill:#ffebee
+    style RoundDomain fill:#fff4e1
+    style UnitDomain fill:#e1f5ff
+    style BattleLoop fill:#f3e5f5
+    style RoundLoop fill:#f3e5f5
+    style UnitLoop fill:#f3e5f5
 ```
 
-#### 层次状态机特点
+**备注**：
+- **三层架构**：当前实现为三层架构（战斗→回合→单位），符合DND规则中所有单位按先攻值统一排序的设计
+- **阵营循环**：在标准DND规则中，所有单位按先攻值（Initiative）统一排序行动，不存在阵营循环。此处保留作为扩展设计，便于后续支持阵营差异行为
 
-1. **状态嵌套**：
-   - 父状态机可以包含子状态机
-   - 子状态机在父状态机进入时自动重置
-   - 子状态机在父状态机更新时自动更新
+#### Domain协作关系
 
-2. **状态隔离**：
-   - 每层状态机独立管理自己的状态
-   - 状态转换只在当前状态机内进行
-   - 父状态机状态变化不影响子状态机状态
+**核心观点**：Domain之间通过协作推进业务流程，父Domain调用子Domain，子Domain完成业务后返回父Domain。
 
-3. **自动管理**：
-   - 父状态机进入时，自动重置子状态机
-   - 父状态机更新时，自动更新子状态机
-   - 父状态机退出时，自动清理子状态机
-
-4. **循环驱动**：
-   - 每层状态机的状态转换驱动循环推进
-   - 状态机状态决定循环是否继续
-   - 状态机状态决定循环行为
-
-#### 循环分层状态机流程图
 ```mermaid
-sequenceDiagram
-    participant Main as 主状态机
-    participant Round as 回合状态机
-    participant Team as 阵营状态机
-    participant Unit as 单位状态机
+graph TB
+    BattleDomain[战斗Domain<br/>Battle Domain]
+    RoundDomain[回合Domain<br/>Round Domain]
+    UnitDomain[单位Domain<br/>Unit Domain]
     
-    Note over Main: 战斗开始
-    Main->>Main: PREPARING → IN_PROGRESS
-    Main->>Round: 进入IN_PROGRESS，激活回合状态机
+    BattleDomain -->|1. 调用| RoundDomain
+    RoundDomain -->|2. 返回| BattleDomain
+    RoundDomain -->|3. 调用| UnitDomain
+    UnitDomain -->|4. 返回| RoundDomain
     
-    Note over Round: 第1回合开始
-    Round->>Round: ROUND_START
-    Round->>Round: CheckRoundActionCondition() → ROUND_ACTION
-    Round->>Team: 进入ROUND_ACTION，激活阵营状态机
+    BattleDomain -.->|包含| RoundDomain
+    RoundDomain -.->|包含| UnitDomain
     
-    Note over Team: 玩家阵营开始
-    Team->>Team: TEAM_START
-    Team->>Team: CheckTeamActionCondition() → TEAM_ACTION
-    Team->>Unit: 进入TEAM_ACTION，激活单位状态机
-    
-    Note over Unit: 单位1行动
-    Unit->>Unit: UNIT_START
-    Unit->>Unit: CheckUnitActionCondition() → UNIT_ACTION
-    Unit->>Unit: 执行行动
-    Unit->>Unit: CheckUnitEndCondition() → UNIT_END
-    Unit->>Unit: CheckNextUnitCondition() → UNIT_START (还有单位2)
-    
-    Note over Unit: 单位2行动
-    Unit->>Unit: UNIT_START
-    Unit->>Unit: UNIT_ACTION
-    Unit->>Unit: UNIT_END
-    Unit->>Unit: CheckNextUnitCondition() → false (没有更多单位)
-    
-    Note over Team: 玩家阵营结束
-    Team->>Team: CheckTeamEndCondition() → TEAM_END
-    Team->>Team: CheckNextTeamCondition() → TEAM_START (还有敌人阵营)
-    
-    Note over Team: 敌人阵营开始
-    Team->>Team: TEAM_START
-    Team->>Team: TEAM_ACTION
-    Team->>Unit: 激活单位状态机（敌人单位1）
-    Unit->>Unit: UNIT_START → UNIT_ACTION → UNIT_END
-    Unit->>Unit: CheckNextUnitCondition() → UNIT_START (还有单位2)
-    Unit->>Unit: UNIT_START → UNIT_ACTION → UNIT_END
-    Unit->>Unit: CheckNextUnitCondition() → false
-    Team->>Team: TEAM_END
-    Team->>Team: CheckNextTeamCondition() → false (没有更多阵营)
-    
-    Note over Round: 第1回合结束
-    Round->>Round: CheckRoundEndCondition() → ROUND_END
-    Round->>Round: CheckNextRoundCondition() → ROUND_START (还有第2回合)
-    
-    Note over Round: 第2回合开始
-    Round->>Round: ROUND_START → ROUND_ACTION
-    Round->>Team: 激活阵营状态机
-    Team->>Team: TEAM_START → TEAM_ACTION → TEAM_END
-    Team->>Team: CheckNextTeamCondition() → TEAM_START (循环)
-    Team->>Team: TEAM_START → TEAM_ACTION → TEAM_END
-    Team->>Team: CheckNextTeamCondition() → false
-    Round->>Round: ROUND_END
-    Round->>Round: CheckNextRoundCondition() → false (战斗结束)
-    
-    Note over Main: 战斗结束
-    Main->>Main: CheckBattleEndCondition() → ENDED
-    Main->>Main: 激活结果状态机
+    style BattleDomain fill:#ffebee
+    style RoundDomain fill:#fff4e1
+    style UnitDomain fill:#e1f5ff
 ```
+
+**协作流程说明**：
+1. **战斗Domain** → 调用 **回合Domain**：战斗进行中，需要执行回合
+2. **回合Domain** → 调用 **单位Domain**：回合进行中，需要处理单位行动
+3. **单位Domain** → 返回 **回合Domain**：单位行动完成
+4. **回合Domain** → 返回 **战斗Domain**：回合完成
+
+**协作原则**：
+- 父Domain控制子Domain的调用时机
+- 子Domain完成业务后主动返回父Domain
+- 每个Domain独立管理自己的业务逻辑和循环
+
+### 循环职责说明
+
+#### 1. 战斗循环（BattleLoop）
+- **职责**：管理整个战斗的生命周期
+- **状态**：PREPARING → IN_PROGRESS → ENDED
+- **维护**：BattleLoopManager
+
+#### 2. 回合循环（RoundLoop）
+- **职责**：管理回合的循环和切换
+- **状态**：START → ACTION → END
+- **维护**：RoundLoopManager
+
+#### 3. 单位循环（UnitLoop）
+- **职责**：管理单个单位的行动流程
+- **状态**：START → ACTION → END
+- **维护**：UnitLoopManager
+
 ---
 
+## 战斗领域
 
+### 核心职责
+
+战斗领域负责管理整个战斗的生命周期，包括战斗初始化、战斗流程控制、战斗结束判断、奖励结算、任务同步等。
+
+### 架构结构
+
+```mermaid
+graph TB
+    subgraph BattleDomain["战斗Domain<br/>Battle Domain"]
+        BattleManagement[战斗管理<br/>BattleManagement]
+        BattleLoop[战斗循环<br/>BattleLoop<br/>PREPARING → IN_PROGRESS → ENDED]
+        RoundCoordinator[回合协调器<br/>RoundCoordinator<br/>微核心：只负责协调调用]
+        
+        subgraph BattleManagement["战斗管理<br/>BattleManagement"]
+            BattleData[战斗数据<br/>BattleData]
+            DataMgr[战斗数据管理<br/>战斗状态/回合历史/活跃阵营]
+            RuleMgr[战斗规则管理<br/>战斗开始/结束条件/胜利条件/失败条件]
+            RewardMgr[奖励管理<br/>奖励结算/任务同步]
+        end
+    end
+    
+    subgraph ExternalSystems["外部系统"]
+        RoundDomain[回合领域<br/>Round Domain]
+        RewardSystem[奖励系统<br/>Reward System]
+        TaskSystem[任务系统<br/>Task System]
+    end
+    
+    BattleManagement -->|控制| BattleLoop
+    BattleManagement --> RoundCoordinator
+    RoundCoordinator -->|反向推动| BattleLoop
+    BattleLoop -->|推进| BattleManagement
+    
+    RoundCoordinator -->|调用| RoundDomain
+    RoundDomain -->|返回| RoundCoordinator
+    
+    BattleManagement -->|结算奖励| RewardSystem
+    BattleManagement -->|同步任务| TaskSystem
+    
+    style BattleDomain fill:#ffebee
+    style BattleManagement fill:#ffebee
+    style BattleLoop fill:#f3e5f5
+    style RoundCoordinator fill:#c8e6c9
+```
+
+### 战斗管理（BattleManagement）
+
+#### 1. 战斗数据管理
+- **战斗状态**：当前战斗状态（PREPARING/IN_PROGRESS/ENDED）
+- **回合历史**：记录已完成的回合历史（`roundHistoryQueue`）
+- **活跃阵营列表**：当前战斗中活跃的阵营ID列表（`activeFactionIDs`）
+- **突袭回合阵营列表**：被突袭的阵营ID列表（`surpriseRoundFactionIDs`）
+
+#### 2. 战斗规则管理
+- **战斗开始条件**：检查是否可以开始战斗
+- **战斗结束条件**：检查是否应该结束战斗
+- **胜利条件**：检查是否满足胜利条件（`CheckVictoryCondition`）
+- **失败条件**：检查是否满足失败条件（`CheckDefeatCondition`）
+
+#### 3. 奖励管理
+- **奖励结算**：战斗结束后结算奖励
+- **任务同步**：同步战斗相关的任务进度
+
+### 战斗循环（BattleLoop）
+
+**循环状态**：PREPARING → IN_PROGRESS → ENDED
+
+- **PREPARING**：战斗准备中，初始化战斗数据
+- **IN_PROGRESS**：战斗进行中，执行回合（调用回合领域）
+- **ENDED**：战斗已结束，结算奖励、同步任务
+
+### 回合协调器（RoundCoordinator）
+
+**核心原则**：只负责协调调用，不包含业务规则
+
+**核心职责**：
+- ✅ **协调调用**：调用回合领域执行回合
+- ✅ **反向推动循环**：回合完成后，主动推动战斗循环进入下一个状态（Domain controls Loop）
+
+### 战斗完整流程
+
+```mermaid
+flowchart TD
+    LoopPreparing[LoopPreparing<br/>战斗准备] --> InitBattle[初始化战斗数据<br/>战斗管理初始化]
+    
+    InitBattle --> LoopProgress[LoopProgress<br/>战斗进行中]
+    
+    LoopProgress --> CallRound[调用回合领域<br/>回合协调器调用回合领域]
+    
+    CallRound --> RoundAction[回合领域执行回合<br/>回合领域完成回合]
+    
+    RoundAction --> PushProgress[回合协调器推动循环<br/>推动到IN_PROGRESS状态继续]
+    
+    PushProgress --> CheckEnd{检查战斗结束条件<br/>战斗管理检查}
+    
+    CheckEnd -->|未结束| CallRound
+    CheckEnd -->|已结束| PushEnd[回合协调器推动循环<br/>推动到ENDED状态]
+    
+    PushEnd --> LoopEnd[LoopEnd<br/>战斗结束]
+    
+    LoopEnd --> Reward[结算奖励<br/>奖励管理结算奖励]
+    Reward --> Task[同步任务<br/>任务管理同步任务]
+    Task --> Complete[战斗完成]
+    
+    style LoopPreparing fill:#ffebee
+    style LoopProgress fill:#ffebee
+    style CallRound fill:#c8e6c9
+    style RoundAction fill:#c8e6c9
+    style PushProgress fill:#f3e5f5
+    style PushEnd fill:#f3e5f5
+    style LoopEnd fill:#ffebee
+    style CheckEnd fill:#ffe0b2
+```
+
+---
+
+## 回合领域
+
+### 核心职责
+
+回合领域负责管理回合的循环和切换，包括回合数管理、行动顺序管理（基于先攻值）、回合开始/结束控制等。
+
+### 架构结构
+
+```mermaid
+graph TB
+    subgraph RoundDomain["回合Domain<br/>Round Domain"]
+        RoundManagement[回合管理<br/>RoundManagement]
+        RoundLoop[回合循环<br/>RoundLoop<br/>START → ACTION → END]
+        UnitCoordinator[单位协调器<br/>UnitCoordinator<br/>微核心：只负责协调调用]
+        
+        subgraph RoundManagement["回合管理<br/>RoundManagement"]
+            RoundData[回合数据<br/>RoundData]
+            DataMgr[回合数据管理<br/>回合数/行动顺序队列]
+            RuleMgr[回合规则管理<br/>回合开始/结束条件]
+            OrderMgr[行动顺序管理<br/>队列初始化/管理/获取下一个单位]
+        end
+        
+        subgraph UnitCoordinator["单位协调器<br/>UnitCoordinator<br/>微核心：只负责协调调用"]
+            UnitCall[单位调用<br/>从回合管理获取单位<br/>调用单位领域]
+        end
+    end
+    
+    subgraph ExternalSystems["外部系统"]
+        BattleDomain[战斗领域<br/>Battle Domain]
+        UnitDomain[单位领域<br/>Unit Domain]
+    end
+    
+    BattleDomain -->|控制| RoundDomain
+    RoundManagement -->|控制| RoundLoop
+    RoundManagement --> UnitCoordinator
+    UnitCoordinator -->|反向推动| RoundLoop
+    RoundLoop -->|推进| RoundManagement
+    
+    UnitCoordinator -->|调用| UnitDomain
+    UnitDomain -->|返回| UnitCoordinator
+    
+    style RoundDomain fill:#fff4e1
+    style RoundManagement fill:#fff4e1
+    style RoundLoop fill:#f3e5f5
+    style UnitCoordinator fill:#c8e6c9
+    style RoundData fill:#e1f5ff
+```
+
+### 回合管理（RoundManagement）
+
+#### 1. 回合数据管理
+- **回合数**：当前回合数、总回合数
+- **行动顺序队列**：基于先攻值的优先级队列（TurnQueue）
+- **当前行动单位**：当前正在行动的单位
+- **活跃阵营列表**：当前回合中活跃的阵营ID列表
+
+#### 2. 回合规则管理
+- **回合开始条件**：检查是否可以开始新回合
+- **回合结束条件**：检查是否应该结束当前回合（所有单位行动完成）
+- **回合切换规则**：判断是否还有下一个回合
+- **突袭回合规则**：战斗开始时，只有被突袭的阵营才能行动（Surprise Round）
+- **单位存活检查**：只有存活的单位才能参与回合（`unit:IsAlive()`）
+- **活跃阵营过滤**：只有活跃的阵营才能参与回合（`activeFactionIDs`）
+
+#### 3. 行动顺序管理
+- **初始化队列**：回合开始时，根据先攻值初始化行动顺序队列
+  - **突袭回合处理**：战斗开始时，只有被突袭的阵营单位加入队列
+  - **正常回合处理**：正常回合中，所有活跃阵营的存活单位加入队列
+- **队列管理**：管理行动顺序队列的添加、移除、清空
+- **获取下一个单位**：从行动顺序队列中获取下一个行动单位（自动过滤死亡单位）
+- **下一个单位检查**：检查是否还有下一个行动单位
+- **延迟行动管理**：管理延迟行动的单位列表，在适当时候插入到行动顺序中
+
+### 回合循环（RoundLoop）
+
+**循环状态**：START → ACTION → END
+
+- **START**：回合开始，初始化行动顺序队列
+  - **突袭回合**：只有被突袭的阵营单位加入队列
+  - **正常回合**：所有活跃阵营的存活单位加入队列
+- **ACTION**：执行回合行动（调用单位领域）
+- **END**：回合结束，清理回合数据，处理延迟行动
+
+### 单位协调器（UnitCoordinator）
+
+**核心原则**：只负责协调调用，不包含业务规则
+
+**核心职责**：
+- ✅ **协调调用**：从回合管理获取下一个单位，调用单位领域执行单位行动
+- ✅ **反向推动循环**：单位行动完成后，主动推动回合循环进入下一个状态（Domain controls Loop）
+
+#### 循环推动机制
+- **推动到END**：所有单位行动完成后，推动循环从ACTION状态进入END状态
+- **推动到START**：回合结束时，推动循环从END状态进入START状态（下一个回合）
+- **推动到ACTION**：回合开始时，推动循环从START状态进入ACTION状态
+
+### 回合完整流程
+
+```mermaid
+flowchart TD
+    LoopStart[LoopStart<br/>战斗领域推动循环] --> InitQueue[初始化行动顺序队列<br/>回合管理根据先攻值排序]
+    
+    InitQueue --> LoopAction[LoopAction<br/>执行回合行动]
+    
+    LoopAction --> GetNextUnit{获取下一个单位<br/>回合管理从队列获取}
+    
+    GetNextUnit -->|有单位| CallUnit[调用单位领域<br/>单位协调器调用单位领域]
+    GetNextUnit -->|无单位| PushEnd
+    
+    CallUnit --> UnitAction[单位领域执行行动<br/>单位领域完成行动]
+    
+    UnitAction --> PushAction[单位协调器推动循环<br/>推动到ACTION状态继续]
+    
+    PushAction --> GetNextUnit
+    
+    PushEnd[单位协调器推动循环<br/>推动到END状态]
+    
+    PushEnd --> RoundEnd[LoopEnd<br/>回合结束]
+    
+    RoundEnd --> CheckNextRound{检查下一个回合<br/>回合管理检查是否还有下一个回合}
+    
+    CheckNextRound -->|有下一个回合| PushStart[单位协调器推动循环<br/>推动到START状态]
+    CheckNextRound -->|无下一个回合| EndRound[结束回合循环<br/>返回战斗领域]
+    
+    PushStart --> LoopStart
+    
+    style LoopStart fill:#fff4e1
+    style LoopAction fill:#fff4e1
+    style CallUnit fill:#c8e6c9
+    style UnitAction fill:#c8e6c9
+    style PushAction fill:#f3e5f5
+    style PushEnd fill:#f3e5f5
+    style PushStart fill:#f3e5f5
+    style LoopEnd fill:#fff4e1
+    style GetNextUnit fill:#ffe0b2
+    style CheckNextRound fill:#ffe0b2
+```
+
+**关键点**：
+- ✅ **Domain controls Loop**：回合管理通过单位协调器控制循环状态转换
+- ✅ **反向推动机制**：单位协调器执行完单位行动后，主动推动循环进入下一个状态
+- ✅ **单位协调器不处理业务规则**：只负责协调调用单位领域，不处理回合业务逻辑
+- ✅ **行动顺序管理**：回合管理负责基于先攻值的优先级队列，确保单位按正确顺序行动
+- ✅ **队列驱动**：通过行动顺序队列驱动单位行动，队列为空时回合结束
+
+### 职责划分
+
+| 组件 | 职责 | 说明 |
+|------|------|------|
+| **回合管理** | 回合数据与规则 | 管理回合数、行动顺序队列、回合开始/结束规则、队列管理 |
+| **单位协调器** | 协调调用 | 从回合管理获取单位，调用单位领域，不处理回合业务规则 |
+| **回合循环** | 流程控制 | START/ACTION/END状态转换，由回合管理控制 |
+
+---
+
+## 单位领域
+
+### 核心职责
+
+单位领域是战斗系统的核心，负责管理单个单位的行动流程，包括移动、技能释放、数值控制等。
+
+
+### 数值查询及推送 (CommunicationBus)
+
+**核心机制**：节点、领域、数据模块、外部系统通过CommunicationBus的**PushChannel**和**QueryChannel**进行通讯，实现数据推送和查询的双向数据流。
+
+**关键组件**：
+- **EffectHandler**：数据类型处理器，负责处理整合数据，并通过PushChannel推送数据到生效的数据模块
+- **PushChannel**：推送处理后的数据到数据模块（推送流程）
+- **QueryChannel**：从数据模块查询数据并返回给起点（查询流程）
+
+
+**工作流程**：
+1. **推送流程**：起点（节点/领域/外部系统）→ EffectHandler处理数据 → PushChannel推送 → 数据模块处理数据
+2. **查询流程**：起点发起查询 → QueryChannel查询 → 数据模块返回数据 → QueryChannel返回结果 → 起点接收
+```mermaid
+graph LR
+    subgraph 起点["起点"]
+        节点
+        领域
+        外部系统
+    end
+
+    QueryChannel[**QueryChannel**<br>查询数据]
+
+    起点 --> EffectHandler[**EffectHandler**<br>数据处理器] -.-> PushChannel[**PushChannel**<br>推送处理数据] -.-> 数据模块
+    
+    数据模块 -.-> QueryChannel
+    起点 <-.-> QueryChannel
+    style PushChannel fill:#c8e6c9
+    style QueryChannel fill:#c8e6c9
+    style 起点 fill:#e1f5ff
+```
+
+### 架构结构
+
+```mermaid
+graph TB
+    subgraph UnitDomain["单位Domain<br/>Unit Domain"]
+        UnitManagement[单位管理<br/>UnitManagement]
+        UnitLoop[单位循环<br/>UnitLoop<br/>START → ACTION → END]
+        ActionCoordinator[行动协调器<br/>ActionCoordinator<br/>微核心：只负责协调调用]
+        
+        subgraph UnitManagement["单位管理<br/>UnitManagement"]
+            UnitData[单位数据<br/>UnitData]
+            DataMgr[单位数据管理<br/>属性/状态/位置/回合数据<br/>AP/MP/先攻值]
+            RuleMgr[单位规则管理<br/>行动点数规则/移动点数规则<br/>先攻值规则/回合初始化规则]
+        end
+        
+        subgraph DataHandleQueue["DataHandleQueue<br/>数据队列<br/>1:1关系"]
+        end
+        
+        subgraph ActionCoordinator["行动协调器<br/>ActionCoordinator<br/>微核心：只负责协调调用"]
+            MoveCoord[移动协调<br/>调用网格系统]
+            SkillCoord[技能协调<br/>调用技能领域]
+            TerrainCoord[地形交互协调<br/>调用地形领域<br/>可选]
+            VisualCoord[表现协调<br/>通知表现层]
+        end
+    end
+    
+    subgraph ExternalSystems["外部系统"]
+        GridSystem[网格系统<br/>GridSystem]
+        SkillDomain[技能领域<br/>Skill Domain]
+        VisualSystem[表现系统<br/>Visual System]
+        TerrainDomain[地形领域<br/>Terrain Domain]
+    end
+    
+    UnitManagement -->|控制| UnitLoop
+    UnitManagement --> ActionCoordinator
+    UnitManagement --> UnitData
+    ActionCoordinator -->|反向推动| UnitLoop
+    UnitLoop -->|推进| UnitManagement
+    
+    ActionCoordinator -->|调用| GridSystem
+    ActionCoordinator -->|调用| SkillDomain
+    ActionCoordinator -->|调用| TerrainDomain
+    ActionCoordinator -->|通知| VisualSystem
+    
+    SkillDomain -->|EffectHandler推送| DataHandleQueue
+    TerrainDomain -->|EffectHandler推送| DataHandleQueue
+
+    DataHandleQueue -->|推送数据| UnitData
+    
+    style UnitDomain fill:#e1f5ff
+    style UnitManagement fill:#fff4e1
+    style UnitLoop fill:#f3e5f5
+    style ActionCoordinator fill:#c8e6c9
+    style DataHandleQueue fill:#f3e5f5
+    style UnitData fill:#e1f5ff
+```
+
+### 单位管理（UnitManagement）
+
+#### 1. 单位数据管理
+- **单位属性**：生命值、行动点数（AP）、移动点数（MP）、先攻值等
+- **单位状态**：是否可行动、是否已移动、是否已攻击、是否存活等
+- **单位位置**：当前网格位置
+- **回合数据**：UnitTurnData管理行动点数、移动点数、先攻值等回合相关数据
+
+#### 2. 单位规则管理
+- **移动点数规则**：移动前检查能否移动
+- **行动点数规则**：检查行动是否可执行（`CheckAction`），消耗行动点数和移动点数（`ConsumeAction`）
+- **行动规则**：是否可执行行动（移动、攻击、技能等）
+- **状态规则**：状态转换规则（是否存活、是否可行动等）
+- **先攻值规则**：管理单位的先攻值，用于回合顺序排序
+- **回合初始化规则**：回合开始时初始化行动点数和移动点数（`StartUnitTurn`）
+
+#### 3. UnitData与DataHandleQueue关系
+- **1:1关系**：DataHandleQueue 与 UnitData 是 1:1 关系，数据直接修改 UnitData
+- **直接修改**：技能领域的EffectHandler推送数据到DataHandleQueue后，直接修改UnitData
+- **无需中间层**：不需要"数值控制管理"中间层，DataHandleQueue直接修改UnitData
+
+### 单位循环（UnitLoop）
+
+**循环状态**：START → ACTION → END
+
+- **START**：单位开始行动
+- **ACTION**：执行行动（移动、技能等）
+- **END**：单位结束行动
+
+### 行动协调器（ActionCoordinator）
+
+**核心原则**：只负责协调调用，不包含业务规则
+
+**核心职责**：
+- ✅ **协调调用**：调用网格系统、技能领域、表现系统
+- ✅ **反向推动循环**：执行完行动后，主动推动单位循环进入下一个状态（Domain controls Loop）
+
+#### 1. 移动协调
+- **移动前检查**：调用单位管理检查移动点数和行动点数
+- **调用网格系统**：进行移动计算（路径查找、移动范围等）
+- **移动后更新**：通过 DataHandleQueue 更新单位位置和移动点数
+- **推动循环**：移动完成后，推动循环进入下一个状态
+
+#### 2. 技能协调
+- **行动点数检查**：调用单位管理检查行动点数是否足够
+- **调用技能领域**：执行技能
+- **不处理数值控制**：数值控制由技能领域的EffectHandler通过DataHandleQueue处理
+- **接收技能结果**：获取技能执行结果（成功/失败），用于流程控制
+- **推动循环**：技能执行完成后，推动循环进入下一个状态
+
+#### 3. 地形交互协调（可选）
+- **地形交互检查**：检查单位是否触发地形要素（陷阱、门等）
+- **调用地形领域**：如果触发地形要素，调用地形领域处理
+- **推动循环**：地形交互完成后，推动循环进入下一个状态
+
+#### 4. 表现协调
+- **通知表现层**：移动表现、技能表现、受攻击表现
+- **推动循环**：表现播放完成后（可选），推动循环进入下一个状态
+
+### 单位行动完整流程
+
+```mermaid
+flowchart TD
+    LoopStart[LoopStart<br/>单位管理推动循环] --> LoopAction[LoopAction<br/>执行行动]
+    
+    LoopAction --> CheckAction{行动前检查<br/>单位管理检查行动点数/移动点数}
+    
+    CheckAction -->|可以移动| Move[单位移动<br/>行动协调器调用网格系统]
+    CheckAction -->|不能移动| Skill
+    
+    Move --> UpdateMove[更新移动点数<br/>DataHandleQueue推送]
+    UpdateMove --> Skill[攻击/治疗<br/>行动协调器调用技能领域]
+    
+    Skill --> EffectPush[EffectHandler推送效果<br/>通过DataHandleQueue到目标单位]
+    EffectPush --> Visual[可视化<br/>行动协调器通知表现层]
+    
+    Visual --> PushEnd[行动协调器推动循环<br/>推动到END状态]
+    
+    PushEnd --> CheckActionPoint{行动点数检查<br/>单位管理检查是否还有行动点数/移动点数}
+    
+    CheckActionPoint -->|还有行动点数/移动点数| PushAction[行动协调器推动循环<br/>推动回ACTION状态]
+    CheckActionPoint -->|无行动点数/移动点数| LoopEnd[LoopEnd<br/>单位结束行动]
+    
+    PushAction --> LoopAction
+    
+    style LoopStart fill:#e1f5ff
+    style LoopAction fill:#e1f5ff
+    style Move fill:#fff4e1
+    style Skill fill:#c8e6c9
+    style EffectPush fill:#fff4e1
+    style Visual fill:#c8e6c9
+    style PushEnd fill:#f3e5f5
+    style PushAction fill:#f3e5f5
+    style LoopEnd fill:#e1f5ff
+    style CheckAction fill:#ffe0b2
+    style CheckActionPoint fill:#ffe0b2
+```
+
+
+
+---
+
+## 单位领域：节点编排架构
+
+### 核心设计理念
+
+#### 1. 节点编排器为核心
+
+**本质**：单位行动流程的核心是节点编排器的动态组织和管理
+
+- 单位行动流程 = 节点编排器根据配置动态组织节点执行
+- 节点编排 = 条件节点 → 执行节点 → 可视化节点的组合
+- 流程控制 = 节点编排器根据节点执行结果决定下一个节点
+- 灵活扩展 = 新增节点类型只需注册到编排器
+
+#### 2. 节点分类设计
+
+**本质**：节点按功能职责分为四类，每类节点职责单一、可复用
+
+- **输入节点（Input Node）**：负责接收玩家输入（如：接收移动点击、接收技能选择、接收目标选择等）
+- **条件节点（Condition Node）**：负责验证、检查、判断，返回判断结果和流程控制建议（如：检查移动点数、验证技能可释放、检查资源决定是否继续等）
+- **执行节点（Execution Node）**：负责实际执行操作，修改数据（如：执行移动、执行技能、消耗资源、更新状态等）
+- **可视化节点（Visual Node）**：负责表现播放（如：播放移动表现、播放技能表现等）
+
+
+
+### 节点编排器架构
+
+```mermaid
+graph TB
+    subgraph UnitDomain["单位Domain"]
+        NodeOrchestrator[节点编排器<br/>NodeOrchestrator]
+        
+        subgraph NodeRegistry["节点注册表<br/>NodeRegistry"]
+            subgraph InputNodes["输入节点组<br/>Input Nodes"]
+                ReceiveMoveInputNode[接收移动输入节点]
+                ReceiveSkillSelectNode[接收技能选择节点]
+                ReceiveTargetSelectNode[接收目标选择节点]
+            end
+            
+            subgraph ConditionNodes["条件节点组<br/>Condition Nodes"]
+                CheckMovePointNode[检查移动点数节点]
+                CheckActionPointNode[检查行动点数节点]
+                ValidateSkillNode[验证技能节点]
+                ValidateTargetNode[验证目标节点]
+                ValidateMoveNode[验证移动节点]
+                CheckResourceNode[检查资源节点]
+            end
+            
+            subgraph ExecutionNodes["执行节点组<br/>Execution Nodes"]
+                InitUnitNode[初始化单位节点]
+                MoveNode[移动节点]
+                SelectSkillNode[选择技能节点]
+                SelectTargetNode[选择目标节点]
+                ExecuteSkillNode[执行技能节点]
+                ConsumeResourceNode[消耗资源节点]
+                UpdateStateNode[更新状态节点]
+            end
+            
+            subgraph VisualNodes["可视化节点组<br/>Visual Nodes"]
+                PlayMoveVisualNode[播放移动表现节点]
+                PlaySkillVisualNode[播放技能表现节点]
+                PlayTargetVisualNode[播放目标表现节点]
+            end
+        end
+        
+        FlowConfig[流程配置<br/>NodeFlowConfig]
+        ContextManager[上下文管理器<br/>ContextManager]
+        
+        subgraph CommunicationBus["通讯总线"]
+            EventChannel[事件通道<br/>EventChannel]
+            MessageChannel[消息通道<br/>MessageChannel]
+            PushChannel[推送通道<br/>PushChannel]
+            QueryChannel[查询通道<br/>QueryChannel]
+        end
+        
+        subgraph DataModules["数据模块"]
+            UnitDataModule[单位数据模块<br/>UnitData]
+            SkillDomainModule[技能领域模块<br/>SkillDomain]
+            TerrainDomainModule[地形领域模块<br/>TerrainDomain]
+            GridSystemModule[网格系统模块<br/>GridSystem]
+        end
+    end
+    
+    NodeOrchestrator -->|管理节点| NodeRegistry
+    NodeOrchestrator -->|读取配置| FlowConfig
+    NodeOrchestrator -->|执行节点| InputNodes
+    NodeOrchestrator -->|执行节点| ConditionNodes
+    NodeOrchestrator -->|执行节点| ExecutionNodes
+    NodeOrchestrator -->|执行节点| VisualNodes
+    NodeOrchestrator -->|管理Context| ContextManager
+    
+    InputNodes -->|发布事件| EventChannel
+    ConditionNodes -->|发布事件| EventChannel
+    ConditionNodes -->|查询数据| QueryChannel
+    ExecutionNodes -->|订阅事件| EventChannel
+    ExecutionNodes -->|1对1通讯| MessageChannel
+    ExecutionNodes -->|查询数据| QueryChannel
+    ExecutionNodes -->|接收数据| PushChannel
+    VisualNodes -->|订阅事件| EventChannel
+    VisualNodes -->|接收数据| PushChannel
+    
+    QueryChannel -->|查询| UnitDataModule
+    QueryChannel -->|查询| SkillDomainModule
+    QueryChannel -->|查询| TerrainDomainModule
+    QueryChannel -->|查询| GridSystemModule
+    
+    PushChannel -->|推送数据| UnitDataModule
+    SkillDomainModule -->|推送数据| PushChannel
+    TerrainDomainModule -->|推送数据| PushChannel
+    
+    style NodeOrchestrator fill:#c8e6c9
+    style NodeRegistry fill:#e1f5ff
+    style InputNodes fill:#ffebee
+    style ConditionNodes fill:#fff4e1
+    style ExecutionNodes fill:#c8e6c9
+    style VisualNodes fill:#f3e5f5
+    style CommunicationBus fill:#fff4e1
+```
+
+### 节点编排器职责
+
+1. **节点注册管理**
+   - 管理节点注册表（NodeRegistry）
+   - 支持动态注册/注销节点
+   - 提供节点查找接口（按ID、按类型）
+
+2. **流程编排**
+   - 根据FlowConfig动态组织节点执行顺序
+   - 处理节点间的跳转、条件分支、循环
+   - 管理节点执行状态和生命周期
+
+3. **Context管理**
+   - 在节点间传递UnitContext
+   - 管理Context的生命周期
+   - 处理Context状态恢复
+
+4. **错误处理**
+   - 处理节点执行失败
+   - 资源回滚和状态恢复
+   - 错误通知和日志记录
+
+### 节点分类详细设计
+
+#### 输入节点（Input Node）
+
+**职责**：接收玩家输入，不修改数据，只负责输入数据的收集和传递
+
+**节点列表**：
+1. **ReceiveMoveInputNode**：接收玩家点击的网格坐标
+2. **ReceiveSkillSelectNode**：接收玩家选择的技能ID
+3. **ReceiveTargetSelectNode**：接收玩家选择的目标（单位、位置等）
+
+**节点接口**：
+- `Execute(context) -> result`：接收输入，返回输入数据和有效性
+- `WaitForInput(context) -> input`：等待玩家输入（异步）
+- `ValidateInput(input) -> bool`：验证输入有效性
+
+#### 条件节点（Condition Node）
+
+**职责**：验证、检查、判断，不修改数据，返回判断结果和流程控制建议
+
+**节点列表**：
+1. **CheckMovePointNode**：检查单位是否有足够的移动点数
+2. **CheckActionPointNode**：检查单位是否有足够的行动点数
+3. **ValidateMoveNode**：验证移动输入是否合法（位置、路径、范围等）
+4. **ValidateSkillNode**：验证技能是否可释放
+5. **ValidateTargetNode**：验证目标是否合法（距离、状态、条件等）
+6. **CheckResourceNode**：检查单位是否还有资源继续行动
+
+**返回结果结构**：
+```lua
+{
+    success: true/false,           -- 判断结果
+    data: {...},                   -- 判断数据（可选）
+    nextAction: "continue"/"end"/"skip", -- 流程控制建议（可选）
+    loopState: "ACTION"/"END"      -- 循环状态建议（可选）
+}
+```
+
+#### 执行节点（Execution Node）
+
+**职责**：实际执行操作，修改数据，返回执行结果
+
+**节点列表**：
+1. **InitUnitNode**：初始化单位行动状态，重置行动点数和移动点数
+2. **MoveNode**：执行移动并更新单位位置，消耗移动点数
+3. **SelectSkillNode**：显示可用的技能列表，准备技能释放上下文
+4. **SelectTargetNode**：根据技能类型显示可选目标，更新技能上下文中的目标信息
+5. **ExecuteSkillNode**：调用技能领域执行技能，处理技能执行结果
+6. **ConsumeResourceNode**：消耗行动点数和资源，记录资源消耗信息
+7. **UpdateStateNode**：批量处理所有状态变更数据，更新单位状态
+
+**节点接口**：
+- `Execute(context) -> result`：执行操作
+- `CanExecute(context) -> bool`：检查是否可以执行
+- `Rollback(context)`：回滚操作（失败时）
+
+#### 可视化节点（Visual Node）
+
+**职责**：播放表现，不修改数据，只负责视觉反馈
+
+**节点列表**：
+1. **PlayMoveVisualNode**：通知VisualSystem播放移动表现
+2. **PlaySkillVisualNode**：通知VisualSystem播放技能释放表现
+3. **PlayTargetVisualNode**：通知VisualSystem播放受攻击单位表现
+
+**节点接口**：
+- `Execute(context) -> result`：播放表现
+- `WaitForComplete(context) -> bool`：等待表现完成（可选）
+
+### 节点编排流程示例
+
+```mermaid
+flowchart TD
+    Start[开始] --> Init[InitUnitNode<br/>初始化单位]
+    
+    Init --> CheckMove{CheckMovePointNode<br/>检查移动点数}
+    CheckMove -->|有移动点数| ReceiveMove[ReceiveMoveInputNode<br/>接收移动输入]
+    CheckMove -->|无移动点数| SelectSkill
+    
+    ReceiveMove --> ValidateMove{ValidateMoveNode<br/>验证移动}
+    ValidateMove -->|验证通过| Move[MoveNode<br/>执行移动]
+    ValidateMove -->|验证失败| ReceiveMove
+    
+    Move --> PlayMove[PlayMoveVisualNode<br/>播放移动表现]
+    PlayMove --> SelectSkill[SelectSkillNode<br/>选择技能]
+    
+    SelectSkill --> ReceiveSkill[ReceiveSkillSelectNode<br/>接收技能选择]
+    ReceiveSkill --> ValidateSkill{ValidateSkillNode<br/>验证技能}
+    ValidateSkill -->|验证通过| SelectTarget[SelectTargetNode<br/>选择目标]
+    ValidateSkill -->|验证失败| SelectSkill
+    
+    SelectTarget --> ReceiveTarget[ReceiveTargetSelectNode<br/>接收目标选择]
+    ReceiveTarget --> ValidateTarget{ValidateTargetNode<br/>验证目标}
+    ValidateTarget -->|验证通过| Consume[ConsumeResourceNode<br/>消耗资源]
+    ValidateTarget -->|验证失败| SelectTarget
+    
+    Consume --> Execute[ExecuteSkillNode<br/>执行技能]
+    Execute --> Update[UpdateStateNode<br/>更新状态]
+    Update --> PlaySkill[PlaySkillVisualNode<br/>播放技能表现]
+    PlaySkill --> PlayTarget[PlayTargetVisualNode<br/>播放目标表现]
+    
+    PlayTarget --> CheckResource{CheckResourceNode<br/>检查资源}
+    CheckResource -->|还有资源| CheckMove
+    CheckResource -->|无资源| End[结束]
+    
+    style Init fill:#c8e6c9
+    style CheckMove fill:#fff4e1
+    style ReceiveMove fill:#ffebee
+    style ValidateMove fill:#fff4e1
+    style Move fill:#c8e6c9
+    style PlayMove fill:#f3e5f5
+    style SelectSkill fill:#c8e6c9
+    style ReceiveSkill fill:#ffebee
+    style ValidateSkill fill:#fff4e1
+    style SelectTarget fill:#c8e6c9
+    style ReceiveTarget fill:#ffebee
+    style ValidateTarget fill:#fff4e1
+    style Consume fill:#c8e6c9
+    style Execute fill:#c8e6c9
+    style Update fill:#c8e6c9
+    style PlaySkill fill:#f3e5f5
+    style PlayTarget fill:#f3e5f5
+    style CheckResource fill:#fff4e1
+    style End fill:#ffebee
+```
+### 节点实现细节
+
+#### UnitContext逐步增强过程
+
+单位行动流程的核心是UnitContext的维护和管理，Context在节点间流转并逐步增强：
+
+```
+UnitContext（节点1：单位循环开始）
+  + unitData（单位数据）
+  + roundContext（回合上下文）
+  ↓
+  + currentUnit（当前行动单位）
+  + unitValidation（单位验证结果）
+  ↓
+  + moveInput（移动输入：点击坐标）
+  + moveValidation（移动验证结果）
+  + movePath（移动路径）
+  + moveResult（移动结果）
+  ↓
+  + selectedSkill（选中的技能）
+  + skillValidation（技能验证结果）
+  + skillContext（技能上下文）
+  ↓
+  + selectedTargets（选中的目标）
+  + targetValidation（目标验证结果）
+  ↓
+  + skillExecutionResult（技能执行结果）
+  + resourceConsumption（资源消耗信息）
+  ↓
+  + visualResult（表现播放结果）
+  + effectResults（效果处理结果）
+  + resourceCheck（资源检查结果）
+  + loopState（循环状态）
+  ↓
+UnitContext（节点7：执行施法后处理）
+```
+
+#### 节点内部架构设计原则
+
+**管道过滤器模式**：
+- 单Context设计：所有节点使用统一的`UnitContext`
+- 逐步增强：每个节点在Context中添加自己的数据
+- 数据流循环：节点1 → 节点2 → ... → 节点7 → 节点3（循环）
+
+**节点内部组件设计**：
+- **输入接收器**：接收外部输入，验证输入有效性
+- **验证器组**：负责各种验证（范围、路径、资源等）
+- **执行器**：负责实际执行操作
+- **数据更新器**：负责更新数据
+- **表现通知器**：负责通知表现层
+- **上下文增强器**：负责增强Context并传递给下一个节点
+- **循环推动器**：负责推动循环状态转换
+
+#### 错误处理和恢复机制
+
+**错误类型**：
+1. **资源错误**：资源不足、资源被消耗等
+2. **验证错误**：验证失败、状态不合法等
+3. **执行错误**：执行失败、异常等
+4. **系统错误**：系统异常、外部系统错误等
+
+**错误处理流程**：
+1. **资源回滚**：执行失败时，回滚已消耗的资源
+2. **状态恢复**：从Context恢复节点执行前的状态
+3. **错误通知**：通知用户错误信息，提供重试或取消选项
+4. **日志记录**：记录错误信息到Context，便于调试和问题追踪
+
+**节点状态机**：
+- **IDLE**：节点未开始执行
+- **EXECUTING**：节点正在执行
+- **COMPLETED**：节点执行完成
+- **FAILED**：节点执行失败
+
+---
+
+## 外部系统集成
+
+### SkillDomain（技能领域）集成
+
+**集成方式**：
+- **调用方式**：ActionCoordinator调用SkillDomain执行技能
+- **数据推送**：SkillDomain的EffectHandler通过DataHandleQueue推送效果数据
+- **数据查询**：节点通过QueryChannel查询技能状态
+
+### TerrainDomain（地形领域）集成
+
+**集成方式**：
+- **调用方式**：ActionCoordinator调用TerrainDomain处理地形要素
+- **数据推送**：TerrainDomain的EffectHandler通过DataHandleQueue推送效果数据
+- **共享Handler机制**：与SkillDomain共享Handler接口，但保持独立系统
+
+### GridSystem（网格系统）集成
+
+**集成方式**：
+- **调用方式**：ActionCoordinator调用GridSystem进行移动计算
+- **数据查询**：节点通过QueryChannel查询移动范围、路径信息
+
+### VisualSystem（表现系统）集成
+
+**集成方式**：
+- **通知方式**：ActionCoordinator通知VisualSystem播放表现
+- **事件订阅**：可视化节点订阅EventChannel接收表现事件
+
+
+### 设计原则总结
+
+- ✅ **Domain controls Loop**：Domain控制循环，循环是Domain的工具
+- ✅ **数据驱动架构**：战斗特性通过配置数据实现，无需额外机制
+- ✅ **节点编排模式**：单位行动流程通过节点编排器动态组织
+- ✅ **解耦设计**：节点间通过CommunicationBus和Context通信，不直接依赖
+- ✅ **多层循环架构**：战斗→回合→单位三层循环架构
+- ✅ **微核心设计**：协调器只负责协调调用，不包含业务规则
+- ✅ **统一数据访问**：节点通过CommunicationBus统一获取数据
+
+---
+
+## 总结
+
+### 架构设计价值
+
+该架构设计文档的价值在于：
+- ✅ **思路解构**：完整解构回合制战斗系统的搭建思路
+- ✅ **流程验证**：从架构层面验证流程合理性
+- ✅ **问题识别**：提前识别潜在的资源和状态问题
+- ✅ **开发指导**：为后续详细设计和实现提供清晰指导
+
+### 架构特点
+
+- ✅ **多层循环架构**：战斗→回合→单位三层循环架构
+- ✅ **微核心设计**：协调器只负责协调调用，不包含业务规则
+- ✅ **统一数据访问**：节点通过CommunicationBus统一获取数据
+- ✅ **错误处理防护**：资源回滚 + 状态恢复 + 错误通知，避免状态不一致
+- ✅ **数据驱动**：所有特性通过配置数据实现，无需修改代码
+
+细节实现是后续开发阶段的工作，当前架构设计已足够指导整个回合制战斗系统的开发。
