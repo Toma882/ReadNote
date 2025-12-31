@@ -1,0 +1,18 @@
+{
+    "sourceFile": "rename_to_arch.py",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1767203312733,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1767203312733,
+            "name": "Commit-0",
+            "content": "#!/usr/bin/env python\r\n# -*- coding: utf-8 -*-\r\nimport os\r\n\r\n# 需要重命名的文件映射\r\nfiles_to_rename = {\r\n    \"Effect系统详解.md\": \"Effect系统架构设计.md\",\r\n    \"Skill系统详解.md\": \"Skill系统架构设计.md\",\r\n    \"Unit系统详解.md\": \"Unit系统架构设计.md\",\r\n    \"公式系统详解.md\": \"公式系统架构设计.md\",\r\n    \"FSM状态机详解.md\": \"FSM状态机架构设计.md\",\r\n    \"对象池系统详解.md\": \"对象池系统架构设计.md\",\r\n    \"触发器系统详解.md\": \"触发器系统架构设计.md\",\r\n    \"OOP框架详解.md\": \"OOP框架架构设计.md\",\r\n    \"设计模式库详解.md\": \"设计模式库架构设计.md\",\r\n    \"数据结构库详解.md\": \"数据结构库架构设计.md\",\r\n    \"Loader系统详解.md\": \"Loader系统架构设计.md\",\r\n    \"GridSystem详解.md\": \"GridSystem架构设计.md\",\r\n    \"Pathfinding详解.md\": \"Pathfinding架构设计.md\",\r\n    \"Lifecycle详解.md\": \"Lifecycle架构设计.md\",\r\n    \"MDC工具详解.md\": \"MDC工具架构设计.md\",\r\n}\r\n\r\nbase_dir = r\"D:\\Project_Git@SVN\\ReadNote\\模块架构设计\"\r\n\r\nprint(\"开始重命名文件...\")\r\nfor old_name, new_name in files_to_rename.items():\r\n    old_path = os.path.join(base_dir, old_name)\r\n    new_path = os.path.join(base_dir, new_name)\r\n    \r\n    try:\r\n        if os.path.exists(old_path):\r\n            os.rename(old_path, new_path)\r\n            print(f\"[OK] {old_name} -> {new_name}\")\r\n        else:\r\n            print(f\"[SKIP] 文件不存在: {old_name}\")\r\n    except Exception as e:\r\n        print(f\"[ERROR] 重命名失败 {old_name}: {e}\")\r\n\r\nprint(\"\\n重命名完成！\")\r\n"
+        }
+    ]
+}
